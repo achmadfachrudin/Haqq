@@ -1,6 +1,7 @@
 package core.ui.component
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -42,7 +43,8 @@ import haqq.composeapp.generated.resources.IndoPak_by_QuranWBW_v4_2_2_WL
 import haqq.composeapp.generated.resources.Res
 import haqq.composeapp.generated.resources.Ubuntu_Bold
 import haqq.composeapp.generated.resources.UthmanicHafs_V22
-import haqq.composeapp.generated.resources.bg_frame_number_light
+import haqq.composeapp.generated.resources.bg_frame_number_black
+import haqq.composeapp.generated.resources.bg_frame_number_white
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.painterResource
 import org.koin.mp.KoinPlatform
@@ -335,12 +337,13 @@ private fun getInlineText(verseNumber: Int): InlineTextContent {
             .replace("8", "٨")
             .replace("9", "٩")
             .replace("0", "٠")
-    val iconRes = Res.drawable.bg_frame_number_light
-//        if (isSystemInDarkTheme() || setting.theme == AppSetting.Theme.DARK) {
-//            Res.drawable.bg_frame_number_light
-//        } else {
-//            Res.drawable.bg_frame_number_dark
-//        }
+
+    val iconRes =
+        when (setting.theme) {
+            AppSetting.Theme.AUTO -> if (isSystemInDarkTheme()) Res.drawable.bg_frame_number_white else Res.drawable.bg_frame_number_black
+            AppSetting.Theme.LIGHT -> Res.drawable.bg_frame_number_black
+            AppSetting.Theme.DARK -> Res.drawable.bg_frame_number_white
+        }
 
     val inlineText =
         InlineTextContent(

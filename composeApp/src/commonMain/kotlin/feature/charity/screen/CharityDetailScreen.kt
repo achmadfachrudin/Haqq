@@ -25,7 +25,7 @@ import feature.other.service.mapper.getString
 import feature.other.service.model.AppString
 import haqq.composeapp.generated.resources.Res
 import haqq.composeapp.generated.resources.share
-import shareImage
+import ShareImage
 
 class CharityDetailScreen(
     private val imageUrl: String,
@@ -69,7 +69,7 @@ class CharityDetailScreen(
         }
 
         if (openShare.value) {
-            shareImage(imageUrl)
+            ShareImage(imageUrl)
             openShare.value = false
         }
 

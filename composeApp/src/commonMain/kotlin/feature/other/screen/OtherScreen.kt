@@ -1,7 +1,6 @@
 package feature.other.screen
 
-import AppConstant.URL_ABOUT
-import AppConstant.URL_PRIVACY_POLICY
+import AppConstant
 import AppConstant.USERNAME_INSTAGRAM
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -46,7 +45,7 @@ import haqq.composeapp.generated.resources.shield
 import haqq.composeapp.generated.resources.trash_2
 import kotlinx.coroutines.launch
 import org.koin.mp.KoinPlatform
-import sendMail
+import SendMail
 
 class OtherScreen : Screen {
     @Composable
@@ -123,8 +122,22 @@ class OtherScreen : Screen {
                 ) {
                     navigator.push(
                         WebScreen(
-                            url = URL_PRIVACY_POLICY.replace("xx", languageId),
+                            url = AppConstant.getPrivacyPoilicyUrl(languageId),
                             title = AppString.PRIVACY_POLICY.getString(),
+                        ),
+                    )
+                }
+
+                BaseDivider()
+
+                BaseItemCard(
+                    iconResource = Res.drawable.file_text,
+                    title = AppString.LICENSES.getString(),
+                ) {
+                    navigator.push(
+                        WebScreen(
+                            url = AppConstant.getLicensesUrl(languageId),
+                            title = AppString.LICENSES.getString(),
                         ),
                     )
                 }
@@ -137,8 +150,8 @@ class OtherScreen : Screen {
                 ) {
                     navigator.push(
                         WebScreen(
-                            URL_ABOUT.replace("xx", languageId),
-                            "${AppString.APP_NAME.getString()} v${getPlatform().appVersionName}",
+                            url = AppConstant.getAboutUrl(languageId),
+                            title = AppString.ABOUT.getString(),
                         ),
                     )
                 }
@@ -202,7 +215,7 @@ class OtherScreen : Screen {
             if (openMail.value) {
                 openMail.value = false
 
-                sendMail()
+                SendMail(subject = "[Feedback]", message = "")
             }
         }
 

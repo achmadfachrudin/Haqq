@@ -1,4 +1,4 @@
-package com.haqq.mobile
+package com.haqq.muslim
 
 import App
 import AppConstant.DEFAULT_LOCATION_LATITUDE

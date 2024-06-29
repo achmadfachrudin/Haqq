@@ -9,18 +9,18 @@ enum class PlatformPage(
 }
 
 @Composable
-expect fun openPage(platformPage: PlatformPage)
+expect fun OpenPage(platformPage: PlatformPage)
 
 expect fun openExternalLink(url: String)
 
 @Composable
-expect fun shareImage(
+expect fun ShareImage(
     imageUrl: String,
     caption: String = "",
 )
 
 @Composable
-expect fun shareText(message: String)
+expect fun ShareText(message: String)
 
 @Composable
-expect fun sendMail(message: String = "")
+expect fun SendMail(subject: String, message: String)

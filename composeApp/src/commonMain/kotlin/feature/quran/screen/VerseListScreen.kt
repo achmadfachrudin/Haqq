@@ -68,8 +68,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
-import sendMail
-import shareText
+import SendMail
+import ShareText
 
 class VerseListScreen(
     val readMode: ReadMode,
@@ -302,7 +302,7 @@ class VerseListScreen(
                         LazyColumn(modifier = Modifier.height(300.dp)) {
                             items(versesFiltered) { verse ->
                                 BaseItemCard(
-                                    title = verse.verseNumber.toString(),
+                                    title = "${verse.chapterId}:${verse.verseNumber}",
                                     onClick = {
                                         screenModel.updateQuery("")
                                         scope.launch {
@@ -389,13 +389,13 @@ class VerseListScreen(
         }
 
         if (openMail.value) {
-            sendMail(shareContent.value)
+            SendMail(subject = "[Verse-Report]", message = shareContent.value)
             openMail.value = false
             openVerseDialog.value = false
         }
 
         if (openShare.value) {
-            shareText(shareContent.value)
+            ShareText(shareContent.value)
             openShare.value = false
             openVerseDialog.value = false
         }

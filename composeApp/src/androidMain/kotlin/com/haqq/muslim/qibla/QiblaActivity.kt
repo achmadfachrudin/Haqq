@@ -1,4 +1,4 @@
-package com.haqq.mobile.qibla
+package com.haqq.muslim.qibla
 
 import AppConstant.DEFAULT_LOCATION_LATITUDE
 import AppConstant.DEFAULT_LOCATION_LONGITUDE
@@ -12,8 +12,8 @@ import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
 import androidx.appcompat.app.AppCompatActivity
-import com.haqq.mobile.databinding.ActivityQiblaBinding
-import com.haqq.mobile.showToast
+import com.haqq.muslim.databinding.ActivityQiblaBinding
+import com.haqq.muslim.showToast
 import feature.other.service.AppRepository
 import feature.other.service.mapper.getString
 import feature.other.service.model.AppSetting

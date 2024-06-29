@@ -17,22 +17,22 @@ kotlin = "2.0.0"
 # Multiplatform Version
 androidx-lifecycle = "2.8.0"
 androidx-navigation = "2.7.0-alpha06"
-ktor = "2.3.11"
+ktor = "2.3.12"
 ksoup = "0.4.0"
 kotlinx-serialization = "1.7.0"
 kotlinx-datetime = "0.6.0"
 koin = "3.5.6"
 koinCompose = "1.1.2"
 playServicesLocation = "21.3.0"
-realm = "2.0.0"
+realm = "2.1.0"
 voyager = "1.1.0-beta02"
-webview = "1.9.12"
+webview = "1.9.20"
 image = "0.9.5"
 napier = "2.7.1"
 # Android
 google-services = "4.4.2"
 firebase-crashlytics-plugin = "3.0.2"
-firebase-bom = "33.1.1"
+firebase-bom = "33.1.2"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }

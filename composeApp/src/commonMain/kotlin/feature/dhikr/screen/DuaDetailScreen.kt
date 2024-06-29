@@ -42,8 +42,8 @@ import haqq.composeapp.generated.resources.alert_circle
 import haqq.composeapp.generated.resources.copy
 import haqq.composeapp.generated.resources.share
 import kotlinx.coroutines.launch
-import sendMail
-import shareText
+import SendMail
+import ShareText
 
 @OptIn(ExperimentalFoundationApi::class)
 class DuaDetailScreen(
@@ -161,12 +161,12 @@ class DuaDetailScreen(
                 }
 
                 if (openMail.value) {
-                    sendMail(shareContent.value)
+                    SendMail(subject = "[Dua-Report]", message = shareContent.value)
                     openMail.value = false
                 }
 
                 if (openShare.value) {
-                    shareText(shareContent.value)
+                    ShareText(shareContent.value)
                     openShare.value = false
                 }
             }

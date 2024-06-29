@@ -23,7 +23,7 @@ import platform.UIKit.UIApplication
 import platform.UIKit.UIImage
 
 @Composable
-actual fun openPage(platformPage: PlatformPage) {
+actual fun OpenPage(platformPage: PlatformPage) {
 }
 
 actual fun openExternalLink(url: String) {
@@ -34,7 +34,7 @@ actual fun openExternalLink(url: String) {
 
 @OptIn(BetaInteropApi::class)
 @Composable
-actual fun shareImage(
+actual fun ShareImage(
     imageUrl: String,
     caption: String,
 ) {
@@ -66,7 +66,7 @@ private fun ByteArray.toNSData(): NSData =
     }
 
 @Composable
-actual fun shareText(message: String) {
+actual fun ShareText(message: String) {
     val activityViewController = UIActivityViewController(listOf(message), null)
     UIApplication.sharedApplication.keyWindow?.rootViewController?.presentViewController(
         activityViewController,
@@ -76,11 +76,11 @@ actual fun shareText(message: String) {
 }
 
 @Composable
-actual fun sendMail(message: String) {
+actual fun SendMail(subject: String, message: String) {
     if (MFMailComposeViewController.canSendMail()) {
         val mail = MFMailComposeViewController()
         mail.setToRecipients(listOf(URL_EMAIL))
-        mail.setSubject("haqq-issue")
+        mail.setSubject(subject)
 
         mail.setMessageBody(
             body =

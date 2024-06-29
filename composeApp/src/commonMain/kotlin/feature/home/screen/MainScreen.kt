@@ -1,6 +1,6 @@
 package feature.home.screen
 
-import AppConstant.URL_PRIVACY_POLICY
+import AppConstant
 import PlatformPage
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -58,7 +58,7 @@ import haqq.composeapp.generated.resources.Res
 import haqq.composeapp.generated.resources.heart
 import haqq.composeapp.generated.resources.more_horizontal
 import haqq.composeapp.generated.resources.settings
-import openPage
+import OpenPage
 import org.jetbrains.compose.resources.painterResource
 import org.koin.mp.KoinPlatform
 
@@ -243,7 +243,7 @@ class MainScreen : Screen {
         }
 
         if (openActivity.value && platformPage.value != PlatformPage.NONE) {
-            openPage(platformPage.value)
+            OpenPage(platformPage.value)
             openActivity.value = false
         }
 
@@ -267,11 +267,7 @@ class MainScreen : Screen {
             },
         ) { paddingValues ->
             Box(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
-                val url =
-                    URL_PRIVACY_POLICY.replace(
-                        "xx",
-                        appRepository.getSetting().language.id,
-                    )
+                val url = AppConstant.getPrivacyPoilicyUrl(appRepository.getSetting().language.id)
 
                 val state = rememberWebViewState(url)
 
