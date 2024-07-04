@@ -4,8 +4,8 @@
 .idea
 **/NetworkSource.kt
 **/QuranArchiveSource.kt
-google-services.json
-GoogleService-Info.plist
+**/google-services.json
+**/GoogleService-Info.plist
 **/build/
 xcuserdata
 !src/**/build/
