@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
@@ -31,6 +33,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import core.ui.component.ArabicCard
 import core.ui.component.BaseDialog
 import core.ui.component.BaseDivider
 import core.ui.component.BaseItemCard
@@ -72,7 +75,10 @@ class SettingScreen : Screen {
             },
         ) { paddingValues ->
             Column(
-                modifier = Modifier.padding(paddingValues).fillMaxSize().padding(vertical = 16.dp),
+                modifier = Modifier.padding(paddingValues)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(vertical = 16.dp),
             ) {
                 state.appSetting?.let {
                     SettingStyleCard(
@@ -140,80 +146,90 @@ class SettingScreen : Screen {
                     ) { fontSize ->
                         screenModel.updateTranslationFontSize(fontSize)
                     }
+                }
 
-                    if (openArabicStyleDialog.value) {
-                        BaseDialog(
-                            onDismissRequest = { openArabicStyleDialog.value = false },
-                            title = AppString.ARABIC_STYLE.getString(),
-                            shouldCustomContent = true,
-                            content = {
-                                AppSetting.ArabicStyle.entries.dropLast(1).forEach { arabicStyle ->
-                                    BaseItemCard(
-                                        title = arabicStyle.display,
-                                        onClick = {
-                                            screenModel.updateArabicStyle(arabicStyle)
-                                            openArabicStyleDialog.value = false
-                                            scope.launch {
-                                                snackbarHostState.showSnackbar(
-                                                    AppString.RESTART_PLEASE.getString(),
-                                                )
-                                            }
-                                        },
-                                    )
-                                }
-                            },
-                        )
-                    }
-
-                    if (openThemeDialog.value) {
-                        BaseDialog(
-                            onDismissRequest = { openThemeDialog.value = false },
-                            title = AppString.THEME.getString(),
-                            shouldCustomContent = true,
-                            content = {
-                                AppSetting.Theme.entries.forEach { theme ->
-                                    BaseItemCard(
-                                        title = theme.display,
-                                        onClick = {
-                                            screenModel.updateTheme(theme)
-                                            openThemeDialog.value = false
-                                            scope.launch {
-                                                snackbarHostState.showSnackbar(
-                                                    AppString.RESTART_PLEASE.getString(),
-                                                )
-                                            }
-                                        },
-                                    )
-                                }
-                            },
-                        )
-                    }
-
-                    if (openLanguageDialog.value) {
-                        BaseDialog(
-                            onDismissRequest = { openLanguageDialog.value = false },
-                            title = AppString.LANGUAGE.getString(),
-                            shouldCustomContent = true,
-                            content = {
-                                AppSetting.Language.entries.forEach { language ->
-                                    BaseItemCard(
-                                        title = language.display,
-                                        onClick = {
-                                            openLanguageDialog.value = false
-                                            scope.launch {
-                                                snackbarHostState.showSnackbar(
-                                                    AppString.RESTART_PLEASE.getString(),
-                                                )
-                                            }
-                                            screenModel.updateLanguage(language)
-                                        },
-                                    )
-                                }
-                            },
-                        )
-                    }
+                state.verse?.let {
+                    ArabicCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        textArabic = it.textArabic,
+                        textTransliteration = it.textTransliteration,
+                        textTranslation = it.textTranslation,
+                        onClick = {}
+                    )
                 }
             }
+        }
+
+        if (openArabicStyleDialog.value) {
+            BaseDialog(
+                onDismissRequest = { openArabicStyleDialog.value = false },
+                title = AppString.ARABIC_STYLE.getString(),
+                shouldCustomContent = true,
+                content = {
+                    AppSetting.ArabicStyle.entries.dropLast(1).forEach { arabicStyle ->
+                        BaseItemCard(
+                            title = arabicStyle.display,
+                            onClick = {
+                                screenModel.updateArabicStyle(arabicStyle)
+                                openArabicStyleDialog.value = false
+                                scope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        AppString.RESTART_PLEASE.getString(),
+                                    )
+                                }
+                            },
+                        )
+                    }
+                },
+            )
+        }
+
+        if (openThemeDialog.value) {
+            BaseDialog(
+                onDismissRequest = { openThemeDialog.value = false },
+                title = AppString.THEME.getString(),
+                shouldCustomContent = true,
+                content = {
+                    AppSetting.Theme.entries.forEach { theme ->
+                        BaseItemCard(
+                            title = theme.display,
+                            onClick = {
+                                screenModel.updateTheme(theme)
+                                openThemeDialog.value = false
+                                scope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        AppString.RESTART_PLEASE.getString(),
+                                    )
+                                }
+                            },
+                        )
+                    }
+                },
+            )
+        }
+
+        if (openLanguageDialog.value) {
+            BaseDialog(
+                onDismissRequest = { openLanguageDialog.value = false },
+                title = AppString.LANGUAGE.getString(),
+                shouldCustomContent = true,
+                content = {
+                    AppSetting.Language.entries.forEach { language ->
+                        BaseItemCard(
+                            title = language.display,
+                            onClick = {
+                                openLanguageDialog.value = false
+                                scope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        AppString.RESTART_PLEASE.getString(),
+                                    )
+                                }
+                                screenModel.updateLanguage(language)
+                            },
+                        )
+                    }
+                },
+            )
         }
 
         LaunchedEffect(currentCompositeKeyHash) {
@@ -229,10 +245,10 @@ class SettingScreen : Screen {
     ) {
         Row(
             modifier =
-                Modifier
-                    .clickable { onClick() }
-                    .fillMaxWidth()
-                    .padding(itemPadding),
+            Modifier
+                .clickable { onClick() }
+                .fillMaxWidth()
+                .padding(itemPadding),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
@@ -254,9 +270,9 @@ class SettingScreen : Screen {
     ) {
         Row(
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(itemPadding),
+            Modifier
+                .fillMaxWidth()
+                .padding(itemPadding),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
@@ -284,9 +300,9 @@ class SettingScreen : Screen {
 
         Row(
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(itemPadding),
+            Modifier
+                .fillMaxWidth()
+                .padding(itemPadding),
         ) {
             val fontSizeList = listOf(14, 16, 18, 20, 22, 24, 26, 28, 30, 32)
 
@@ -310,7 +326,7 @@ class SettingScreen : Screen {
                     },
                     steps = fontSizeList.size - 2,
                     valueRange =
-                        fontSizeList.first().toFloat()..fontSizeList.last().toFloat(),
+                    fontSizeList.first().toFloat()..fontSizeList.last().toFloat(),
                     onValueChangeFinished = {
                         onChanged(sliderPosition.toInt())
                     },

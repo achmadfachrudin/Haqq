@@ -79,7 +79,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.haqq.mobile"
+    namespace = "com.haqq.muslim"
     compileSdk =
         libs.versions.android.compileSdk
             .get()
@@ -90,7 +90,7 @@ android {
     sourceSets["main"].resources.srcDirs("src/commonMain/resources")
 
     defaultConfig {
-        applicationId = "com.haqq.mobile"
+        applicationId = "com.haqq.muslim"
         minSdk =
             libs.versions.android.minSdk
                 .get()
@@ -99,8 +99,8 @@ android {
             libs.versions.android.targetSdk
                 .get()
                 .toInt()
-        versionName = "1.0.8"
-        versionCode = 8
+        versionName = "1.0.9"
+        versionCode = 9
     }
     packaging {
         resources {

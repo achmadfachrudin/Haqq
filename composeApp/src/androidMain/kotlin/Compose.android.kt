@@ -17,7 +17,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 @Composable
-actual fun openPage(platformPage: PlatformPage) {
+actual fun OpenPage(platformPage: PlatformPage) {
     val context = LocalContext.current
     val packageName = context.packageName
     val activityName = platformPage.android
@@ -29,7 +29,7 @@ actual fun openExternalLink(url: String) {
 }
 
 @Composable
-actual fun shareImage(
+actual fun ShareImage(
     imageUrl: String,
     caption: String,
 ) {
@@ -52,7 +52,7 @@ actual fun shareImage(
         val bitmapUri =
             FileProvider.getUriForFile(
                 context,
-                context.packageName + ".fileprovider",
+                "${context.packageName}.provider",
                 newFile,
             )
 
@@ -82,7 +82,7 @@ private fun getBitmapFromURL(url: URL): Bitmap? =
     }
 
 @Composable
-actual fun shareText(message: String) {
+actual fun ShareText(message: String) {
     val intent =
         Intent().apply {
             action = Intent.ACTION_SEND
@@ -94,7 +94,7 @@ actual fun shareText(message: String) {
 }
 
 @Composable
-actual fun sendMail(message: String) {
+actual fun SendMail(subject: String, message: String) {
     val intent = Intent(Intent.ACTION_VIEW, Uri.parse("mailto:"))
     intent.putExtra(
         Intent.EXTRA_EMAIL,
@@ -102,7 +102,7 @@ actual fun sendMail(message: String) {
     )
     intent.putExtra(
         Intent.EXTRA_SUBJECT,
-        "haqq-issue",
+        subject,
     )
     intent.putExtra(
         Intent.EXTRA_TEXT,

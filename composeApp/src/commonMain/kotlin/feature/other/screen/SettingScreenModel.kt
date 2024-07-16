@@ -4,18 +4,28 @@ import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import feature.other.service.AppRepository
 import feature.other.service.model.AppSetting
+import feature.quran.service.QuranRepository
+import feature.quran.service.model.Verse
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SettingScreenModel(
     private val appRepository: AppRepository,
+    private val quranRepository: QuranRepository,
 ) : StateScreenModel<SettingScreenModel.State>(State()) {
     data class State(
         val appSetting: AppSetting? = null,
+        val verse: Verse? = null,
     )
 
     fun getSetting() {
         screenModelScope.launch {
-            mutableState.value = state.value.copy(appSetting = appRepository.getSetting())
+            mutableState.value =
+                state.value.copy(appSetting = appRepository.getSetting(), verse = null)
+
+            delay(500)
+
+            getVerse()
         }
     }
 
@@ -80,6 +90,13 @@ class SettingScreenModel(
             appRepository.updateTranslationFontSize(fontSize)
 
             getSetting()
+        }
+    }
+
+    private fun getVerse() {
+        screenModelScope.launch {
+            val verse = quranRepository.getVerseById(5)
+            mutableState.value = state.value.copy(verse = verse)
         }
     }
 }

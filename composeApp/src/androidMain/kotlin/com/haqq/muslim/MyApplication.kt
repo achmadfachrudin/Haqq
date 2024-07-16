@@ -1,4 +1,4 @@
-package com.haqq.mobile
+package com.haqq.muslim
 
 import android.app.Application
 import initKoin

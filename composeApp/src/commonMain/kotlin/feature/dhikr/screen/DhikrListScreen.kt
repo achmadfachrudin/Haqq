@@ -53,8 +53,8 @@ import haqq.composeapp.generated.resources.more_horizontal
 import haqq.composeapp.generated.resources.share
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
-import sendMail
-import shareText
+import SendMail
+import ShareText
 
 @OptIn(ExperimentalFoundationApi::class)
 class DhikrListScreen(
@@ -237,12 +237,12 @@ class DhikrListScreen(
                 }
 
                 if (openMail.value) {
-                    sendMail(shareContent.value)
+                    SendMail(subject = "[Dhikr-Report]", message = shareContent.value)
                     openMail.value = false
                 }
 
                 if (openShare.value) {
-                    shareText(shareContent.value)
+                    ShareText(shareContent.value)
                     openShare.value = false
                 }
             }

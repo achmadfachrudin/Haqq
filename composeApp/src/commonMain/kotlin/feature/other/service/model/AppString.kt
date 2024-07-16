@@ -272,6 +272,10 @@ enum class AppString(
         "Mal Guidance",
         "Panduan Mal",
     ),
+    LICENSES(
+        "Licenses",
+        "Lisensi",
+    ),
     NEXT_PRAYER_TIME(
         "Next prayer time :",
         "Waktu sholat selanjutnya :",

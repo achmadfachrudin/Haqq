@@ -1,6 +1,14 @@
 object AppConstant {
-    const val URL_PRIVACY_POLICY = "https://sites.google.com/view/haqq-app/xx/privacy-policy"
-    const val URL_ABOUT = "https://sites.google.com/view/haqq-app/xx/about/"
+    private const val URL_WEB = "https://sites.google.com/view/haqq-app/xx/"
+    private const val PATH_ABOUT = "about/"
+    private const val PATH_LICENSES = "licenses/"
+    private const val PATH_PRIVACY_POLICY = "privacy-policy/"
+
+    private fun getWebUrl(languageId: String) = URL_WEB.replace("xx", languageId)
+    fun getAboutUrl(languageId: String) = getWebUrl(languageId).plus(PATH_ABOUT)
+    fun getLicensesUrl(languageId: String) = getWebUrl(languageId).plus(PATH_LICENSES)
+    fun getPrivacyPoilicyUrl(languageId: String) = getWebUrl(languageId).plus(PATH_PRIVACY_POLICY)
+
     const val URL_SUPPORT = "https://sociabuzz.com/haqq/tribe/"
 
     const val USERNAME_INSTAGRAM = "haqq_sunnah"

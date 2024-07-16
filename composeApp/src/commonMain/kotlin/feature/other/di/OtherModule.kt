@@ -13,7 +13,7 @@ import org.koin.dsl.module
 val otherFeatureModule =
     module {
         factory { OtherScreenModel(get()) }
-        factory { SettingScreenModel(get()) }
+        factory { SettingScreenModel(get(), get()) }
 
         single<SettingRemote> {
             SettingRemoteImp(
