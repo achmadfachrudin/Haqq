@@ -104,6 +104,10 @@ enum class AppString(
         "Close",
         "Tutup",
     ),
+    COLOR(
+        "Color",
+        "Warna",
+    ),
     CONTINUE_READ(
         "Continue read %1",
         "Lanjut baca %1",
@@ -213,8 +217,8 @@ enum class AppString(
         "Doa as - Sunnah",
     ),
     FEEDBACK(
-        "Give Feedback or Report",
-        "Beri Masukan atau Laporkan",
+        "Give feedback or report",
+        "Beri masukan atau laporkan",
     ),
     HOME_TITLE(
         "Home ",

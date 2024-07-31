@@ -77,11 +77,11 @@ class CalendarScreen : Screen {
             topBar = {
                 BaseTopAppBar(
                     title = AppString.CALENDAR_FASTING.getString(),
+                    showRightButton = state.calendarState is CalendarScreenModel.CalendarState.Content,
+                    rightButtonImage = painterResource(Res.drawable.calendar),
                     onLeftButtonClick = {
                         navigator.pop()
                     },
-                    showRightButton = state.calendarState is CalendarScreenModel.CalendarState.Content,
-                    rightButtonImage = painterResource(Res.drawable.calendar),
                     onRightButtonClick = {
                         when (val display = state.calendarState) {
                             is CalendarScreenModel.CalendarState.Content -> {

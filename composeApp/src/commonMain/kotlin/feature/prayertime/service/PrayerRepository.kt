@@ -21,6 +21,7 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.onStart
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
@@ -102,92 +103,70 @@ class PrayerRepository(
         flow {
             val today: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
             val tomorrow: LocalDate = today.plus(1, DateTimeUnit.DAY)
+            val nextMonth: LocalDate = today.plus(1, DateTimeUnit.MONTH)
             val setting = appRepository.getSetting()
 
-            val localTodayTomorrowPrayerTimes =
+            val localPrayerTimes =
                 realm
                     .query<PrayerTimeRealm>()
                     .find()
                     .filter {
-                        val saved = LocalDate(it.gregorianYear, it.gregorianMonth, it.gregorianDate)
+                        val date = LocalDate(it.gregorianYear, it.gregorianMonth, it.gregorianDate)
 
-                        (saved == today || saved == tomorrow) &&
+                        (date == today || date == tomorrow) &&
                             it.locationName.lowercase() == setting.location.name.lowercase()
-                    }.sortedBy { it.gregorianFullDate }
+                    }.sortedBy { it.gregorianYear }
                     .map { it.mapToModel() }
 
-            if (localTodayTomorrowPrayerTimes.size == 2) {
-                emit(DataState.Success(localTodayTomorrowPrayerTimes))
+            if (localPrayerTimes.size == 2) {
+                emit(DataState.Success(localPrayerTimes))
             } else {
-                if (!setting.isLocationValid) {
-                    emit(DataState.Error(AppString.PRAYER_ENABLE_GPS.getString()))
-                    return@flow
-                }
-
                 realm.writeBlocking {
                     delete(PrayerTimeRealm::class)
                 }
 
-                when (
-                    val result =
-                        remote.fetchGregorianMonthTimes(
-                            month = today.monthNumber,
-                            year = today.year,
-                            latitude = setting.location.latitude,
-                            longitude = setting.location.longitude,
-                        )
-                ) {
-                    is ApiResponse.Error -> {
-                        if (setting.isLocationValid) {
-                            emit(DataState.Error(result.message))
-                        } else {
-                            emit(DataState.Error(AppString.PRAYER_ENABLE_GPS.getString()))
-                        }
-                    }
+                if (today.month != tomorrow.month) {
+                    // get this month
+                    fetchGregorianMonthTimes(
+                        month = today.monthNumber,
+                        year = today.year,
+                    ).last()
 
-                    is ApiResponse.Success -> {
-                        realm.writeBlocking {
-                            result.body.data?.forEach { day ->
-                                copyToRealm(
-                                    day.mapToPrayerTimeRealm(setting.location.name),
-                                )
-                            }
-                        }
-
-                        val todayTomorrowPrayerTimes =
-                            realm
-                                .query<PrayerTimeRealm>()
-                                .find()
-                                .filter {
-                                    val saved =
-                                        LocalDate(
-                                            it.gregorianYear,
-                                            it.gregorianMonth,
-                                            it.gregorianDate,
-                                        )
-
-                                    (saved == today || saved == tomorrow) &&
-                                        it.locationName.lowercase() == setting.location.name.lowercase()
-                                }.sortedBy { it.gregorianFullDate }
-                                .map { it.mapToModel() }
-
-                        emit(DataState.Success(todayTomorrowPrayerTimes))
-                    }
+                    // get next month
+                    fetchGregorianMonthTimes(
+                        month = nextMonth.monthNumber,
+                        year = nextMonth.year,
+                    ).last()
+                } else {
+                    // get this month
+                    fetchGregorianMonthTimes(
+                        month = today.monthNumber,
+                        year = today.year,
+                    ).last()
                 }
+
+                val latestPrayerTimes =
+                    realm
+                        .query<PrayerTimeRealm>()
+                        .find()
+                        .filter {
+                            val date =
+                                LocalDate(it.gregorianYear, it.gregorianMonth, it.gregorianDate)
+
+                            (date == today || date == tomorrow) &&
+                                it.locationName.lowercase() == setting.location.name.lowercase()
+                        }.sortedBy { it.gregorianYear }
+                        .map { it.mapToModel() }
+
+                emit(DataState.Success(latestPrayerTimes))
             }
-        }.onStart { emit(DataState.Loading) }
-            .catch { emit(DataState.Error(it.message.orEmpty())) }
-            .flowOn(Dispatchers.IO)
+        }.flowOn(Dispatchers.IO)
 
     private fun fetchGregorianMonthTimes(
         month: Int,
         year: Int,
     ) = flow {
         val setting = appRepository.getSetting()
-
-        realm.writeBlocking {
-            delete(PrayerTimeRealm::class)
-        }
 
         when (
             val result =
@@ -198,7 +177,14 @@ class PrayerRepository(
                     longitude = setting.location.longitude,
                 )
         ) {
-            is ApiResponse.Error -> emit(DataState.Error(result.message))
+            is ApiResponse.Error -> {
+                if (setting.isLocationValid) {
+                    emit(DataState.Error(result.message))
+                } else {
+                    emit(DataState.Error(AppString.PRAYER_ENABLE_GPS.getString()))
+                }
+            }
+
             is ApiResponse.Success -> {
                 realm.writeBlocking {
                     result.body.data?.forEach { day ->

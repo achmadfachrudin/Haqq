@@ -81,16 +81,16 @@ class NoteDetailScreen(
             topBar = {
                 BaseTopAppBar(
                     title = AppString.STUDY_NOTE_NEW.getString(),
+                    showOptionalButton = !state.note?.id.isNullOrZero(),
+                    showRightButton = true,
+                    optionalButtonImage = painterResource(Res.drawable.trash_2),
+                    rightButtonImage = painterResource(Res.drawable.save),
                     onLeftButtonClick = {
                         navigator.pop()
                     },
-                    showOptionalButton = !state.note?.id.isNullOrZero(),
-                    optionalButtonImage = painterResource(Res.drawable.trash_2),
                     onOptionalButtonClick = {
                         openConfirmationDialog.value = true
                     },
-                    showRightButton = true,
-                    rightButtonImage = painterResource(Res.drawable.save),
                     onRightButtonClick = {
                         state.note?.let { note ->
                             val created =

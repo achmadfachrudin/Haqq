@@ -1,6 +1,10 @@
 package feature.quran.screen
 
+import SendMail
+import ShareText
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,6 +32,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
@@ -41,7 +46,6 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import core.ui.component.ArabicCard
 import core.ui.component.BaseButton
 import core.ui.component.BaseDialog
-import core.ui.component.BaseDivider
 import core.ui.component.BaseItemCard
 import core.ui.component.BaseOutlineTextField
 import core.ui.component.BasePageQuran
@@ -60,16 +64,17 @@ import feature.quran.service.model.ReadMode
 import feature.quran.service.model.Verse
 import haqq.composeapp.generated.resources.Res
 import haqq.composeapp.generated.resources.alert_circle
+import haqq.composeapp.generated.resources.bg_frame_surah
+import haqq.composeapp.generated.resources.bookmark
 import haqq.composeapp.generated.resources.copy
 import haqq.composeapp.generated.resources.corner_left_down
+import haqq.composeapp.generated.resources.heart
 import haqq.composeapp.generated.resources.search
 import haqq.composeapp.generated.resources.share
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
-import SendMail
-import ShareText
 
 class VerseListScreen(
     val readMode: ReadMode,
@@ -106,13 +111,13 @@ class VerseListScreen(
             topBar = {
                 BaseTopAppBar(
                     title = title,
-                    onLeftButtonClick = {
-                        navigator.pop()
-                    },
                     showOptionalButton = state.verseState is VerseListScreenModel.VerseState.Content && state.readMode != ReadMode.BY_PAGE,
                     showRightButton = state.verseState is VerseListScreenModel.VerseState.Content && state.readMode != ReadMode.BY_PAGE,
                     optionalButtonImage = painterResource(Res.drawable.corner_left_down),
                     rightButtonImage = painterResource(Res.drawable.search),
+                    onLeftButtonClick = {
+                        navigator.pop()
+                    },
                     onOptionalButtonClick = { openJumpVerseDialog.value = true },
                     onRightButtonClick = { openSearchDialog.value = true },
                 )
@@ -464,10 +469,10 @@ class VerseListScreen(
             }
         }
 
-    private fun getVerseActionIcon(verseAction: VerseListScreenModel.VerseAction): DrawableResource? =
+    private fun getVerseActionIcon(verseAction: VerseListScreenModel.VerseAction): DrawableResource =
         when (verseAction) {
-            VerseListScreenModel.VerseAction.SAVE_AS_LASTREAD -> null
-            VerseListScreenModel.VerseAction.ADD_OR_REMOVE_FAVORITE -> null
+            VerseListScreenModel.VerseAction.SAVE_AS_LASTREAD -> Res.drawable.bookmark
+            VerseListScreenModel.VerseAction.ADD_OR_REMOVE_FAVORITE -> Res.drawable.heart
             VerseListScreenModel.VerseAction.COPY -> Res.drawable.copy
             VerseListScreenModel.VerseAction.SHARE -> Res.drawable.share
             VerseListScreenModel.VerseAction.REPORT -> Res.drawable.alert_circle
@@ -475,32 +480,35 @@ class VerseListScreen(
 
     @Composable
     private fun HeaderChapter(chapter: Chapter) {
-        Column {
-            BaseDivider()
-            BaseSpacerVertical(4)
-            BaseText(
+        Box {
+            Image(
                 modifier = Modifier.fillMaxWidth(),
-                text = chapter.nameArabic,
-                style = getHaqqTypography().titleLarge,
-                horizontalArrangement = Arrangement.Center,
+                painter = painterResource(Res.drawable.bg_frame_surah),
+                contentDescription = "",
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
             )
-            BaseText(
-                modifier = Modifier.fillMaxWidth(),
-                text =
-                    AppString.SURAH_DESC
-                        .getString()
-                        .replace("%1", chapter.nameTranslation)
-                        .replace(
-                            "%2",
-                            chapter.versesCount.toString(),
-                        ).replace("%3", chapter.revelationPlace),
-                horizontalArrangement = Arrangement.Center,
-            )
-            BaseSpacerVertical(4)
-            BaseDivider()
-
-            if (chapter.bismillahPre) {
-                BismillahCard()
+            Column(modifier = Modifier.fillMaxSize().align(Alignment.Center)) {
+                BaseText(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = chapter.nameArabic,
+                    style = getHaqqTypography().titleLarge,
+                    horizontalArrangement = Arrangement.Center,
+                )
+                BaseText(
+                    modifier = Modifier.fillMaxWidth(),
+                    text =
+                        AppString.SURAH_DESC
+                            .getString()
+                            .replace("%1", chapter.nameTranslation)
+                            .replace(
+                                "%2",
+                                chapter.versesCount.toString(),
+                            ).replace("%3", chapter.revelationPlace),
+                    horizontalArrangement = Arrangement.Center,
+                )
+                if (chapter.bismillahPre) {
+                    BismillahCard()
+                }
             }
         }
     }

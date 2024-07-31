@@ -1,5 +1,6 @@
 package feature.charity.screen
 
+import ShareImage
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,7 +26,6 @@ import feature.other.service.mapper.getString
 import feature.other.service.model.AppString
 import haqq.composeapp.generated.resources.Res
 import haqq.composeapp.generated.resources.share
-import ShareImage
 
 class CharityDetailScreen(
     private val imageUrl: String,

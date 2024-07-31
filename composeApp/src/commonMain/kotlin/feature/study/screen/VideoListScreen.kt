@@ -107,7 +107,12 @@ class VideoListScreen(
             )
 
             Column(modifier = Modifier.weight(0.6f).padding(start = 16.dp)) {
-                BaseText(video.title, maxLines = 3, overflow = TextOverflow.Ellipsis, style = getHaqqTypography().titleSmall)
+                BaseText(
+                    video.title,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis,
+                    style = getHaqqTypography().titleSmall,
+                )
                 BaseText(text = video.publishedAt, style = getHaqqTypography().bodySmall)
             }
         }

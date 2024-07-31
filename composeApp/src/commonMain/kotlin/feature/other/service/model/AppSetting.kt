@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 data class AppSetting(
     val language: Language,
     val theme: Theme,
+    val themeColor: ThemeColor,
     val arabicStyle: ArabicStyle,
     val arabicFontSize: Int,
     val transliterationVisibility: Boolean,
@@ -32,6 +33,16 @@ data class AppSetting(
         AUTO("Auto"),
         LIGHT("Light"),
         DARK("Dark"),
+    }
+
+    enum class ThemeColor(
+        val display: String,
+    ) {
+        GREEN("Green"),
+        BLUE("Blue"),
+        PURPLE("Purple"),
+        RED("Red"),
+        PINK("Pink"),
     }
 
     enum class ArabicStyle(

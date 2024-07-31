@@ -51,13 +51,13 @@ class PrayerTimeScreen : Screen {
             topBar = {
                 BaseTopAppBar(
                     title = AppString.PRAYER_TIME_TITLE.getString(),
-                    onLeftButtonClick = {
-                        navigator.pop()
-                    },
                     showRightButton =
                         state.todayTomorrowState is PrayerTimeScreenModel.TodayTomorrowState.Content &&
                             state.calendarState is PrayerTimeScreenModel.CalendarState.Content,
                     rightButtonImage = painterResource(Res.drawable.calendar),
+                    onLeftButtonClick = {
+                        navigator.pop()
+                    },
                     onRightButtonClick = {
                         when (val display = state.calendarState) {
                             is PrayerTimeScreenModel.CalendarState.Content -> {

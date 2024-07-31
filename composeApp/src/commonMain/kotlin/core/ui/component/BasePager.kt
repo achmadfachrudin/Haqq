@@ -31,16 +31,13 @@ fun BaseIndicator(
         // pageCount start from 0
         repeat(pagerState.pageCount) { iteration ->
             val shape = CircleShape
-            val activeColor = MaterialTheme.colorScheme.primary
-            val color =
-                if (pagerState.currentPage == iteration) activeColor else MaterialTheme.colorScheme.secondaryContainer
             Box(
                 modifier =
                     Modifier
                         .padding(2.dp)
                         .clip(shape)
-                        .background(color)
-                        .border(1.dp, activeColor, shape)
+                        .background(MaterialTheme.colorScheme.onPrimary)
+                        .border(1.dp, MaterialTheme.colorScheme.primary, shape)
                         .size(10.dp),
             )
         }

@@ -5,7 +5,6 @@ import core.data.DataState
 import core.util.orZero
 import feature.other.service.AppRepository
 import feature.other.service.model.AppSetting.Language
-import feature.quran.service.source.local.QuranArchiveSource
 import feature.quran.service.entity.ChapterRealm
 import feature.quran.service.entity.ChaptersEntity
 import feature.quran.service.entity.JuzRealm
@@ -26,6 +25,7 @@ import feature.quran.service.model.QuranConstant.MAX_JUZ
 import feature.quran.service.model.QuranConstant.MAX_PAGE
 import feature.quran.service.model.Verse
 import feature.quran.service.model.VerseFavorite
+import feature.quran.service.source.local.QuranArchiveSource
 import feature.quran.service.source.remote.QuranRemote
 import io.github.aakira.napier.Napier
 import io.realm.kotlin.Realm
@@ -601,27 +601,38 @@ class QuranRepository(
     fun getVerseFavorites(): List<VerseFavorite> {
         val favorites = realm.query<VerseFavoriteRealm>().find()
 
-        return favorites.map {
-            VerseFavorite(
-                verseId = it.verseId,
-                verseNumber = it.verseNumber,
-                chapterId = it.chapterId,
-                chapterNameSimple = it.chapterNameSimple,
-            )
-        }
+        return favorites
+            .map {
+                VerseFavorite(
+                    verseId = it.verseId,
+                    verseNumber = it.verseNumber,
+                    chapterId = it.chapterId,
+                    chapterNameSimple = it.chapterNameSimple,
+                )
+            }.sortedBy { it.verseId }
     }
 
     fun isFavorite(verseId: Int): Boolean = realm.query<VerseFavoriteRealm>("verseId == $0", verseId).find().isNotEmpty()
 
     fun addOrRemoveVerseFavorites(verse: Verse) {
         val verseFavorites =
-            realm.query<VerseFavoriteRealm>("verseId == $0", verse.id).find().firstOrNull()
+            realm
+                .query<VerseFavoriteRealm>("verseId == $0", verse.id)
+                .find()
+                .firstOrNull()
 
         val chapter = getChapterById(verse.chapterId)
 
         realm.writeBlocking {
             if (verseFavorites == null) {
-                copyToRealm(VerseFavoriteRealm())
+                copyToRealm(
+                    VerseFavoriteRealm().apply {
+                        verseId = verse.id
+                        verseNumber = verse.verseNumber
+                        chapterId = verse.chapterId
+                        chapterNameSimple = chapter.nameSimple
+                    },
+                )
             } else {
                 findLatest(verseFavorites)?.also { delete(it) }
             }
@@ -637,7 +648,10 @@ class QuranRepository(
 
         realm.writeBlocking {
             if (verseFavorites == null) {
-                copyToRealm(VerseFavoriteRealm())
+                copyToRealm(
+                    VerseFavoriteRealm().apply {
+                    },
+                )
             } else {
                 findLatest(verseFavorites)?.also { delete(it) }
             }

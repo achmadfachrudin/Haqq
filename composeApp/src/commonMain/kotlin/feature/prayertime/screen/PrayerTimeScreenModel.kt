@@ -55,24 +55,15 @@ class PrayerTimeScreenModel(
     fun getPrayerTime() {
         screenModelScope.launch {
             prayerRepository.fetchTodayTomorrowPrayerTimes().collectLatest {
-                var monthSelected: Int = DEFAULT_HIJRI_MONTH
-                var yearSelected: Int = DEFAULT_HIJRI_YEAR
-                val timeState =
-                    when (it) {
-                        is DataState.Error -> TodayTomorrowState.Error(it.message)
-                        DataState.Loading -> TodayTomorrowState.Loading
-                        is DataState.Success -> {
-                            monthSelected =
-                                it.data
-                                    .first()
-                                    .hijri.month.monthNumber
-                            yearSelected =
-                                it.data
-                                    .first()
-                                    .hijri.year
-                            TodayTomorrowState.Content(it.data)
-                        }
-                    }
+                val monthSelected =
+                    it.data
+                        .first()
+                        .hijri.month.monthNumber
+                val yearSelected =
+                    it.data
+                        .first()
+                        .hijri.year
+                val timeState = TodayTomorrowState.Content(it.data)
 
                 mutableState.value =
                     state.value.copy(

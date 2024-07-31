@@ -1,12 +1,9 @@
 package core.ui.component
 
-import androidx.compose.animation.core.tween
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import io.kamel.image.KamelImage
-import io.kamel.image.asyncPainterResource
+import coil3.compose.SubcomposeAsyncImage
 
 @Composable
 fun BaseImage(
@@ -15,12 +12,13 @@ fun BaseImage(
     contentScale: ContentScale = ContentScale.Crop,
     contentDescription: String = "Haqq Image",
 ) {
-    KamelImage(
-        resource = asyncPainterResource(data = imageUrl),
+    SubcomposeAsyncImage(
+        model = imageUrl,
         modifier = modifier,
         contentScale = contentScale,
         contentDescription = contentDescription,
-        onLoading = { CircularProgressIndicator() },
-        animationSpec = tween(),
+        loading = {
+            LoadingState()
+        },
     )
 }

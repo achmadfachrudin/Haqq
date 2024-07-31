@@ -61,6 +61,7 @@ class SettingScreen : Screen {
 
         val openArabicStyleDialog = remember { mutableStateOf(false) }
         val openThemeDialog = remember { mutableStateOf(false) }
+        val openThemeColorDialog = remember { mutableStateOf(false) }
         val openLanguageDialog = remember { mutableStateOf(false) }
 
         Scaffold(
@@ -75,10 +76,12 @@ class SettingScreen : Screen {
             },
         ) { paddingValues ->
             Column(
-                modifier = Modifier.padding(paddingValues)
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(vertical = 16.dp),
+                modifier =
+                    Modifier
+                        .padding(paddingValues)
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(vertical = 16.dp),
             ) {
                 state.appSetting?.let {
                     SettingStyleCard(
@@ -86,6 +89,15 @@ class SettingScreen : Screen {
                         style = it.theme.display,
                     ) {
                         openThemeDialog.value = true
+                    }
+
+                    BaseDivider()
+
+                    SettingStyleCard(
+                        title = AppString.COLOR.getString(),
+                        style = it.themeColor.display,
+                    ) {
+                        openThemeColorDialog.value = true
                     }
 
                     BaseDivider()
@@ -154,7 +166,7 @@ class SettingScreen : Screen {
                         textArabic = it.textArabic,
                         textTransliteration = it.textTransliteration,
                         textTranslation = it.textTranslation,
-                        onClick = {}
+                        onClick = {},
                     )
                 }
             }
@@ -208,6 +220,30 @@ class SettingScreen : Screen {
             )
         }
 
+        if (openThemeColorDialog.value) {
+            BaseDialog(
+                onDismissRequest = { openThemeColorDialog.value = false },
+                title = AppString.COLOR.getString(),
+                shouldCustomContent = true,
+                content = {
+                    AppSetting.ThemeColor.entries.forEach { color ->
+                        BaseItemCard(
+                            title = color.display,
+                            onClick = {
+                                screenModel.updateThemeColor(color)
+                                openThemeColorDialog.value = false
+                                scope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        AppString.RESTART_PLEASE.getString(),
+                                    )
+                                }
+                            },
+                        )
+                    }
+                },
+            )
+        }
+
         if (openLanguageDialog.value) {
             BaseDialog(
                 onDismissRequest = { openLanguageDialog.value = false },
@@ -245,10 +281,10 @@ class SettingScreen : Screen {
     ) {
         Row(
             modifier =
-            Modifier
-                .clickable { onClick() }
-                .fillMaxWidth()
-                .padding(itemPadding),
+                Modifier
+                    .clickable { onClick() }
+                    .fillMaxWidth()
+                    .padding(itemPadding),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
@@ -270,9 +306,9 @@ class SettingScreen : Screen {
     ) {
         Row(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(itemPadding),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(itemPadding),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
@@ -300,9 +336,9 @@ class SettingScreen : Screen {
 
         Row(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(itemPadding),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(itemPadding),
         ) {
             val fontSizeList = listOf(14, 16, 18, 20, 22, 24, 26, 28, 30, 32)
 
@@ -326,7 +362,7 @@ class SettingScreen : Screen {
                     },
                     steps = fontSizeList.size - 2,
                     valueRange =
-                    fontSizeList.first().toFloat()..fontSizeList.last().toFloat(),
+                        fontSizeList.first().toFloat()..fontSizeList.last().toFloat(),
                     onValueChangeFinished = {
                         onChanged(sliderPosition.toInt())
                     },

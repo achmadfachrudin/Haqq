@@ -161,14 +161,14 @@ class MonthlyPrayerTimeScreen : Screen {
     ) {
         val backgroundColor =
             if (index % 2 == 0) {
-                MaterialTheme.colorScheme.primary
+                MaterialTheme.colorScheme.secondary
             } else {
                 MaterialTheme.colorScheme.surface
             }
 
         val contentColor =
             if (index % 2 == 0) {
-                MaterialTheme.colorScheme.onPrimary
+                MaterialTheme.colorScheme.onSecondary
             } else {
                 MaterialTheme.colorScheme.onSurface
             }

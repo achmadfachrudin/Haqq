@@ -2,48 +2,44 @@ package core.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import haqq.composeapp.generated.resources.Res
-import haqq.composeapp.generated.resources.Ubuntu_Bold
-import haqq.composeapp.generated.resources.Ubuntu_Medium
-import haqq.composeapp.generated.resources.Ubuntu_Regular
+import haqq.composeapp.generated.resources.Rubik_Bold
+import haqq.composeapp.generated.resources.Rubik_Light
+import haqq.composeapp.generated.resources.Rubik_Medium
+import haqq.composeapp.generated.resources.Rubik_Regular
+import haqq.composeapp.generated.resources.Rubik_SemiBold
 import org.jetbrains.compose.resources.Font
 
 @Composable
 fun getHaqqTypography(): Typography {
-    val defaultTypography = Typography()
-
-    return defaultTypography.copy(
-        displayLarge = replaceFontFamily(defaultTypography.displayLarge),
-        displayMedium = replaceFontFamily(defaultTypography.displayMedium),
-        displaySmall = replaceFontFamily(defaultTypography.displaySmall),
-        headlineLarge = replaceFontFamily(defaultTypography.headlineLarge),
-        headlineMedium = replaceFontFamily(defaultTypography.headlineMedium),
-        headlineSmall = replaceFontFamily(defaultTypography.headlineSmall),
-        titleLarge = replaceFontFamily(defaultTypography.titleLarge),
-        titleMedium = replaceFontFamily(defaultTypography.titleMedium),
-        titleSmall = replaceFontFamily(defaultTypography.titleSmall),
-        bodyLarge = replaceFontFamily(defaultTypography.bodyLarge),
-        bodyMedium = replaceFontFamily(defaultTypography.bodyMedium),
-        bodySmall = replaceFontFamily(defaultTypography.bodySmall),
-        labelLarge = replaceFontFamily(defaultTypography.labelLarge),
-        labelMedium = replaceFontFamily(defaultTypography.labelMedium),
-        labelSmall = replaceFontFamily(defaultTypography.labelSmall),
-    )
-}
-
-@Composable
-private fun replaceFontFamily(textStyle: TextStyle): TextStyle {
-    val fontFamily =
+    val displayFontFamily =
         FontFamily(
-            when (textStyle.fontWeight) {
-                FontWeight.Bold -> Font(Res.font.Ubuntu_Bold)
-                FontWeight.Medium -> Font(Res.font.Ubuntu_Medium)
-                else -> Font(Res.font.Ubuntu_Regular)
-            },
+            Font(Res.font.Rubik_Light, FontWeight.Light),
+            Font(Res.font.Rubik_Regular, FontWeight.Normal),
+            Font(Res.font.Rubik_Medium, FontWeight.Medium),
+            Font(Res.font.Rubik_SemiBold, FontWeight.SemiBold),
+            Font(Res.font.Rubik_Bold, FontWeight.Bold),
         )
 
-    return textStyle.copy(fontFamily = fontFamily)
+    val defaultTypography = Typography()
+
+    return Typography(
+        displayLarge = defaultTypography.displayLarge.copy(fontFamily = displayFontFamily),
+        displayMedium = defaultTypography.displayMedium.copy(fontFamily = displayFontFamily),
+        displaySmall = defaultTypography.displaySmall.copy(fontFamily = displayFontFamily),
+        headlineLarge = defaultTypography.headlineLarge.copy(fontFamily = displayFontFamily),
+        headlineMedium = defaultTypography.headlineMedium.copy(fontFamily = displayFontFamily),
+        headlineSmall = defaultTypography.headlineSmall.copy(fontFamily = displayFontFamily),
+        titleLarge = defaultTypography.titleLarge.copy(fontFamily = displayFontFamily),
+        titleMedium = defaultTypography.titleMedium.copy(fontFamily = displayFontFamily),
+        titleSmall = defaultTypography.titleSmall.copy(fontFamily = displayFontFamily),
+        bodyLarge = defaultTypography.bodyLarge.copy(fontFamily = displayFontFamily),
+        bodyMedium = defaultTypography.bodyMedium.copy(fontFamily = displayFontFamily),
+        bodySmall = defaultTypography.bodySmall.copy(fontFamily = displayFontFamily),
+        labelLarge = defaultTypography.labelLarge.copy(fontFamily = displayFontFamily),
+        labelMedium = defaultTypography.labelMedium.copy(fontFamily = displayFontFamily),
+        labelSmall = defaultTypography.labelSmall.copy(fontFamily = displayFontFamily),
+    )
 }

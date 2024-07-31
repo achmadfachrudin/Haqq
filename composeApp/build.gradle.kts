@@ -55,10 +55,17 @@ kotlin {
 
             // UI
             api(libs.compose.webview)
-            implementation(libs.compose.image)
             implementation(libs.koin.core)
             implementation(libs.voyager.navigator)
             implementation(libs.voyager.koin)
+            implementation(libs.coil.core)
+            implementation(libs.coil.network)
+            implementation(libs.coil.compose)
+            implementation(libs.kottie)
+//            implementation(libs.compottie.core)
+//            implementation(libs.compottie.dot)
+//            implementation(libs.compottie.network)
+//            implementation(libs.compottie.resources)
 
             // Data
             implementation(libs.realm.core)
@@ -99,8 +106,8 @@ android {
             libs.versions.android.targetSdk
                 .get()
                 .toInt()
-        versionName = "1.0.9"
-        versionCode = 9
+        versionName = "1.0.10"
+        versionCode = 10
     }
     packaging {
         resources {
