@@ -145,7 +145,7 @@ class NoteListScreen : Screen {
                 modifier = Modifier.fillMaxSize().padding(16.dp),
             ) {
                 BaseText(
-                    text = "${note.id}-${note.title}",
+                    text = note.title,
                     style = getHaqqTypography().titleMedium,
                     maxLines = 1,
                 )

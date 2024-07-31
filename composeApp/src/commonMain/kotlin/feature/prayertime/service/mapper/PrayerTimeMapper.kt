@@ -17,12 +17,12 @@ import kotlinx.datetime.LocalTime
 internal const val DEFAULT_HIJRI_DATE = 8
 internal const val DEFAULT_HIJRI_MONTH = 6
 internal const val DEFAULT_HIJRI_YEAR = 1444
-internal const val DEFAULT_HIJRI_FULLDATE = "08-06-1444"
+internal const val DEFAULT_HIJRI_FULLDATE = "1444-06-08"
 internal const val DEFAULT_GREGORIAN_WEEKDAY = "SUNDAY"
 internal const val DEFAULT_GREGORIAN_DATE = 1
 internal const val DEFAULT_GREGORIAN_MONTH = 1
 internal const val DEFAULT_GREGORIAN_YEAR = 2023
-internal const val DEFAULT_GREGORIAN_FULLDATE = "01-01-2023"
+internal const val DEFAULT_GREGORIAN_FULLDATE = "2023-01-01" // year month date
 internal const val DEFAULT_TIME = "00:00"
 
 /**
@@ -58,12 +58,16 @@ internal fun ConvertDateEntity.mapToHijri(): Triple<Int, Int, Int> {
     return Triple(date, month, year)
 }
 
-internal fun PrayertimeEntity.Data.mapToPrayerTimeRealm(locationName: String): PrayerTimeRealm =
-    PrayerTimeRealm().apply {
-        gregorianFullDate = date.gregorian.date ?: DEFAULT_GREGORIAN_FULLDATE
-        gregorianDate = date.gregorian.day?.toInt() ?: DEFAULT_GREGORIAN_DATE
-        gregorianMonth = date.gregorian.month?.number ?: DEFAULT_GREGORIAN_MONTH
-        gregorianYear = date.gregorian.year?.toInt() ?: DEFAULT_GREGORIAN_YEAR
+internal fun PrayertimeEntity.Data.mapToPrayerTimeRealm(locationName: String): PrayerTimeRealm {
+    val gYear = date.gregorian.year?.toInt()
+    val gMonth = date.gregorian.month?.number
+    val gDate = date.gregorian.day?.toInt()
+
+    return PrayerTimeRealm().apply {
+        gregorianFullDate = "$gYear-$gMonth-$gDate"
+        gregorianDate = gDate ?: DEFAULT_GREGORIAN_DATE
+        gregorianMonth = gMonth ?: DEFAULT_GREGORIAN_MONTH
+        gregorianYear = gYear ?: DEFAULT_GREGORIAN_YEAR
         hijriDate = date.hijri.day?.toInt() ?: DEFAULT_HIJRI_DATE
         hijriMonth = date.hijri.month?.number ?: DEFAULT_HIJRI_MONTH
         hijriYear = date.hijri.year?.toInt() ?: DEFAULT_HIJRI_YEAR
@@ -78,6 +82,7 @@ internal fun PrayertimeEntity.Data.mapToPrayerTimeRealm(locationName: String): P
         timeMaghrib = timings.Maghrib ?: DEFAULT_TIME
         timeIsya = timings.Isha ?: DEFAULT_TIME
     }
+}
 
 internal fun PrayertimeEntity.Data.mapToPrayerTime(): PrayerTime {
     val timeImsak = timings.Imsak ?: DEFAULT_TIME

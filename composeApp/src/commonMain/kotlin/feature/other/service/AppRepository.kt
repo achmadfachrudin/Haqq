@@ -43,6 +43,7 @@ class AppRepository(
         return AppSetting(
             language = AppSetting.Language.valueOf(setting.languageName),
             theme = AppSetting.Theme.valueOf(setting.theme),
+            themeColor = AppSetting.ThemeColor.valueOf(setting.themeColor),
             arabicStyle = AppSetting.ArabicStyle.valueOf(setting.arabicStyleName),
             arabicFontSize = setting.arabicFontSize,
             transliterationVisibility = setting.transliterationVisibility,
@@ -73,6 +74,14 @@ class AppRepository(
             val setting = this.query<AppSettingRealm>().find().first()
 
             setting.theme = theme.name
+        }
+    }
+
+    fun updateThemeColor(themeColor: AppSetting.ThemeColor) {
+        realm.writeBlocking {
+            val setting = this.query<AppSettingRealm>().find().first()
+
+            setting.themeColor = themeColor.name
         }
     }
 

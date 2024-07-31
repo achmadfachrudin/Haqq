@@ -41,7 +41,7 @@ import feature.quran.service.model.QuranConstant.MAX_VERSE
 import feature.quran.service.model.Verse
 import haqq.composeapp.generated.resources.IndoPak_by_QuranWBW_v4_2_2_WL
 import haqq.composeapp.generated.resources.Res
-import haqq.composeapp.generated.resources.Ubuntu_Bold
+import haqq.composeapp.generated.resources.Rubik_Bold
 import haqq.composeapp.generated.resources.UthmanicHafs_V22
 import haqq.composeapp.generated.resources.bg_frame_number_black
 import haqq.composeapp.generated.resources.bg_frame_number_white
@@ -389,7 +389,7 @@ fun BaseTranslation(
     BaseText(
         text = text,
         style = getHaqqTypography().bodyLarge,
-        fontFamily = FontFamily(Font(Res.font.Ubuntu_Bold)),
+        fontFamily = FontFamily(Font(Res.font.Rubik_Bold)),
         fontSize = fontSize.sp,
         modifier = modifier,
     )

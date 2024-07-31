@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -97,7 +96,7 @@ fun ArabicCard(
                     Modifier
                         .defaultMinSize(minHeight = AssistChipDefaults.Height)
                         .border(
-                            BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
                             shape = MaterialTheme.shapes.medium,
                         ).clip(MaterialTheme.shapes.medium)
                         .padding(horizontal = 16.dp),
@@ -145,11 +144,6 @@ fun BaseMessageCard(
     Card(
         modifier = Modifier.fillMaxWidth(),
         onClick = { onItemClick() },
-        colors =
-            CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-            ),
     ) {
         Column(
             modifier = Modifier.fillMaxSize().padding(16.dp),

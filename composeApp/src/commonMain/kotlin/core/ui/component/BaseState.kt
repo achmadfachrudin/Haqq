@@ -15,7 +15,7 @@ import feature.other.service.model.AppString
 @Composable
 fun LoadingState() {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = CenterHorizontally,
     ) {

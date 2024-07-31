@@ -1,6 +1,8 @@
 package feature.dhikr.screen
 
 import AnalyticsConstant.trackScreen
+import SendMail
+import ShareText
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -53,8 +55,6 @@ import haqq.composeapp.generated.resources.more_horizontal
 import haqq.composeapp.generated.resources.share
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
-import SendMail
-import ShareText
 
 @OptIn(ExperimentalFoundationApi::class)
 class DhikrListScreen(
@@ -87,11 +87,11 @@ class DhikrListScreen(
             topBar = {
                 BaseTopAppBar(
                     title = title,
+                    showRightButton = state is DhikrListScreenModel.State.Content,
+                    rightButtonImage = painterResource(Res.drawable.more_horizontal),
                     onLeftButtonClick = {
                         navigator.pop()
                     },
-                    showRightButton = true,
-                    rightButtonImage = painterResource(Res.drawable.more_horizontal),
                     onRightButtonClick = {
                         openResetDialog.value = true
                     },

@@ -27,6 +27,8 @@ fun BaseTopAppBar(
     leftButtonImage: Painter = painterResource(Res.drawable.arrow_left),
     optionalButtonImage: Painter = painterResource(Res.drawable.info),
     rightButtonImage: Painter = painterResource(Res.drawable.arrow_right),
+    showOptionalLottie: Boolean = false,
+    optionalLottie: @Composable (() -> Unit)? = null,
     optionalButtonTint: Color = LocalContentColor.current,
     onLeftButtonClick: () -> Unit = {},
     onOptionalButtonClick: () -> Unit = {},
@@ -52,6 +54,11 @@ fun BaseTopAppBar(
         },
         actions = {
             Row {
+                if (showOptionalLottie) {
+                    IconButton(onClick = onOptionalButtonClick) {
+                        optionalLottie?.invoke()
+                    }
+                }
                 if (showOptionalButton) {
                     IconButton(onClick = onOptionalButtonClick) {
                         Icon(

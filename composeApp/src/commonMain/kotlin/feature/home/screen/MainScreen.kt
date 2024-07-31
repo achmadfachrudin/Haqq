@@ -1,12 +1,15 @@
 package feature.home.screen
 
 import AppConstant
+import KottieAnimation
+import OpenPage
 import PlatformPage
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Scaffold
@@ -16,6 +19,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -29,7 +33,6 @@ import com.multiplatform.webview.web.rememberWebViewState
 import core.ui.component.BaseButton
 import core.ui.component.BaseTopAppBar
 import core.ui.component.TabNavigationItem
-import core.ui.theme.ExtraColor
 import feature.article.screen.ArticleListScreen
 import feature.charity.screen.CharityListScreen
 import feature.charity.screen.openSupport
@@ -55,19 +58,33 @@ import feature.web.screen.YoutubeScreen
 import feature.zakat.screen.ZakatScreen
 import getPlatform
 import haqq.composeapp.generated.resources.Res
-import haqq.composeapp.generated.resources.heart
 import haqq.composeapp.generated.resources.more_horizontal
 import haqq.composeapp.generated.resources.settings
-import OpenPage
+import kottieComposition.KottieCompositionSpec
+import kottieComposition.animateKottieCompositionAsState
+import kottieComposition.rememberKottieComposition
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.koin.mp.KoinPlatform
+import utils.KottieConstants
 
 class MainScreen : Screen {
+    @OptIn(ExperimentalResourceApi::class)
     @Composable
     override fun Content() {
         val screenModel = koinScreenModel<MainScreenModel>()
         val state by screenModel.state.collectAsState()
         val navigator = LocalNavigator.currentOrThrow
+
+        var animation by remember { mutableStateOf("") }
+        val composition =
+            rememberKottieComposition(
+                spec = KottieCompositionSpec.File(animation),
+            )
+        val animationState by animateKottieCompositionAsState(
+            composition = composition,
+            iterations = KottieConstants.IterateForever,
+        )
 
         val openActivity = remember { mutableStateOf(false) }
         val platformPage = remember { mutableStateOf(PlatformPage.NONE) }
@@ -80,12 +97,17 @@ class MainScreen : Screen {
                     BaseTopAppBar(
                         title = AppString.APP_NAME.getString(),
                         showLeftButton = true,
-                        showOptionalButton = true,
                         showRightButton = true,
+                        showOptionalLottie = true,
                         leftButtonImage = painterResource(Res.drawable.settings),
-                        optionalButtonImage = painterResource(Res.drawable.heart),
                         rightButtonImage = painterResource(Res.drawable.more_horizontal),
-                        optionalButtonTint = ExtraColor.getPairColor(ExtraColor.PINK).first,
+                        optionalLottie = {
+                            KottieAnimation(
+                                modifier = Modifier.size(32.dp),
+                                composition = composition,
+                                progress = { animationState.progress },
+                            )
+                        },
                         onLeftButtonClick = { navigator.push(SettingScreen()) },
                         onOptionalButtonClick = {
                             openSupport(navigator)
@@ -248,6 +270,8 @@ class MainScreen : Screen {
         }
 
         LaunchedEffect(Unit) {
+            animation = Res.readBytes("files/love.json").decodeToString()
+
             screenModel.onViewed()
         }
     }

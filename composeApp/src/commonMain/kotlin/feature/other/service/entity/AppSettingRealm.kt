@@ -9,6 +9,7 @@ class AppSettingRealm : RealmObject {
     var id = 0
     var languageName = AppSetting.Language.INDONESIAN.name
     var theme = AppSetting.Theme.LIGHT.name
+    var themeColor = AppSetting.ThemeColor.GREEN.name
     var arabicStyleName = AppSetting.ArabicStyle.INDOPAK.name
     var arabicFontSize = 22
     var translationFontSize = 14

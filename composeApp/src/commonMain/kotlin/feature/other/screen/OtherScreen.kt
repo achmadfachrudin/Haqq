@@ -2,9 +2,12 @@ package feature.other.screen
 
 import AppConstant
 import AppConstant.USERNAME_INSTAGRAM
+import KottieAnimation
+import SendMail
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -17,9 +20,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -29,7 +34,6 @@ import core.ui.component.BaseDivider
 import core.ui.component.BaseItemCard
 import core.ui.component.BaseLabelValueCard
 import core.ui.component.BaseTopAppBar
-import core.ui.theme.ExtraColor
 import feature.charity.screen.openSupport
 import feature.other.service.AppRepository
 import feature.other.service.mapper.getString
@@ -38,16 +42,20 @@ import feature.web.screen.WebScreen
 import getPlatform
 import haqq.composeapp.generated.resources.Res
 import haqq.composeapp.generated.resources.file_text
-import haqq.composeapp.generated.resources.heart
 import haqq.composeapp.generated.resources.instagram
 import haqq.composeapp.generated.resources.mail
 import haqq.composeapp.generated.resources.shield
 import haqq.composeapp.generated.resources.trash_2
 import kotlinx.coroutines.launch
+import kottieComposition.KottieCompositionSpec
+import kottieComposition.animateKottieCompositionAsState
+import kottieComposition.rememberKottieComposition
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.koin.mp.KoinPlatform
-import SendMail
+import utils.KottieConstants
 
 class OtherScreen : Screen {
+    @OptIn(ExperimentalResourceApi::class)
     @Composable
     override fun Content() {
         val screenModel = koinScreenModel<OtherScreenModel>()
@@ -58,6 +66,16 @@ class OtherScreen : Screen {
         val scope = rememberCoroutineScope()
         val snackbarHostState = remember { SnackbarHostState() }
         val clipboardManager = LocalClipboardManager.current
+
+        var animation by remember { mutableStateOf("") }
+        val composition =
+            rememberKottieComposition(
+                spec = KottieCompositionSpec.File(animation),
+            )
+        val animationState by animateKottieCompositionAsState(
+            composition = composition,
+            iterations = KottieConstants.IterateForever,
+        )
 
         val openClearDialog = remember { mutableStateOf(false) }
         val openMail = remember { mutableStateOf(false) }
@@ -99,8 +117,13 @@ class OtherScreen : Screen {
 
                 BaseItemCard(
                     title = AppString.SUPPORT_TITLE.getString(),
-                    iconResource = Res.drawable.heart,
-                    iconTint = ExtraColor.getPairColor(ExtraColor.PINK).first,
+                    iconLottie = {
+                        KottieAnimation(
+                            modifier = Modifier.size(24.dp),
+                            composition = composition,
+                            progress = { animationState.progress },
+                        )
+                    },
                 ) {
                     openSupport(navigator)
                 }
@@ -220,6 +243,8 @@ class OtherScreen : Screen {
         }
 
         LaunchedEffect(currentCompositeKeyHash) {
+            animation = Res.readBytes("files/love.json").decodeToString()
+
             screenModel.fetchSetting()
         }
     }

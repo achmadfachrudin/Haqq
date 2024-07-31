@@ -1,6 +1,8 @@
 package feature.dhikr.screen
 
 import AnalyticsConstant.trackScreen
+import SendMail
+import ShareText
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -42,8 +44,6 @@ import haqq.composeapp.generated.resources.alert_circle
 import haqq.composeapp.generated.resources.copy
 import haqq.composeapp.generated.resources.share
 import kotlinx.coroutines.launch
-import SendMail
-import ShareText
 
 @OptIn(ExperimentalFoundationApi::class)
 class DuaDetailScreen(

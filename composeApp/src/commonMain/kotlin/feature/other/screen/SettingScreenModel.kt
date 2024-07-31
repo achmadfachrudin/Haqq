@@ -37,6 +37,14 @@ class SettingScreenModel(
         }
     }
 
+    fun updateThemeColor(themeColor: AppSetting.ThemeColor) {
+        screenModelScope.launch {
+            appRepository.updateThemeColor(themeColor)
+
+            getSetting()
+        }
+    }
+
     fun updateLanguage(language: AppSetting.Language) {
         screenModelScope.launch {
             appRepository.updateLanguage(language)

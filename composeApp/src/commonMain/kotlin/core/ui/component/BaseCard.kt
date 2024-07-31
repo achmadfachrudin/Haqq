@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
@@ -35,11 +34,6 @@ fun BaseMenuLandscapeCard(
     Card(
         modifier = Modifier.fillMaxWidth().height(110.dp),
         onClick = { onItemClick() },
-        colors =
-            CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-            ),
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -60,11 +54,6 @@ fun BaseMenuLargeCard(
     Card(
         modifier = Modifier.size(94.dp),
         onClick = { onItemClick() },
-        colors =
-            CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-            ),
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -91,6 +80,7 @@ fun BaseLabelCard(title: String) {
 fun BaseItemCard(
     title: String,
     titleColor: Color = Color.Unspecified,
+    iconLottie: @Composable (() -> Unit)? = null,
     iconResource: DrawableResource? = null,
     iconTint: Color = LocalContentColor.current,
     imageUrl: String? = null,
@@ -108,21 +98,23 @@ fun BaseItemCard(
                     .padding(itemPadding),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            iconLottie?.let {
+                iconLottie.invoke()
+            }
             iconResource?.let {
                 Icon(
                     painter = painterResource(iconResource),
                     tint = iconTint,
                     contentDescription = "",
                 )
-                BaseSpacerHorizontal()
             }
             imageUrl?.let {
                 BaseImage(
                     imageUrl = imageUrl,
                     modifier = Modifier.size(24.dp).clip(CircleShape),
                 )
-                BaseSpacerHorizontal()
             }
+            BaseSpacerHorizontal()
             BaseText(text = title, color = titleColor)
         }
 
