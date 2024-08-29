@@ -245,6 +245,7 @@ class MainScreen : Screen {
                                     onStudyNoteClick = { navigator.push(NoteListScreen()) },
                                     onConversationClick = { navigator.push(ConversationScreen()) },
                                     onCharityClick = { navigator.push(CharityListScreen()) },
+                                    onContentClick = { },
                                 )
                             }
                         }

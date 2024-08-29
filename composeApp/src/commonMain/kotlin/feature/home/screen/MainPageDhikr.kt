@@ -3,6 +3,7 @@ package feature.home.screen
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -79,7 +80,8 @@ internal fun MainPageDhikr(
         ) {
             BaseDivider(0)
             BaseTitle(
-                AppString.DUA.getString(),
+                modifier = Modifier.padding(top = 16.dp),
+                text = AppString.DUA.getString(),
                 horizontalArrangement = Arrangement.Start,
             )
         }
@@ -103,7 +105,8 @@ internal fun MainPageDhikr(
         ) {
             BaseDivider(0)
             BaseTitle(
-                AppString.OTHER_TITLE.getString(),
+                modifier = Modifier.padding(top = 16.dp),
+                text = AppString.OTHER_TITLE.getString(),
                 horizontalArrangement = Arrangement.Start,
             )
         }

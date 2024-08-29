@@ -35,6 +35,6 @@ class DhikrRemoteImp(
     override suspend fun fetchAsmaulHusna(): ApiResponse<List<AsmaulHusnaEntity>> =
         httpClient.safeRequest {
             method = HttpMethod.Get
-            url("asmaul_husna)")
+            url("asmaul_husna")
         }
 }

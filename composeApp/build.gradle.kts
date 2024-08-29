@@ -34,7 +34,6 @@ kotlin {
     }
 
     sourceSets {
-
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -62,10 +61,6 @@ kotlin {
             implementation(libs.coil.network)
             implementation(libs.coil.compose)
             implementation(libs.kottie)
-//            implementation(libs.compottie.core)
-//            implementation(libs.compottie.dot)
-//            implementation(libs.compottie.network)
-//            implementation(libs.compottie.resources)
 
             // Data
             implementation(libs.realm.core)
@@ -106,8 +101,8 @@ android {
             libs.versions.android.targetSdk
                 .get()
                 .toInt()
-        versionName = "1.0.10"
-        versionCode = 10
+        versionName = "1.0.11"
+        versionCode = 11
     }
     packaging {
         resources {

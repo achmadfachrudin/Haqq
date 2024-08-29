@@ -100,6 +100,7 @@ fun BaseItemCard(
         ) {
             iconLottie?.let {
                 iconLottie.invoke()
+                BaseSpacerHorizontal()
             }
             iconResource?.let {
                 Icon(
@@ -107,14 +108,15 @@ fun BaseItemCard(
                     tint = iconTint,
                     contentDescription = "",
                 )
+                BaseSpacerHorizontal()
             }
             imageUrl?.let {
                 BaseImage(
                     imageUrl = imageUrl,
                     modifier = Modifier.size(24.dp).clip(CircleShape),
                 )
+                BaseSpacerHorizontal()
             }
-            BaseSpacerHorizontal()
             BaseText(text = title, color = titleColor)
         }
 

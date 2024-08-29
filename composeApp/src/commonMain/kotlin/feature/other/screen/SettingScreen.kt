@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SnackbarHost
@@ -28,6 +29,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
@@ -172,30 +174,6 @@ class SettingScreen : Screen {
             }
         }
 
-        if (openArabicStyleDialog.value) {
-            BaseDialog(
-                onDismissRequest = { openArabicStyleDialog.value = false },
-                title = AppString.ARABIC_STYLE.getString(),
-                shouldCustomContent = true,
-                content = {
-                    AppSetting.ArabicStyle.entries.dropLast(1).forEach { arabicStyle ->
-                        BaseItemCard(
-                            title = arabicStyle.display,
-                            onClick = {
-                                screenModel.updateArabicStyle(arabicStyle)
-                                openArabicStyleDialog.value = false
-                                scope.launch {
-                                    snackbarHostState.showSnackbar(
-                                        AppString.RESTART_PLEASE.getString(),
-                                    )
-                                }
-                            },
-                        )
-                    }
-                },
-            )
-        }
-
         if (openThemeDialog.value) {
             BaseDialog(
                 onDismissRequest = { openThemeDialog.value = false },
@@ -205,6 +183,7 @@ class SettingScreen : Screen {
                     AppSetting.Theme.entries.forEach { theme ->
                         BaseItemCard(
                             title = theme.display,
+                            titleColor = GetSelectedColor(theme == state.appSetting?.theme),
                             onClick = {
                                 screenModel.updateTheme(theme)
                                 openThemeDialog.value = false
@@ -226,11 +205,12 @@ class SettingScreen : Screen {
                 title = AppString.COLOR.getString(),
                 shouldCustomContent = true,
                 content = {
-                    AppSetting.ThemeColor.entries.forEach { color ->
+                    AppSetting.ThemeColor.entries.forEach { themeColor ->
                         BaseItemCard(
-                            title = color.display,
+                            title = themeColor.display,
+                            titleColor = GetSelectedColor(themeColor == state.appSetting?.themeColor),
                             onClick = {
-                                screenModel.updateThemeColor(color)
+                                screenModel.updateThemeColor(themeColor)
                                 openThemeColorDialog.value = false
                                 scope.launch {
                                     snackbarHostState.showSnackbar(
@@ -253,6 +233,7 @@ class SettingScreen : Screen {
                     AppSetting.Language.entries.forEach { language ->
                         BaseItemCard(
                             title = language.display,
+                            titleColor = GetSelectedColor(language == state.appSetting?.language),
                             onClick = {
                                 openLanguageDialog.value = false
                                 scope.launch {
@@ -268,10 +249,43 @@ class SettingScreen : Screen {
             )
         }
 
+        if (openArabicStyleDialog.value) {
+            BaseDialog(
+                onDismissRequest = { openArabicStyleDialog.value = false },
+                title = AppString.ARABIC_STYLE.getString(),
+                shouldCustomContent = true,
+                content = {
+                    AppSetting.ArabicStyle.entries.dropLast(1).forEach { arabicStyle ->
+                        BaseItemCard(
+                            title = arabicStyle.display,
+                            titleColor = GetSelectedColor(arabicStyle == state.appSetting?.arabicStyle),
+                            onClick = {
+                                screenModel.updateArabicStyle(arabicStyle)
+                                openArabicStyleDialog.value = false
+                                scope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        AppString.RESTART_PLEASE.getString(),
+                                    )
+                                }
+                            },
+                        )
+                    }
+                },
+            )
+        }
+
         LaunchedEffect(currentCompositeKeyHash) {
             screenModel.getSetting()
         }
     }
+
+    @Composable
+    private fun GetSelectedColor(isSelected: Boolean): Color =
+        if (isSelected) {
+            MaterialTheme.colorScheme.primary
+        } else {
+            Color.Unspecified
+        }
 
     @Composable
     private fun SettingStyleCard(

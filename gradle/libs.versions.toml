@@ -1,5 +1,5 @@
 [versions]
-agp = "8.2.2"
+agp = "8.5.2"
 android-compileSdk = "34"
 android-minSdk = "24"
 android-targetSdk = "34"
@@ -19,23 +19,22 @@ androidx-lifecycle = "2.8.0"
 androidx-navigation = "2.7.0-alpha06"
 ktor = "2.3.12"
 ksoup = "0.4.0"
-coil = "3.0.0-alpha09"
+coil = "3.0.0-alpha10"
 kottie = "1.9.6"
 compottie = "1.1.2"
 kotlinx-serialization = "1.7.1"
 kotlinx-datetime = "0.6.0"
 koin = "3.5.6"
-koinCompose = "1.1.2"
+koinCompose = "1.1.5"
 playServicesLocation = "21.3.0"
 realm = "2.1.0"
 voyager = "1.1.0-beta02"
 webview = "1.9.20"
-image = "0.9.5"
 napier = "2.7.1"
 # Android
 google-services = "4.4.2"
 firebase-crashlytics-plugin = "3.0.2"
-firebase-bom = "33.1.2"
+firebase-bom = "33.2.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -73,7 +72,6 @@ realm-core = { module = "io.realm.kotlin:library-base", version.ref = "realm" }
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
 voyager-koin = { module = "cafe.adriel.voyager:voyager-koin", version.ref = "voyager" }
 compose-webview = { module = "io.github.kevinnzou:compose-webview-multiplatform", version.ref = "webview" }
-compose-image = { module = "media.kamel:kamel-image", version.ref = "image" }
 napier-logging = { module = "io.github.aakira:napier", version.ref = "napier" }
 # Android
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
