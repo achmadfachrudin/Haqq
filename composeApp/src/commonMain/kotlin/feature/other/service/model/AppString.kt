@@ -44,13 +44,13 @@ enum class AppString(
         "Asma 'ul Husna",
         "Asma' ul Husna",
     ),
+    AYAHS(
+        "Ayahs",
+        "Ayat",
+    ),
     CALENDAR_AYYAMULBIDH(
         "Ayyamul bidh: 11,12,13 each month",
         "Ayyamul bidh: 11,12,13 setiap bulan",
-    ),
-    URL_COPIED(
-        "URL copied",
-        "URL berhasil disalin",
     ),
     CALENDAR_FASTING(
         "Fasting Calendar",
@@ -92,10 +92,6 @@ enum class AppString(
         "Select the data that you want to clear",
         "Pilih data yang ingin kamu bersihkan",
     ),
-    FOLLOW(
-        "Follow @haqq_sunnah",
-        "Ikuti @haqq_sunnah",
-    ),
     CLEAR_SEARCH(
         "Clear Search",
         "Bersihkan Pencarian",
@@ -107,6 +103,10 @@ enum class AppString(
     COLOR(
         "Color",
         "Warna",
+    ),
+    CONTENT_TITLE(
+        "Share Content",
+        "Bagikan Konten",
     ),
     CONTINUE_READ(
         "Continue read %1",
@@ -143,10 +143,6 @@ enum class AppString(
     DELETE_CONFIRMATION_DESC(
         "Are you sure you want to delete?",
         "Apakah kamu yakin ingin menghapus?",
-    ),
-    FILTER(
-        "Filter",
-        "Filter",
     ),
     DELETE_CONFIRMATION_TITLE(
         "Confirm Delete",
@@ -188,10 +184,6 @@ enum class AppString(
         "Please ensure you have a stable internet connection throughout the download. Do not close the app until the process is complete.",
         "Pastikan kamu memiliki koneksi internet yang stabil selama proses pengunduhan. Jangan tutup aplikasi hingga proses selesai.",
     ),
-    OK(
-        "Ok",
-        "Ok",
-    ),
     DOWNLOAD_ALL_SURAHS(
         "Download all surahs ",
         "Download semua surat",
@@ -199,10 +191,6 @@ enum class AppString(
     DOWNLOAD_IN_PROGRESS(
         "Currently the download process is in progress. Please wait a moment. Do not close the app until the process is complete.",
         "Saat ini proses download sedang berlangsung. Silakan tunggu beberapa saat. Jangan tutup aplikasi hingga proses selesai.",
-    ),
-    AYAHS(
-        "Ayahs",
-        "Ayat",
     ),
     DUA(
         "Dua ",
@@ -219,6 +207,18 @@ enum class AppString(
     FEEDBACK(
         "Give feedback or report",
         "Beri masukan atau laporkan",
+    ),
+    FILTER(
+        "Filter",
+        "Filter",
+    ),
+    FOLLOW(
+        "Follow @haqq_sunnah",
+        "Ikuti @haqq_sunnah",
+    ),
+    FROM_SURAH_AND_AYAH(
+        "From %1 ayah %2",
+        "Dari %1 ayat %2",
     ),
     HOME_TITLE(
         "Home ",
@@ -243,6 +243,10 @@ enum class AppString(
     LATEST_VERSION(
         "Latest version",
         "Versi terakhir",
+    ),
+    LEARN(
+        "Learn",
+        "Belajar",
     ),
     LEARN_FASTING(
         "Fasting Guidance",
@@ -304,6 +308,10 @@ enum class AppString(
         "Study Title",
         "Judul Kajian",
     ),
+    OK(
+        "Ok",
+        "Ok",
+    ),
     OTHER_TITLE(
         "Others ",
         "Lainnya",
@@ -319,10 +327,6 @@ enum class AppString(
     PLEASE_DOWNLOAD_MUSHAF(
         "Please download all surahs to use this feature",
         "Silakan download semua surat untuk menggunakan fitur ini",
-    ),
-    FROM_SURAH_AND_AYAH(
-        "From %1 ayah %2",
-        "Dari %1 ayat %2",
     ),
     PRAYER_ASR(
         "Asr ",
@@ -536,6 +540,10 @@ enum class AppString(
         "Share",
         "Bagikan",
     ),
+    SOCIAL(
+        "Social ",
+        "Sosial",
+    ),
     SORT(
         "Sort",
         "Urutkan",
@@ -603,6 +611,10 @@ enum class AppString(
     TRY_AGAIN(
         "Try again",
         "Coba lagi",
+    ),
+    URL_COPIED(
+        "URL copied",
+        "URL berhasil disalin",
     ),
     ZAKAT_CALCULATION_RESULT(
         "Zakat Calculation Result",
