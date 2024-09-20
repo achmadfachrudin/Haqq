@@ -1,6 +1,5 @@
 package feature.home.service.mapper
 
-import core.data.DataState
 import core.util.orZero
 import feature.dhikr.service.model.DhikrType
 import feature.home.service.entity.HomeTemplateEntity
@@ -10,6 +9,7 @@ import feature.home.service.model.TemplateType
 import feature.other.service.AppRepository
 import feature.other.service.mapper.getString
 import feature.other.service.model.AppSetting
+import feature.other.service.model.AppString
 import feature.prayertime.service.PrayerRepository
 import feature.prayertime.service.model.Salah
 import feature.quran.service.QuranRepository
@@ -61,78 +61,71 @@ internal suspend fun List<HomeTemplateRealm>.mapToModel(): List<HomeTemplate> =
                         AppSetting.Language.INDONESIAN -> it.textId
                     }
                 val images =
-                    it.images.takeIf { it.isNotEmpty() }?.split(",") ?: listOf()
+                    it.images.takeIf { images -> images.isNotEmpty() }?.split(",") ?: listOf()
                 val links =
-                    it.links.takeIf { it.isNotEmpty() }?.split(",") ?: listOf()
+                    it.links.takeIf { links -> links.isNotEmpty() }?.split(",") ?: listOf()
 
                 when (type) {
                     TemplateType.PRAYER_TIME -> {
                         prayerRepository
                             .fetchTodayTomorrowPrayerTimes()
                             .collectLatest { times ->
-                                when (times) {
-                                    is DataState.Error -> {
-                                        templates.add(
-                                            HomeTemplate.PrayerTime(
-                                                position = position,
-                                                type = type,
-                                                label = label,
-                                                date = times.message,
-                                                locationName = "",
-                                                nextPrayerName = "",
-                                                nextPrayerTime = "",
-                                            ),
-                                        )
-                                    }
+                                if (times.data.isEmpty()) {
+                                    templates.add(
+                                        HomeTemplate.PrayerTime(
+                                            position = position,
+                                            type = type,
+                                            label = label,
+                                            date = AppString.PRAYER_ENABLE_GPS.getString(),
+                                            locationName = "",
+                                            nextPrayerName = "",
+                                            nextPrayerTime = "",
+                                        ),
+                                    )
+                                } else {
+                                    val today = times.data.first()
+                                    val tomorrow = times.data.last()
+                                    val nextTime =
+                                        today.whatNextPrayerTime(tomorrow, true)
 
-                                    DataState.Loading -> {
-                                    }
+                                    val dayName =
+                                        when (appRepository.getSetting().language) {
+                                            AppSetting.Language.ENGLISH -> today.day.dayNameEn
+                                            AppSetting.Language.INDONESIAN -> today.day.dayNameId
+                                        }
 
-                                    is DataState.Success -> {
-                                        val today = times.data.first()
-                                        val tomorrow = times.data.last()
-                                        val nextTime =
-                                            today.whatNextPrayerTime(tomorrow, true)
+                                    templates.add(
+                                        HomeTemplate.PrayerTime(
+                                            position = position,
+                                            type = type,
+                                            label = label,
+                                            date = "$dayName, ${today.hijri.fullDate} / ${today.gregorian.fullDate}",
+                                            locationName = today.locationName,
+                                            nextPrayerName = nextTime.first.title.getString(),
+                                            nextPrayerTime = nextTime.second,
+                                        ),
+                                    )
 
-                                        val dayName =
-                                            when (appRepository.getSetting().language) {
-                                                AppSetting.Language.ENGLISH -> today.day.dayNameEn
-                                                AppSetting.Language.INDONESIAN -> today.day.dayNameId
-                                            }
+                                    when (nextTime.first) {
+                                        Salah.IMSAK,
+                                        Salah.SUBUH,
+                                        -> {
+                                            dhikrType = DhikrType.SLEEP
+                                        }
 
-                                        templates.add(
-                                            HomeTemplate.PrayerTime(
-                                                position = position,
-                                                type = type,
-                                                label = label,
-                                                date = "$dayName, ${today.hijri.fullDate} / ${today.gregorian.fullDate}",
-                                                locationName = today.locationName,
-                                                nextPrayerName = nextTime.first.title.getString(),
-                                                nextPrayerTime = nextTime.second,
-                                            ),
-                                        )
+                                        Salah.SYURUQ,
+                                        Salah.ZHUHUR,
+                                        -> {
+                                            dhikrType = DhikrType.MORNING
+                                        }
 
-                                        when (nextTime.first) {
-                                            Salah.IMSAK,
-                                            Salah.SUBUH,
-                                            -> {
-                                                dhikrType = DhikrType.SLEEP
-                                            }
+                                        Salah.ASHAR -> {
+                                        }
 
-                                            Salah.SYURUQ,
-                                            Salah.ZHUHUR,
-                                            -> {
-                                                dhikrType = DhikrType.MORNING
-                                            }
-
-                                            Salah.ASHAR -> {
-                                            }
-
-                                            Salah.MAGHRIB,
-                                            Salah.ISYA,
-                                            -> {
-                                                dhikrType = DhikrType.AFTERNOON
-                                            }
+                                        Salah.MAGHRIB,
+                                        Salah.ISYA,
+                                        -> {
+                                            dhikrType = DhikrType.AFTERNOON
                                         }
                                     }
                                 }

@@ -18,7 +18,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-    <!--        android:theme="@android:style/Theme.Material.Light.NoActionBar">-->
 
         <provider
             android:name="androidx.core.content.FileProvider"

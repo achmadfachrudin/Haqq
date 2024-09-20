@@ -1,6 +1,5 @@
 package feature.home.screen
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -314,7 +313,6 @@ private fun SingleImageCard(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun MultipleImageCard(
     template: HomeTemplate.MultipleImage,

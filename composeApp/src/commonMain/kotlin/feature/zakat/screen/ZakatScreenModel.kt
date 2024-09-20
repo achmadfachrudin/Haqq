@@ -44,38 +44,33 @@ class ZakatScreenModel(
     fun getHijri() {
         screenModelScope.launch {
             repository.fetchTodayTomorrowPrayerTimes().collectLatest {
-                when (it) {
-                    is DataState.Error -> {}
-                    DataState.Loading -> {}
+                if (it.data.isNotEmpty()) {
+                    val currentTime = it.data.first()
+                    val currentHijri = currentTime.hijri
 
-                    is DataState.Success -> {
-                        val currentTime = it.data.first()
-                        val currentHijri = currentTime.hijri
+                    repository
+                        .fetchHijriMonthTimes(
+                            month = currentHijri.month.monthNumber,
+                            year = currentHijri.year - 1,
+                        ).collectLatest { lastYear ->
+                            when (lastYear) {
+                                is DataState.Error -> {
+                                }
 
-                        repository
-                            .fetchHijriMonthTimes(
-                                month = currentHijri.month.monthNumber,
-                                year = currentHijri.year - 1,
-                            ).collectLatest { lastYear ->
-                                when (lastYear) {
-                                    is DataState.Error -> {
-                                    }
-
-                                    DataState.Loading -> {}
-                                    is DataState.Success -> {
-                                        val lastYearTime =
-                                            lastYear.data.haqqDays
-                                                .filterIsInstance<PrayerTime>()
-                                                .first { time -> time.hijri.date == currentTime.hijri.date }
-                                        mutableState.value =
-                                            state.value.copy(
-                                                currentTime = currentTime,
-                                                lastYearTime = lastYearTime,
-                                            )
-                                    }
+                                DataState.Loading -> {}
+                                is DataState.Success -> {
+                                    val lastYearTime =
+                                        lastYear.data.haqqDays
+                                            .filterIsInstance<PrayerTime>()
+                                            .first { time -> time.hijri.date == currentTime.hijri.date }
+                                    mutableState.value =
+                                        state.value.copy(
+                                            currentTime = currentTime,
+                                            lastYearTime = lastYearTime,
+                                        )
                                 }
                             }
-                    }
+                        }
                 }
             }
         }

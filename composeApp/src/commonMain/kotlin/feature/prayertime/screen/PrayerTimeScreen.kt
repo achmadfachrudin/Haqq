@@ -1,6 +1,5 @@
 package feature.prayertime.screen
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -110,7 +109,6 @@ class PrayerTimeScreen : Screen {
         }
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     private fun PrayerSuccessContent(times: List<PrayerTime>) {
         val appRepository = KoinPlatform.getKoin().get<AppRepository>()

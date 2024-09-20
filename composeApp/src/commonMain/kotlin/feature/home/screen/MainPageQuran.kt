@@ -63,7 +63,6 @@ import haqq.composeapp.generated.resources.hexagonal
 import org.jetbrains.compose.resources.painterResource
 import org.koin.mp.KoinPlatform
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun MainPageQuran(
     state: MainScreenModel.QuranState,

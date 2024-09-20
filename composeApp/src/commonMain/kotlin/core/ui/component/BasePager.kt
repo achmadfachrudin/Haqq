@@ -1,6 +1,5 @@
 package core.ui.component
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -21,7 +20,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BaseIndicator(
     pagerState: PagerState,
@@ -44,7 +42,6 @@ fun BaseIndicator(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BaseTabRow(
     pagerState: PagerState,
@@ -75,7 +72,6 @@ fun BaseTabRow(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BaseScrollableTabRow(
     pagerState: PagerState,

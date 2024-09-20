@@ -1,6 +1,5 @@
 package feature.article.screen
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -37,7 +36,6 @@ import feature.other.service.mapper.getString
 import feature.other.service.model.AppString
 import feature.web.screen.WebScreen
 
-@OptIn(ExperimentalFoundationApi::class)
 class ArticleListScreen : Screen {
     @Composable
     override fun Content() {

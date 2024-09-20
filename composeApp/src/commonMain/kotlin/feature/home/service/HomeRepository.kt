@@ -29,12 +29,16 @@ class HomeRepository(
         flow {
             val lastUpdate = appRepository.getSetting().lastUpdate
             val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
-            val shouldUpdate = lastUpdate.daysUntil(today) > 7
 
             val localTemplates =
                 realm.query<HomeTemplateRealm>().find()
 
-            if (localTemplates.isEmpty() || shouldUpdate) {
+            val shouldUpdate =
+                lastUpdate.daysUntil(today) > 7 ||
+                    localTemplates.isEmpty() ||
+                    localTemplates.any { it.type == "" }
+
+            if (shouldUpdate) {
                 realm.writeBlocking {
                     delete(HomeTemplateRealm::class)
                 }
@@ -68,7 +72,6 @@ class HomeRepository(
                         .query<HomeTemplateRealm>()
                         .find()
                         .mapToModel()
-                        .sortedBy { it.position }
 
                 emit(DataState.Success(latestTemplates))
             }
