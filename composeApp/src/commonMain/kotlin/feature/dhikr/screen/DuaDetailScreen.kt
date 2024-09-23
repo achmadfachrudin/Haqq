@@ -3,7 +3,6 @@ package feature.dhikr.screen
 import AnalyticsConstant.trackScreen
 import SendMail
 import ShareText
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -45,7 +44,6 @@ import haqq.composeapp.generated.resources.copy
 import haqq.composeapp.generated.resources.share
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
 class DuaDetailScreen(
     private val duaCategoryTitle: String,
     val duaId: Int,

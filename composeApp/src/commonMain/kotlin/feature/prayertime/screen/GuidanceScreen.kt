@@ -1,6 +1,5 @@
 package feature.prayertime.screen
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -53,7 +52,6 @@ import haqq.composeapp.generated.resources.copy
 import haqq.composeapp.generated.resources.share
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
 class GuidanceScreen(
     private val guidanceType: GuidanceType,
 ) : Screen {

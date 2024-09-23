@@ -17,10 +17,10 @@ class AndroidPlatform : Platform {
             """.trimIndent()
 
     override val appVersionName: String
-        get() = "1.0.11"
+        get() = "1.0.12"
 
     override val appVersionCode: Int
-        get() = 11
+        get() = 12
 
     override val isIOS: Boolean
         get() = false

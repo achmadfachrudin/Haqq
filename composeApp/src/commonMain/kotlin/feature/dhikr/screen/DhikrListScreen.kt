@@ -3,17 +3,15 @@ package feature.dhikr.screen
 import AnalyticsConstant.trackScreen
 import SendMail
 import ShareText
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -29,19 +27,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastMapIndexed
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import core.ui.component.ArabicCard
-import core.ui.component.BaseButton
 import core.ui.component.BaseDialog
 import core.ui.component.BaseIconButton
 import core.ui.component.BaseScrollableTabRow
-import core.ui.component.BaseSpacerHorizontal
 import core.ui.component.BaseSpacerVertical
+import core.ui.component.BaseText
 import core.ui.component.BaseTopAppBar
 import core.ui.component.ErrorState
 import core.ui.component.LoadingState
@@ -56,7 +52,6 @@ import haqq.composeapp.generated.resources.share
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 
-@OptIn(ExperimentalFoundationApi::class)
 class DhikrListScreen(
     private val dhikrType: DhikrType,
 ) : Screen {
@@ -144,77 +139,70 @@ class DhikrListScreen(
                             )
                         }
 
-                        Row(
-                            modifier = Modifier.fillMaxWidth().padding(16.dp),
-                        ) {
-                            val message =
-                                """
-                                $title
-                                
-                                ${dhikr.title}
-                                ${dhikr.textArabic}
-                                ${dhikr.textTransliteration}
-                                ${dhikr.textTranslation}
-                                ${dhikr.hadith}
-                                """.trimIndent()
+                        BottomAppBar(
+                            actions = {
+                                val message =
+                                    """
+                                    $title
+                                    
+                                    ${dhikr.title}
+                                    ${dhikr.textArabic}
+                                    ${dhikr.textTransliteration}
+                                    ${dhikr.textTranslation}
+                                    ${dhikr.hadith}
+                                    """.trimIndent()
 
-                            BaseIconButton(
-                                iconResource = Res.drawable.alert_circle,
-                                onClick = {
-                                    shareContent.value = message
-                                    openMail.value = true
-                                },
-                                contentDescription = AppString.REPORT.getString(),
-                            )
+                                BaseIconButton(
+                                    iconResource = Res.drawable.alert_circle,
+                                    onClick = {
+                                        shareContent.value = message
+                                        openMail.value = true
+                                    },
+                                    contentDescription = AppString.REPORT.getString(),
+                                )
 
-                            BaseSpacerHorizontal()
-
-                            BaseIconButton(
-                                iconResource = Res.drawable.copy,
-                                onClick = {
-                                    clipboardManager.setText(AnnotatedString(message))
-                                    scope.launch {
-                                        snackbarHostState.showSnackbar(
-                                            AppString.COPIED.getString(),
-                                        )
-                                    }
-                                },
-                                contentDescription = AppString.COPIED.getString(),
-                            )
-
-                            BaseSpacerHorizontal()
-
-                            BaseIconButton(
-                                iconResource = Res.drawable.share,
-                                onClick = {
-                                    shareContent.value = message
-                                    openShare.value = true
-                                },
-                                contentDescription = AppString.SHARE.getString(),
-                            )
-
-                            Spacer(Modifier.weight(1f))
-
-                            BaseButton(
-                                modifier = Modifier.weight(1f),
-                                text = "${dhikr.count}",
-                                onClick = {
-                                    screenModel.currentPage = pagerState.currentPage
-                                    screenModel.dhikrClicked(dhikr)
-
-                                    if (dhikr.count + 1 >= dhikr.maxCount) {
+                                BaseIconButton(
+                                    iconResource = Res.drawable.copy,
+                                    onClick = {
+                                        clipboardManager.setText(AnnotatedString(message))
                                         scope.launch {
-                                            pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                                            snackbarHostState.showSnackbar(
+                                                AppString.COPIED.getString(),
+                                            )
                                         }
-                                    } else {
+                                    },
+                                    contentDescription = AppString.COPIED.getString(),
+                                )
+
+                                BaseIconButton(
+                                    iconResource = Res.drawable.share,
+                                    onClick = {
+                                        shareContent.value = message
+                                        openShare.value = true
+                                    },
+                                    contentDescription = AppString.SHARE.getString(),
+                                )
+                            },
+                            floatingActionButton = {
+                                ExtendedFloatingActionButton(
+                                    onClick = {
+                                        screenModel.currentPage = pagerState.currentPage
+                                        screenModel.dhikrClicked(dhikr)
+
                                         scope.launch {
-                                            pagerState.scrollToPage(0)
-                                            pagerState.scrollToPage(screenModel.currentPage)
+                                            if (dhikr.count + 1 >= dhikr.maxCount) {
+                                                pagerState.scrollToPage(pagerState.currentPage + 1)
+                                            } else {
+                                                pagerState.scrollToPage(0)
+                                                pagerState.scrollToPage(screenModel.currentPage)
+                                            }
                                         }
-                                    }
-                                },
-                            )
-                        }
+                                    },
+                                ) {
+                                    BaseText("${dhikr.count}")
+                                }
+                            },
+                        )
                     }
 
                     is DhikrListScreenModel.State.Error -> {

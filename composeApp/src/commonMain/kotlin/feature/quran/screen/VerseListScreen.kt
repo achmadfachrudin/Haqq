@@ -31,7 +31,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
@@ -69,11 +68,11 @@ import haqq.composeapp.generated.resources.bookmark
 import haqq.composeapp.generated.resources.copy
 import haqq.composeapp.generated.resources.corner_left_down
 import haqq.composeapp.generated.resources.heart
+import haqq.composeapp.generated.resources.heart_filled
 import haqq.composeapp.generated.resources.search
 import haqq.composeapp.generated.resources.share
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
 class VerseListScreen(
@@ -354,39 +353,84 @@ class VerseListScreen(
                     shouldCustomContent = true,
                     content = {
                         VerseListScreenModel.VerseAction.entries.forEach { verseAction ->
-                            BaseItemCard(
-                                title = getVerseActionLabel(verseAction, isFavorite),
-                                titleColor = getVerseActionColor(verseAction, isFavorite),
-                                iconResource = getVerseActionIcon(verseAction),
-                                onClick = {
-                                    when (verseAction) {
-                                        VerseListScreenModel.VerseAction.SAVE_AS_LASTREAD -> {
+                            when (verseAction) {
+                                VerseListScreenModel.VerseAction.SAVE_AS_LASTREAD -> {
+                                    BaseItemCard(
+                                        title = AppString.SAVE_AS_LASTREAD.getString(),
+                                        iconResource = Res.drawable.bookmark,
+                                        onClick = {
                                             screenModel.updateLastRead(verse.id)
+                                            openVerseDialog.value = false
+                                            selectedVerse.value = null
+                                        },
+                                    )
+                                }
+
+                                VerseListScreenModel.VerseAction.ADD_OR_REMOVE_FAVORITE -> {
+                                    val itemTitle =
+                                        if (isFavorite) {
+                                            AppString.REMOVE_FROM_FAVORITE.getString()
+                                        } else {
+                                            AppString.ADD_TO_FAVORITE.getString()
                                         }
 
-                                        VerseListScreenModel.VerseAction.ADD_OR_REMOVE_FAVORITE -> {
+                                    val itemIcon =
+                                        if (isFavorite) {
+                                            Res.drawable.heart_filled
+                                        } else {
+                                            Res.drawable.heart
+                                        }
+
+                                    BaseItemCard(
+                                        title = itemTitle,
+                                        iconResource = itemIcon,
+                                        iconTint = MaterialTheme.colorScheme.error,
+                                        onClick = {
                                             screenModel.addOrRemoveFavorite(verse)
-                                        }
+                                            openVerseDialog.value = false
+                                            selectedVerse.value = null
+                                        },
+                                    )
+                                }
 
-                                        VerseListScreenModel.VerseAction.COPY -> {
-                                            clipboardManager.setText(AnnotatedString(shareMessage))
-                                        }
-
-                                        VerseListScreenModel.VerseAction.SHARE -> {
+                                VerseListScreenModel.VerseAction.SHARE -> {
+                                    BaseItemCard(
+                                        title = AppString.SHARE.getString(),
+                                        iconResource = Res.drawable.share,
+                                        onClick = {
                                             shareContent.value = shareMessage
                                             openShare.value = true
-                                        }
+                                            openVerseDialog.value = false
+                                            selectedVerse.value = null
+                                        },
+                                    )
+                                }
 
-                                        VerseListScreenModel.VerseAction.REPORT -> {
+                                VerseListScreenModel.VerseAction.COPY -> {
+                                    BaseItemCard(
+                                        title = AppString.COPY.getString(),
+                                        iconResource = Res.drawable.copy,
+                                        onClick = {
+                                            clipboardManager.setText(AnnotatedString(shareMessage))
+                                            openVerseDialog.value = false
+                                            selectedVerse.value = null
+                                        },
+                                    )
+                                }
+
+                                VerseListScreenModel.VerseAction.REPORT -> {
+                                    BaseItemCard(
+                                        title = AppString.REPORT.getString(),
+                                        iconResource = Res.drawable.alert_circle,
+                                        onClick = {
                                             shareContent.value = shareMessage
                                             openMail.value = true
-                                        }
-                                    }
-
-                                    openVerseDialog.value = false
-                                    selectedVerse.value = null
-                                },
-                            )
+                                            openVerseDialog.value = false
+                                            selectedVerse.value = null
+                                        },
+                                    )
+                                }
+                            }
                         }
                     },
                 )
@@ -426,57 +470,6 @@ class VerseListScreen(
             }
         }
     }
-
-    private fun getVerseActionLabel(
-        verseAction: VerseListScreenModel.VerseAction,
-        isFavorite: Boolean,
-    ): String =
-        when (verseAction) {
-            VerseListScreenModel.VerseAction.SAVE_AS_LASTREAD -> AppString.SAVE_AS_LASTREAD.getString()
-            VerseListScreenModel.VerseAction.ADD_OR_REMOVE_FAVORITE -> {
-                if (isFavorite) {
-                    AppString.REMOVE_FROM_FAVORITE.getString()
-                } else {
-                    AppString.ADD_TO_FAVORITE.getString()
-                }
-            }
-
-            VerseListScreenModel.VerseAction.COPY -> AppString.COPY.getString()
-            VerseListScreenModel.VerseAction.SHARE -> AppString.SHARE.getString()
-            VerseListScreenModel.VerseAction.REPORT -> AppString.REPORT.getString()
-        }
-
-    @Composable
-    private fun getVerseActionColor(
-        verseAction: VerseListScreenModel.VerseAction,
-        isFavorite: Boolean,
-    ): Color =
-        when (verseAction) {
-            VerseListScreenModel.VerseAction.ADD_OR_REMOVE_FAVORITE -> {
-                if (isFavorite) {
-                    MaterialTheme.colorScheme.error
-                } else {
-                    Color.Unspecified
-                }
-            }
-
-            VerseListScreenModel.VerseAction.SAVE_AS_LASTREAD,
-            VerseListScreenModel.VerseAction.COPY,
-            VerseListScreenModel.VerseAction.SHARE,
-            VerseListScreenModel.VerseAction.REPORT,
-            -> {
-                Color.Unspecified
-            }
-        }
-
-    private fun getVerseActionIcon(verseAction: VerseListScreenModel.VerseAction): DrawableResource =
-        when (verseAction) {
-            VerseListScreenModel.VerseAction.SAVE_AS_LASTREAD -> Res.drawable.bookmark
-            VerseListScreenModel.VerseAction.ADD_OR_REMOVE_FAVORITE -> Res.drawable.heart
-            VerseListScreenModel.VerseAction.COPY -> Res.drawable.copy
-            VerseListScreenModel.VerseAction.SHARE -> Res.drawable.share
-            VerseListScreenModel.VerseAction.REPORT -> Res.drawable.alert_circle
-        }
 
     @Composable
     private fun HeaderChapter(chapter: Chapter) {

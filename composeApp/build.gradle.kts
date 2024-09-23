@@ -37,8 +37,14 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
-            implementation(libs.koin.android)
+            implementation(project.dependencies.platform(libs.koin.bom))
+            implementation(libs.koin.android.compose)
             implementation(libs.ktor.client.okhttp)
+
+            implementation(libs.play.services.location)
+            implementation(project.dependencies.platform(libs.firebase.bom))
+            implementation(libs.firebase.analytics)
+            implementation(libs.firebase.crashlytics)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
@@ -46,7 +52,6 @@ kotlin {
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(compose.material)
             implementation(compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
@@ -54,6 +59,7 @@ kotlin {
 
             // UI
             api(libs.compose.webview)
+            implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.core)
             implementation(libs.voyager.navigator)
             implementation(libs.voyager.koin)
@@ -101,8 +107,8 @@ android {
             libs.versions.android.targetSdk
                 .get()
                 .toInt()
-        versionName = "1.0.11"
-        versionCode = 11
+        versionName = "1.0.12"
+        versionCode = 12
     }
     packaging {
         resources {
@@ -124,10 +130,5 @@ android {
     }
     dependencies {
         debugImplementation(compose.uiTooling)
-
-        implementation(libs.play.services.location)
-        implementation(project.dependencies.platform(libs.firebase.bom))
-        implementation(libs.firebase.analytics)
-        implementation(libs.firebase.crashlytics)
     }
 }

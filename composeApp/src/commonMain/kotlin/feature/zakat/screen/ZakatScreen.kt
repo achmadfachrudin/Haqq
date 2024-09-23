@@ -1,6 +1,5 @@
 package feature.zakat.screen
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,7 +43,6 @@ import feature.other.service.model.AppString
 import feature.prayertime.service.model.PrayerTime
 
 class ZakatScreen : Screen {
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
         val screenModel = koinScreenModel<ZakatScreenModel>()
