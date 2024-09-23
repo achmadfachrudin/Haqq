@@ -107,8 +107,8 @@ android {
             libs.versions.android.targetSdk
                 .get()
                 .toInt()
-        versionName = "1.0.11"
-        versionCode = 11
+        versionName = "1.0.12"
+        versionCode = 12
     }
     packaging {
         resources {
