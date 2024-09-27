@@ -20,10 +20,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.koin.koinScreenModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import core.ui.component.BaseScrollableTabRow
 import core.ui.component.BaseSpacerVertical
 import core.ui.component.BaseText
@@ -34,107 +30,112 @@ import core.ui.component.itemPadding
 import core.ui.theme.getHaqqTypography
 import feature.other.service.mapper.getString
 import feature.other.service.model.AppString
-import feature.web.screen.WebScreen
+import feature.web.screen.WebNav
+import kotlinx.serialization.Serializable
+import org.koin.compose.viewmodel.koinViewModel
 
-class ArticleListScreen : Screen {
-    @Composable
-    override fun Content() {
-        val screenModel = koinScreenModel<ArticleListScreenModel>()
-        val state by screenModel.state.collectAsState()
-        val navigator = LocalNavigator.currentOrThrow
+@Serializable
+object ArticleListNav
 
-        Scaffold(
-            topBar = {
-                BaseTopAppBar(
-                    title = AppString.ARTICLE_TITLE.getString(),
-                    onLeftButtonClick = { navigator.pop() },
-                )
-            },
-        ) { paddingValues ->
-            Column(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
-                when (val display = state) {
-                    is ArticleListScreenModel.State.Loading -> {
-                        LoadingState()
-                    }
+@Composable
+fun ArticleListScreen(
+    onBackClick: () -> Unit,
+    onWebClick: (WebNav) -> Unit,
+) {
+    val vm = koinViewModel<ArticleListScreenModel>()
+    val state by vm.state.collectAsState()
 
-                    is ArticleListScreenModel.State.Content -> {
-                        val tabTitles = display.medias.map { it.name }
-                        val pagerState = rememberPagerState(pageCount = { tabTitles.size })
+    Scaffold(
+        topBar = {
+            BaseTopAppBar(
+                title = AppString.ARTICLE_TITLE.getString(),
+                onLeftButtonClick = { onBackClick() },
+            )
+        },
+    ) { paddingValues ->
+        Column(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
+            when (val display = state) {
+                is ArticleListScreenModel.State.Loading -> {
+                    LoadingState()
+                }
 
-                        BaseScrollableTabRow(
-                            pagerState = pagerState,
-                            tabTitles = tabTitles,
-                        )
+                is ArticleListScreenModel.State.Content -> {
+                    val tabTitles = display.medias.map { it.name }
+                    val pagerState = rememberPagerState(pageCount = { tabTitles.size })
 
-                        BaseSpacerVertical()
+                    BaseScrollableTabRow(
+                        pagerState = pagerState,
+                        tabTitles = tabTitles,
+                    )
 
-                        HorizontalPager(
-                            state = pagerState,
+                    BaseSpacerVertical()
+
+                    HorizontalPager(
+                        state = pagerState,
+                        modifier = Modifier.weight(1f),
+                        verticalAlignment = Alignment.Top,
+                    ) { index ->
+                        val mediaName = display.medias[index].name
+                        val mediaArticles = display.medias[index].articles
+
+                        LazyColumn(
                             modifier = Modifier.weight(1f),
-                            verticalAlignment = Alignment.Top,
-                        ) { index ->
-                            val mediaName = display.medias[index].name
-                            val mediaArticles = display.medias[index].articles
-
-                            LazyColumn(
-                                modifier = Modifier.weight(1f),
-                                contentPadding = PaddingValues(bottom = 16.dp),
-                            ) {
-                                items(mediaArticles) { article ->
-                                    ArticleCard(
-                                        title = article.title,
-                                        url = article.url,
-                                        date = article.date,
-                                        onClick = {
-                                            navigator.push(
-                                                WebScreen(
-                                                    article.url,
-                                                    mediaName,
-                                                ),
-                                            )
-                                        },
-                                    )
-                                }
+                            contentPadding = PaddingValues(bottom = 16.dp),
+                        ) {
+                            items(mediaArticles) { article ->
+                                ArticleCard(
+                                    title = article.title,
+                                    url = article.url,
+                                    date = article.date,
+                                    onClick = {
+                                        onWebClick(
+                                            WebNav(
+                                                url = article.url,
+                                                title = mediaName,
+                                            ),
+                                        )
+                                    },
+                                )
                             }
                         }
                     }
+                }
 
-                    is ArticleListScreenModel.State.Error -> {
-                        ErrorState(display.message)
-                    }
+                is ArticleListScreenModel.State.Error -> {
+                    ErrorState(display.message)
                 }
             }
         }
-
-        LaunchedEffect(currentCompositeKeyHash) {
-            screenModel.getMedias()
-        }
     }
 
-    @Composable
-    private fun ArticleCard(
-        title: String,
-        url: String,
-        date: String,
-        onClick: () -> Unit = {},
+    LaunchedEffect(currentCompositeKeyHash) {
+        vm.getMedias()
+    }
+}
+
+@Composable
+private fun ArticleCard(
+    title: String,
+    url: String,
+    date: String,
+    onClick: () -> Unit = {},
+) {
+    Column(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable { onClick() }
+                .padding(itemPadding),
     ) {
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .clickable { onClick() }
-                    .padding(itemPadding),
-        ) {
-            BaseText(
-                text = title,
-                style = getHaqqTypography().titleMedium,
-            )
-            BaseText(
-                text = url,
-                style = getHaqqTypography().bodySmall,
-                color = MaterialTheme.colorScheme.secondary,
-            )
-            BaseText(text = date, style = getHaqqTypography().bodySmall)
-        }
+        BaseText(
+            text = title,
+            style = getHaqqTypography().titleMedium,
+        )
+        BaseText(
+            text = url,
+            style = getHaqqTypography().bodySmall,
+            color = MaterialTheme.colorScheme.secondary,
+        )
+        BaseText(text = date, style = getHaqqTypography().bodySmall)
     }
 }

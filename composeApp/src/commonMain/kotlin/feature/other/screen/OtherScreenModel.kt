@@ -1,16 +1,22 @@
 package feature.other.screen
 
-import cafe.adriel.voyager.core.model.StateScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import core.data.DataState
 import feature.other.service.AppRepository
 import feature.other.service.entity.SettingEntity
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class OtherScreenModel(
     private val appRepository: AppRepository,
-) : StateScreenModel<OtherScreenModel.State>(State.Loading) {
+) : ViewModel() {
+    val mutableState = MutableStateFlow<State>(State.Loading)
+    val state: StateFlow<State> = mutableState.asStateFlow()
+
     sealed class State {
         object Loading : State()
 
@@ -33,7 +39,7 @@ class OtherScreenModel(
     }
 
     fun clearData(clearType: ClearType) {
-        screenModelScope.launch {
+        viewModelScope.launch {
             when (clearType) {
                 ClearType.DHIKR -> appRepository.clearDhikrData()
                 ClearType.DUA -> appRepository.clearDuaData()
@@ -46,7 +52,7 @@ class OtherScreenModel(
     }
 
     fun fetchSetting() {
-        screenModelScope.launch {
+        viewModelScope.launch {
             appRepository.fetchSetting().collectLatest {
                 mutableState.value =
                     when (it) {

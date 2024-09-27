@@ -1,17 +1,23 @@
 package feature.prayertime.screen
 
-import cafe.adriel.voyager.core.model.StateScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import core.data.DataState
 import feature.prayertime.service.PrayerRepository
 import feature.prayertime.service.model.Guidance
 import feature.prayertime.service.model.GuidanceType
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class GuidanceScreenModel(
     private val repository: PrayerRepository,
-) : StateScreenModel<GuidanceScreenModel.State>(State.Loading) {
+) : ViewModel() {
+    val mutableState = MutableStateFlow<State>(State.Loading)
+    val state: StateFlow<State> = mutableState.asStateFlow()
+
     sealed class State {
         object Loading : State()
 
@@ -25,7 +31,7 @@ class GuidanceScreenModel(
     }
 
     fun getGuidance(guidanceType: GuidanceType) {
-        screenModelScope.launch {
+        viewModelScope.launch {
             repository.fetchGuidance(guidanceType).collectLatest {
                 mutableState.value =
                     when (it) {

@@ -1,16 +1,22 @@
 package feature.conversation.screen
 
-import cafe.adriel.voyager.core.model.StateScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import core.data.DataState
 import feature.conversation.service.ConversationRepository
 import feature.conversation.service.model.Conversation
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class ConversationScreenModel(
     private val repository: ConversationRepository,
-) : StateScreenModel<ConversationScreenModel.State>(State.Loading) {
+) : ViewModel() {
+    val mutableState = MutableStateFlow<State>(State.Loading)
+    val state: StateFlow<State> = mutableState.asStateFlow()
+
     sealed class State {
         object Loading : State()
 
@@ -24,7 +30,7 @@ class ConversationScreenModel(
     }
 
     fun getConversation() {
-        screenModelScope.launch {
+        viewModelScope.launch {
             repository.fetchConversations().collectLatest {
                 mutableState.value =
                     when (it) {

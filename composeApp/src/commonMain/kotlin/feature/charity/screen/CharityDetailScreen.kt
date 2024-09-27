@@ -16,9 +16,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import core.ui.component.BaseIconButton
 import core.ui.component.BaseImage
 import core.ui.component.BaseTopAppBar
@@ -26,54 +23,57 @@ import feature.other.service.mapper.getString
 import feature.other.service.model.AppString
 import haqq.composeapp.generated.resources.Res
 import haqq.composeapp.generated.resources.share
+import kotlinx.serialization.Serializable
 
-class CharityDetailScreen(
-    private val imageUrl: String,
-) : Screen {
-    @Composable
-    override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
+@Serializable
+data class CharityDetailNav(
+    val imageUrl: String,
+)
 
-        val openShare = remember { mutableStateOf(false) }
+@Composable
+fun CharityDetailScreen(
+    nav: CharityDetailNav,
+    onBackClick: () -> Unit,
+) {
+    val openShare = remember { mutableStateOf(false) }
 
-        Scaffold(
-            topBar = {
-                BaseTopAppBar(
-                    title = AppString.CHARITY_TITLE.getString(),
-                    onLeftButtonClick = {
-                        navigator.pop()
+    Scaffold(
+        topBar = {
+            BaseTopAppBar(
+                title = AppString.CHARITY_TITLE.getString(),
+                onLeftButtonClick = {
+                    onBackClick()
+                },
+            )
+        },
+    ) { paddingValues ->
+        Column(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
+            BaseImage(
+                modifier = Modifier.weight(1f),
+                imageUrl = nav.imageUrl,
+                contentScale = ContentScale.FillWidth,
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                BaseIconButton(
+                    iconResource = Res.drawable.share,
+                    onClick = {
+                        openShare.value = true
                     },
+                    contentDescription = AppString.SHARE.getString(),
                 )
-            },
-        ) { paddingValues ->
-            Column(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
-                BaseImage(
-                    modifier = Modifier.weight(1f),
-                    imageUrl = imageUrl,
-                    contentScale = ContentScale.FillWidth,
-                )
-
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    BaseIconButton(
-                        iconResource = Res.drawable.share,
-                        onClick = {
-                            openShare.value = true
-                        },
-                        contentDescription = AppString.SHARE.getString(),
-                    )
-                }
             }
         }
+    }
 
-        if (openShare.value) {
-            ShareImage(imageUrl)
-            openShare.value = false
-        }
+    if (openShare.value) {
+        ShareImage(nav.imageUrl)
+        openShare.value = false
+    }
 
-        LaunchedEffect(currentCompositeKeyHash) {
-        }
+    LaunchedEffect(currentCompositeKeyHash) {
     }
 }

@@ -16,6 +16,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.currentCompositeKeyHash
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,316 +24,364 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.koin.koinScreenModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.multiplatform.webview.web.LoadingState
 import com.multiplatform.webview.web.WebView
 import com.multiplatform.webview.web.rememberWebViewState
 import core.ui.component.BaseButton
 import core.ui.component.BaseTopAppBar
 import core.ui.component.TabNavigationItem
-import feature.article.screen.ArticleListScreen
-import feature.charity.screen.CharityListScreen
-import feature.charity.screen.openSupport
-import feature.conversation.screen.ConversationScreen
-import feature.dhikr.screen.AsmaulHusnaScreen
-import feature.dhikr.screen.DhikrListScreen
-import feature.dhikr.screen.DuaListScreen
-import feature.dhikr.screen.DuaSunnahScreen
-import feature.other.screen.OtherScreen
-import feature.other.screen.SettingScreen
+import feature.article.screen.ArticleListNav
+import feature.charity.screen.CharityListNav
+import feature.conversation.screen.ConversationNav
+import feature.dhikr.screen.AsmaulHusnaNav
+import feature.dhikr.screen.DhikrPagerNav
+import feature.dhikr.screen.DuaListNav
+import feature.dhikr.screen.DuaSunnahNav
+import feature.other.screen.OtherNav
+import feature.other.screen.SettingNav
 import feature.other.service.AppRepository
 import feature.other.service.mapper.getString
 import feature.other.service.model.AppString
-import feature.prayertime.screen.CalendarScreen
-import feature.prayertime.screen.GuidanceScreen
-import feature.prayertime.screen.PrayerTimeScreen
-import feature.quran.screen.VerseListScreen
+import feature.prayertime.screen.CalendarNav
+import feature.prayertime.screen.GuidanceNav
+import feature.prayertime.screen.PrayerTimeDailyNav
+import feature.quran.screen.VerseListNav
 import feature.quran.service.model.ReadMode
-import feature.study.screen.ChannelListScreen
-import feature.study.screen.NoteListScreen
-import feature.web.screen.WebScreen
-import feature.web.screen.YoutubeScreen
-import feature.zakat.screen.ZakatScreen
+import feature.study.screen.ChannelListNav
+import feature.study.screen.NoteListNav
+import feature.web.screen.WebNav
+import feature.web.screen.YoutubeNav
+import feature.zakat.screen.ZakatNav
 import getPlatform
 import haqq.composeapp.generated.resources.Res
 import haqq.composeapp.generated.resources.more_horizontal
 import haqq.composeapp.generated.resources.settings
+import kotlinx.serialization.Serializable
 import kottieComposition.KottieCompositionSpec
 import kottieComposition.animateKottieCompositionAsState
 import kottieComposition.rememberKottieComposition
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.viewmodel.koinViewModel
 import org.koin.mp.KoinPlatform
 import utils.KottieConstants
 
-class MainScreen : Screen {
-    @OptIn(ExperimentalResourceApi::class)
-    @Composable
-    override fun Content() {
-        val screenModel = koinScreenModel<MainScreenModel>()
-        val state by screenModel.state.collectAsState()
-        val navigator = LocalNavigator.currentOrThrow
+@Serializable
+object MainNav
 
-        var animation by remember { mutableStateOf("") }
-        val composition =
-            rememberKottieComposition(
-                spec = KottieCompositionSpec.File(animation),
-            )
-        val animationState by animateKottieCompositionAsState(
-            composition = composition,
-            iterations = KottieConstants.IterateForever,
+@OptIn(ExperimentalResourceApi::class)
+@Composable
+fun MainScreen(
+    onArticleListClick: (ArticleListNav) -> Unit,
+    onAsmaulHusnaClick: (AsmaulHusnaNav) -> Unit,
+    onDhikrListClick: (DhikrPagerNav) -> Unit,
+    onDuaListClick: (DuaListNav) -> Unit,
+    onDuaSunnahClick: (DuaSunnahNav) -> Unit,
+    onCalendarClick: (CalendarNav) -> Unit,
+    onGuidanceClick: (GuidanceNav) -> Unit,
+    onPrayerTimeDailyClick: (PrayerTimeDailyNav) -> Unit,
+    onChannelListClick: (ChannelListNav) -> Unit,
+    onNoteListClick: (NoteListNav) -> Unit,
+    onCharityListClick: (CharityListNav) -> Unit,
+    onConversationClick: (ConversationNav) -> Unit,
+    onVerseListClick: (VerseListNav) -> Unit,
+    onOtherClick: (OtherNav) -> Unit,
+    onSettingClick: (SettingNav) -> Unit,
+    onSupportClick: () -> Unit,
+    onWebClick: (WebNav) -> Unit,
+    onYoutubeClick: (YoutubeNav) -> Unit,
+    onZakatClick: (ZakatNav) -> Unit,
+) {
+    val vm = koinViewModel<MainScreenModel>()
+    val state by vm.state.collectAsState()
+
+    var animation by remember { mutableStateOf("") }
+    val composition =
+        rememberKottieComposition(
+            spec = KottieCompositionSpec.File(animation),
         )
+    val animationState by animateKottieCompositionAsState(
+        composition = composition,
+        iterations = KottieConstants.IterateForever,
+    )
 
-        val openActivity = remember { mutableStateOf(false) }
-        val platformPage = remember { mutableStateOf(PlatformPage.NONE) }
+    val openActivity = remember { mutableStateOf(false) }
+    val platformPage = remember { mutableStateOf(PlatformPage.NONE) }
 
-        if (!state.acceptPrivacyPolicy) {
-            DialogPrivacyPolicy()
-        } else {
-            Scaffold(
-                topBar = {
-                    BaseTopAppBar(
-                        title = AppString.APP_NAME.getString(),
-                        showLeftButton = true,
-                        showRightButton = true,
-                        showOptionalLottie = true,
-                        leftButtonImage = painterResource(Res.drawable.settings),
-                        rightButtonImage = painterResource(Res.drawable.more_horizontal),
-                        optionalLottie = {
-                            KottieAnimation(
-                                modifier = Modifier.size(32.dp),
-                                composition = composition,
-                                progress = { animationState.progress },
-                            )
-                        },
-                        onLeftButtonClick = { navigator.push(SettingScreen()) },
-                        onOptionalButtonClick = {
-                            openSupport(navigator)
-                        },
-                        onRightButtonClick = { navigator.push(OtherScreen()) },
-                    )
-                },
-                content = {
-                    Column(modifier = Modifier.padding(it).fillMaxSize()) {
-                        when (state.pageState) {
-                            MainScreenModel.PageState.HOME -> {
-                                MainPageHome(
-                                    state = state.mainState,
-                                    onPrayerTimeClick = {
-                                        navigator.push(PrayerTimeScreen())
-                                    },
-                                    onDhikrClick = { dhikrType ->
-                                        navigator.push(DhikrListScreen(dhikrType))
-                                    },
-                                    onWebClick = { url ->
-                                        navigator.push(WebScreen(url))
-                                    },
-                                    onVerseClick = { chapterNumber: Int, verseNumber: Int ->
-                                        navigator.push(
-                                            VerseListScreen(
-                                                readMode = ReadMode.BY_CHAPTER,
-                                                id = chapterNumber,
-                                                verseNumber = verseNumber,
-                                            ),
-                                        )
-                                    },
-                                    onVideoClick = { videoId ->
-                                        navigator.push(YoutubeScreen(videoId))
-                                    },
-                                )
-                            }
-
-                            MainScreenModel.PageState.DHIKR -> {
-                                MainPageDhikr(
-                                    onDzikirClick = { dhikrType ->
-                                        navigator.push(DhikrListScreen(dhikrType))
-                                    },
-                                    onDuaQuranClick = {
-                                        screenModel.getQuranicDuaCategory().let { category ->
-                                            navigator.push(
-                                                DuaListScreen(
-                                                    category.tag,
-                                                    category.title,
-                                                ),
-                                            )
-                                        }
-                                    },
-                                    onDuaSunnahClick = { navigator.push(DuaSunnahScreen()) },
-                                    onAsmaClick = { navigator.push(AsmaulHusnaScreen()) },
-                                )
-                            }
-
-                            MainScreenModel.PageState.QURAN -> {
-                                MainPageQuran(
-                                    state = state.quranState,
-                                    onRetryClick = { screenModel.getQuran() },
-                                    onLastReadClick = { verse ->
-                                        navigator.push(
-                                            VerseListScreen(
-                                                readMode = ReadMode.BY_CHAPTER,
-                                                id = verse.chapterId,
-                                                verseNumber = verse.verseNumber,
-                                            ),
-                                        )
-                                    },
-                                    onDownloadClick = {
-                                        screenModel.downloadAllVerses()
-                                    },
-                                    onChapterClick = { chapter ->
-                                        navigator.push(
-                                            VerseListScreen(
-                                                readMode = ReadMode.BY_CHAPTER,
-                                                id = chapter.id,
-                                            ),
-                                        )
-                                    },
-                                    onJuzClick = { juz ->
-                                        navigator.push(
-                                            VerseListScreen(
-                                                readMode = ReadMode.BY_JUZ,
-                                                id = juz.id,
-                                            ),
-                                        )
-                                    },
-                                    onPageClick = { page ->
-                                        navigator.push(
-                                            VerseListScreen(
-                                                readMode = ReadMode.BY_PAGE,
-                                                id = page.id,
-                                            ),
-                                        )
-                                    },
-                                    onFavoriteClick = { verse ->
-                                        navigator.push(
-                                            VerseListScreen(
-                                                readMode = ReadMode.BY_CHAPTER,
-                                                id = verse.chapterId,
-                                                verseNumber = verse.verseNumber,
-                                            ),
-                                        )
-                                    },
-                                    onRemoveFavoriteClick = { verse ->
-                                        screenModel.addOrRemoveFavorite(verse)
-                                    },
-                                )
-                            }
-
-                            MainScreenModel.PageState.PRAYER -> {
-                                MainPagePrayer(
-                                    onOpenActivity = { name ->
-                                        platformPage.value = name
-                                        openActivity.value = true
-                                    },
-                                    onVideoClick = { url ->
-                                        navigator.push(YoutubeScreen(url))
-                                    },
-                                    onTimeClick = { navigator.push(PrayerTimeScreen()) },
-                                    onCalendarClick = { navigator.push(CalendarScreen()) },
-                                    onCalculateZakatClick = { navigator.push(ZakatScreen()) },
-                                    onGuideClick = { guidanceType ->
-                                        navigator.push(GuidanceScreen(guidanceType))
-                                    },
-                                )
-                            }
-
-                            MainScreenModel.PageState.ACTIVITY -> {
-                                MainPageActivity(
-                                    onArticleClick = { navigator.push(ArticleListScreen()) },
-                                    onStudyVideoClick = { navigator.push(ChannelListScreen()) },
-                                    onStudyNoteClick = { navigator.push(NoteListScreen()) },
-                                    onConversationClick = { navigator.push(ConversationScreen()) },
-                                    onCharityClick = { navigator.push(CharityListScreen()) },
-                                    onContentClick = { },
-                                )
-                            }
-                        }
-                    }
-                },
-                bottomBar = {
-                    NavigationBar {
-                        MainScreenModel.PageState.entries.forEach {
-                            TabNavigationItem(
-                                pageState = it,
-                                pageSelected = state.pageState,
-                                onClick = { screenModel.updatePage(it) },
-                            )
-                        }
-                    }
-                },
-            )
-        }
-
-        if (openActivity.value && platformPage.value != PlatformPage.NONE) {
-            OpenPage(platformPage.value)
-            openActivity.value = false
-        }
-
-        LaunchedEffect(Unit) {
-            animation = Res.readBytes("files/love.json").decodeToString()
-
-            screenModel.onViewed()
-        }
-    }
-
-    @Composable
-    private fun DialogPrivacyPolicy() {
-        val screenModel = koinScreenModel<MainScreenModel>()
-        val appRepository = KoinPlatform.getKoin().get<AppRepository>()
-
+    if (!state.acceptPrivacyPolicy) {
+        DialogPrivacyPolicy()
+    } else {
         Scaffold(
             topBar = {
                 BaseTopAppBar(
-                    title = AppString.PRIVACY_POLICY.getString(),
-                    showLeftButton = false,
-                    showRightButton = false,
+                    title = AppString.APP_NAME.getString(),
+                    showLeftButton = true,
+                    showRightButton = true,
+                    showOptionalLottie = true,
+                    leftButtonImage = painterResource(Res.drawable.settings),
+                    rightButtonImage = painterResource(Res.drawable.more_horizontal),
+                    optionalLottie = {
+                        KottieAnimation(
+                            modifier = Modifier.size(32.dp),
+                            composition = composition,
+                            progress = { animationState.progress },
+                        )
+                    },
+                    onLeftButtonClick = {
+                        onSettingClick(SettingNav)
+                    },
+                    onOptionalButtonClick = {
+                        onSupportClick()
+                    },
+                    onRightButtonClick = {
+                        onOtherClick(OtherNav)
+                    },
                 )
             },
-        ) { paddingValues ->
-            Box(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
-                val url = AppConstant.getPrivacyPoilicyUrl(appRepository.getSetting().language.id)
+            content = {
+                Column(modifier = Modifier.padding(it).fillMaxSize()) {
+                    when (state.pageState) {
+                        MainScreenModel.PageState.HOME -> {
+                            MainPageHome(
+                                state = state.mainState,
+                                onPrayerTimeClick = {
+                                    onPrayerTimeDailyClick(PrayerTimeDailyNav)
+                                },
+                                onDhikrClick = { dhikrType ->
+                                    onDhikrListClick(DhikrPagerNav(dhikrType = dhikrType))
+                                },
+                                onWebClick = { url ->
+                                    onWebClick(WebNav(url = url))
+                                },
+                                onVerseClick = { chapterNumber: Int, verseNumber: Int ->
+                                    onVerseListClick(
+                                        VerseListNav(
+                                            readMode = ReadMode.BY_CHAPTER,
+                                            id = chapterNumber,
+                                            verseNumber = verseNumber,
+                                        ),
+                                    )
+                                },
+                                onVideoClick = { videoId ->
+                                    onYoutubeClick(
+                                        YoutubeNav(
+                                            videoId = videoId,
+                                        ),
+                                    )
+                                },
+                            )
+                        }
 
-                val state = rememberWebViewState(url)
+                        MainScreenModel.PageState.DHIKR -> {
+                            MainPageDhikr(
+                                onDzikirClick = { dhikrType ->
+                                    onDhikrListClick(DhikrPagerNav(dhikrType = dhikrType))
+                                },
+                                onDuaQuranClick = {
+                                    val category = vm.getQuranicDuaCategory()
+                                    onDuaListClick(
+                                        DuaListNav(
+                                            duaCategoryTitle = category.title,
+                                            duaCategoryTag = category.tag,
+                                        ),
+                                    )
+                                },
+                                onDuaSunnahClick = {
+                                    onDuaSunnahClick(DuaSunnahNav)
+                                },
+                                onAsmaClick = {
+                                    onAsmaulHusnaClick(AsmaulHusnaNav)
+                                },
+                            )
+                        }
 
-                state.webSettings.apply {
-                    isJavaScriptEnabled = true
-                    customUserAgentString = getPlatform().name
-                    androidWebSettings.domStorageEnabled = true
-                    androidWebSettings.safeBrowsingEnabled = true
-                }
+                        MainScreenModel.PageState.QURAN -> {
+                            MainPageQuran(
+                                state = state.quranState,
+                                onRetryClick = { vm.getQuran() },
+                                onLastReadClick = { verse ->
+                                    onVerseListClick(
+                                        VerseListNav(
+                                            readMode = ReadMode.BY_CHAPTER,
+                                            id = verse.chapterId,
+                                            verseNumber = verse.verseNumber,
+                                        ),
+                                    )
+                                },
+                                onDownloadClick = {
+                                    vm.downloadAllVerses()
+                                },
+                                onChapterClick = { chapter ->
+                                    onVerseListClick(
+                                        VerseListNav(
+                                            readMode = ReadMode.BY_CHAPTER,
+                                            id = chapter.id,
+                                        ),
+                                    )
+                                },
+                                onJuzClick = { juz ->
+                                    onVerseListClick(
+                                        VerseListNav(
+                                            readMode = ReadMode.BY_JUZ,
+                                            id = juz.id,
+                                        ),
+                                    )
+                                },
+                                onPageClick = { page ->
+                                    onVerseListClick(
+                                        VerseListNav(
+                                            readMode = ReadMode.BY_PAGE,
+                                            id = page.id,
+                                        ),
+                                    )
+                                },
+                                onFavoriteClick = { verse ->
+                                    onVerseListClick(
+                                        VerseListNav(
+                                            readMode = ReadMode.BY_CHAPTER,
+                                            id = verse.chapterId,
+                                            verseNumber = verse.verseNumber,
+                                        ),
+                                    )
+                                },
+                                onRemoveFavoriteClick = { verse ->
+                                    vm.addOrRemoveFavorite(verse)
+                                },
+                            )
+                        }
 
-                when (val loadingState = state.loadingState) {
-                    LoadingState.Finished -> {
+                        MainScreenModel.PageState.PRAYER -> {
+                            MainPagePrayer(
+                                onOpenActivity = { name ->
+                                    platformPage.value = name
+                                    openActivity.value = true
+                                },
+                                onVideoClick = { videoId ->
+                                    onYoutubeClick(
+                                        YoutubeNav(
+                                            videoId = videoId,
+                                        ),
+                                    )
+                                },
+                                onTimeClick = {
+                                    onPrayerTimeDailyClick(PrayerTimeDailyNav)
+                                },
+                                onCalendarClick = {
+                                    onCalendarClick(CalendarNav)
+                                },
+                                onCalculateZakatClick = {
+                                    onZakatClick(ZakatNav)
+                                },
+                                onGuideClick = { guidanceType ->
+                                    onGuidanceClick(GuidanceNav(guidanceType))
+                                },
+                            )
+                        }
+
+                        MainScreenModel.PageState.ACTIVITY -> {
+                            MainPageActivity(
+                                onArticleClick = {
+                                    onArticleListClick(ArticleListNav)
+                                },
+                                onStudyVideoClick = {
+                                    onChannelListClick(ChannelListNav)
+                                },
+                                onStudyNoteClick = {
+                                    onNoteListClick(NoteListNav)
+                                },
+                                onConversationClick = {
+                                    onConversationClick(ConversationNav)
+                                },
+                                onCharityClick = {
+                                    onCharityListClick(CharityListNav)
+                                },
+                                onContentClick = { },
+                            )
+                        }
                     }
-
-                    LoadingState.Initializing -> {
-                        LinearProgressIndicator(
-                            progress = { 20f },
-                            modifier = Modifier.fillMaxWidth(),
+                }
+            },
+            bottomBar = {
+                NavigationBar {
+                    MainScreenModel.PageState.entries.forEach {
+                        TabNavigationItem(
+                            pageState = it,
+                            pageSelected = state.pageState,
+                            onClick = { vm.updatePage(it) },
                         )
                     }
-
-                    is LoadingState.Loading -> {
-                        LinearProgressIndicator(
-                            progress = { loadingState.progress },
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                    }
                 }
+            },
+        )
+    }
 
-                WebView(
-                    modifier = Modifier.padding(bottom = 16.dp).fillMaxSize(),
-                    state = state,
-                )
+    if (openActivity.value && platformPage.value != PlatformPage.NONE) {
+        OpenPage(platformPage.value)
+        openActivity.value = false
+    }
 
-                BaseButton(
-                    modifier = Modifier.padding(16.dp).fillMaxWidth().align(Alignment.BottomCenter),
-                    text = AppString.ACCEPT.getString(),
-                    onClick = { screenModel.acceptPrivacyPolicy() },
-                )
+    LaunchedEffect(currentCompositeKeyHash) {
+        animation = Res.readBytes("files/love.json").decodeToString()
+
+        vm.onViewed()
+    }
+}
+
+@Composable
+private fun DialogPrivacyPolicy() {
+    val vm = koinViewModel<MainScreenModel>()
+    val appRepository = KoinPlatform.getKoin().get<AppRepository>()
+
+    Scaffold(
+        topBar = {
+            BaseTopAppBar(
+                title = AppString.PRIVACY_POLICY.getString(),
+                showLeftButton = false,
+                showRightButton = false,
+            )
+        },
+    ) { paddingValues ->
+        Box(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
+            val url = AppConstant.getPrivacyPoilicyUrl(appRepository.getSetting().language.id)
+
+            val state = rememberWebViewState(url)
+
+            state.webSettings.apply {
+                isJavaScriptEnabled = true
+                customUserAgentString = getPlatform().name
+                androidWebSettings.domStorageEnabled = true
+                androidWebSettings.safeBrowsingEnabled = true
             }
+
+            when (val loadingState = state.loadingState) {
+                LoadingState.Finished -> {
+                }
+
+                LoadingState.Initializing -> {
+                    LinearProgressIndicator(
+                        progress = { 20f },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+
+                is LoadingState.Loading -> {
+                    LinearProgressIndicator(
+                        progress = { loadingState.progress },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+            }
+
+            WebView(
+                modifier = Modifier.padding(bottom = 16.dp).fillMaxSize(),
+                state = state,
+            )
+
+            BaseButton(
+                modifier = Modifier.padding(16.dp).fillMaxWidth().align(Alignment.BottomCenter),
+                text = AppString.ACCEPT.getString(),
+                onClick = { vm.acceptPrivacyPolicy() },
+            )
         }
     }
 }

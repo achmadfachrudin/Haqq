@@ -1,16 +1,22 @@
 package feature.study.screen
 
-import cafe.adriel.voyager.core.model.StateScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import core.data.DataState
 import feature.study.service.StudyRepository
 import feature.study.service.model.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class ChannelListScreenModel(
     private val repository: StudyRepository,
-) : StateScreenModel<ChannelListScreenModel.State>(State.Loading) {
+) : ViewModel() {
+    val mutableState = MutableStateFlow<State>(State.Loading)
+    val state: StateFlow<State> = mutableState.asStateFlow()
+
     sealed class State {
         object Loading : State()
 
@@ -24,7 +30,7 @@ class ChannelListScreenModel(
     }
 
     fun getChannels() {
-        screenModelScope.launch {
+        viewModelScope.launch {
             repository.fetchChannels().collectLatest {
                 mutableState.value =
                     when (it) {

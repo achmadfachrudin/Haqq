@@ -1,33 +1,39 @@
 package feature.study.screen
 
-import cafe.adriel.voyager.core.model.StateScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import feature.study.service.StudyRepository
 import feature.study.service.model.Note
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class NoteDetailScreenModel(
     private val repository: StudyRepository,
-) : StateScreenModel<NoteDetailScreenModel.State>(State()) {
+) : ViewModel() {
+    val mutableState = MutableStateFlow(State())
+    val state: StateFlow<State> = mutableState.asStateFlow()
+
     data class State(
         val note: Note? = null,
     )
 
     fun getNoteDetail(noteId: Int) {
-        screenModelScope.launch {
+        viewModelScope.launch {
             val note = repository.fetchNote(noteId) ?: Note()
             mutableState.value = mutableState.value.copy(note = note)
         }
     }
 
     fun deleteNote(noteId: Int) {
-        screenModelScope.launch {
+        viewModelScope.launch {
             repository.deleteNote(noteId)
         }
     }
 
     fun saveNote(note: Note) {
-        screenModelScope.launch {
+        viewModelScope.launch {
             repository.saveNote(note)
         }
     }

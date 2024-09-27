@@ -6,12 +6,13 @@ import feature.article.service.ArticleRepository
 import feature.article.service.source.remote.ArticleRemote
 import feature.article.service.source.remote.ArticleRemoteImp
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val articleFeatureModule =
     module {
-        factory { ArticleListScreenModel(get()) }
+        viewModelOf(::ArticleListScreenModel)
 
         single<ArticleRemote> {
             ArticleRemoteImp(
@@ -19,6 +20,5 @@ val articleFeatureModule =
                 get(named(NetworkSource.SUPABASE)),
             )
         }
-
         singleOf(::ArticleRepository)
     }

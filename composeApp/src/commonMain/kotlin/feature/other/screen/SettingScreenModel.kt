@@ -1,25 +1,31 @@
 package feature.other.screen
 
-import cafe.adriel.voyager.core.model.StateScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import feature.other.service.AppRepository
 import feature.other.service.model.AppSetting
 import feature.quran.service.QuranRepository
 import feature.quran.service.model.Verse
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class SettingScreenModel(
     private val appRepository: AppRepository,
     private val quranRepository: QuranRepository,
-) : StateScreenModel<SettingScreenModel.State>(State()) {
+) : ViewModel() {
+    val mutableState = MutableStateFlow(State())
+    val state: StateFlow<State> = mutableState.asStateFlow()
+
     data class State(
         val appSetting: AppSetting? = null,
         val verse: Verse? = null,
     )
 
     fun getSetting() {
-        screenModelScope.launch {
+        viewModelScope.launch {
             mutableState.value =
                 state.value.copy(appSetting = appRepository.getSetting(), verse = null)
 
@@ -30,7 +36,7 @@ class SettingScreenModel(
     }
 
     fun updateTheme(theme: AppSetting.Theme) {
-        screenModelScope.launch {
+        viewModelScope.launch {
             appRepository.updateTheme(theme)
 
             getSetting()
@@ -38,7 +44,7 @@ class SettingScreenModel(
     }
 
     fun updateThemeColor(themeColor: AppSetting.ThemeColor) {
-        screenModelScope.launch {
+        viewModelScope.launch {
             appRepository.updateThemeColor(themeColor)
 
             getSetting()
@@ -46,7 +52,7 @@ class SettingScreenModel(
     }
 
     fun updateLanguage(language: AppSetting.Language) {
-        screenModelScope.launch {
+        viewModelScope.launch {
             appRepository.updateLanguage(language)
 
             getSetting()
@@ -54,7 +60,7 @@ class SettingScreenModel(
     }
 
     fun updateArabicStyle(style: AppSetting.ArabicStyle) {
-        screenModelScope.launch {
+        viewModelScope.launch {
             appRepository.updateArabicStyle(style)
 
             getSetting()
@@ -62,7 +68,7 @@ class SettingScreenModel(
     }
 
     fun updateTransliterationVisibility(shouldShow: Boolean) {
-        screenModelScope.launch {
+        viewModelScope.launch {
             appRepository.updateTransliterationVisibility(shouldShow)
 
             getSetting()
@@ -70,7 +76,7 @@ class SettingScreenModel(
     }
 
     fun updateTranslationVisibility(shouldShow: Boolean) {
-        screenModelScope.launch {
+        viewModelScope.launch {
             appRepository.updateTranslationVisibility(shouldShow)
 
             getSetting()
@@ -78,7 +84,7 @@ class SettingScreenModel(
     }
 
     fun updateArabicFontSize(fontSize: Int) {
-        screenModelScope.launch {
+        viewModelScope.launch {
             appRepository.updateArabicFontSize(fontSize)
 
             getSetting()
@@ -86,7 +92,7 @@ class SettingScreenModel(
     }
 
     fun updateTransliterationFontSize(fontSize: Int) {
-        screenModelScope.launch {
+        viewModelScope.launch {
             appRepository.updateTransliterationFontSize(fontSize)
 
             getSetting()
@@ -94,7 +100,7 @@ class SettingScreenModel(
     }
 
     fun updateTranslationFontSize(fontSize: Int) {
-        screenModelScope.launch {
+        viewModelScope.launch {
             appRepository.updateTranslationFontSize(fontSize)
 
             getSetting()
@@ -102,7 +108,7 @@ class SettingScreenModel(
     }
 
     private fun getVerse() {
-        screenModelScope.launch {
+        viewModelScope.launch {
             val verse = quranRepository.getVerseById(5)
             mutableState.value = state.value.copy(verse = verse)
         }

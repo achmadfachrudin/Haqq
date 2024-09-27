@@ -1,16 +1,22 @@
 package feature.dhikr.screen
 
-import cafe.adriel.voyager.core.model.StateScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import core.data.DataState
 import feature.dhikr.service.DhikrRepository
 import feature.dhikr.service.model.AsmaulHusna
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class AsmaulHusnaScreenModel(
     private val repository: DhikrRepository,
-) : StateScreenModel<AsmaulHusnaScreenModel.State>(State.Loading) {
+) : ViewModel() {
+    val mutableState = MutableStateFlow<State>(State.Loading)
+    val state: StateFlow<State> = mutableState.asStateFlow()
+
     sealed class State {
         object Loading : State()
 
@@ -24,7 +30,7 @@ class AsmaulHusnaScreenModel(
     }
 
     fun getDoa() {
-        screenModelScope.launch {
+        viewModelScope.launch {
             repository.fetchAsmaulHusna().collectLatest {
                 mutableState.value =
                     when (it) {

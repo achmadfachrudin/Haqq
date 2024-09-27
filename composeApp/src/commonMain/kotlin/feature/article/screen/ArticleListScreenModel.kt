@@ -1,16 +1,22 @@
 package feature.article.screen
 
-import cafe.adriel.voyager.core.model.StateScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import core.data.DataState
 import feature.article.service.ArticleRepository
 import feature.article.service.model.ArticleMedia
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class ArticleListScreenModel(
     private val repository: ArticleRepository,
-) : StateScreenModel<ArticleListScreenModel.State>(State.Loading) {
+) : ViewModel() {
+    val mutableState = MutableStateFlow<State>(State.Loading)
+    val state: StateFlow<State> = mutableState.asStateFlow()
+
     sealed class State {
         object Loading : State()
 
@@ -24,7 +30,7 @@ class ArticleListScreenModel(
     }
 
     fun getMedias() {
-        screenModelScope.launch {
+        viewModelScope.launch {
             repository.fetchMedias().collectLatest {
                 mutableState.value =
                     when (it) {

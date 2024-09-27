@@ -1,19 +1,19 @@
 package feature.charity.screen
 
 import AppConstant.URL_SUPPORT
-import cafe.adriel.voyager.navigator.Navigator
+import androidx.navigation.NavHostController
 import feature.other.service.mapper.getString
 import feature.other.service.model.AppString
-import feature.web.screen.WebScreen
+import feature.web.screen.WebNav
 import getPlatform
 import openExternalLink
 
-fun openSupport(navigator: Navigator) {
+fun openSupport2(navHostController: NavHostController) {
     if (getPlatform().isIOS) {
         openExternalLink(URL_SUPPORT)
     } else {
-        navigator.push(
-            WebScreen(
+        navHostController.navigate(
+            WebNav(
                 url = URL_SUPPORT,
                 title = AppString.SUPPORT_TITLE.getString(),
             ),

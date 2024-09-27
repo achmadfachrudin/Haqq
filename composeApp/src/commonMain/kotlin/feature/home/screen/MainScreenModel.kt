@@ -1,7 +1,7 @@
 package feature.home.screen
 
-import cafe.adriel.voyager.core.model.StateScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import core.data.DataState
 import feature.dhikr.service.model.DuaCategory
 import feature.home.service.HomeRepository
@@ -15,6 +15,9 @@ import feature.quran.service.model.LastRead
 import feature.quran.service.model.Page
 import feature.quran.service.model.QuranConstant.MAX_CHAPTER
 import feature.quran.service.model.VerseFavorite
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.last
@@ -28,7 +31,10 @@ class MainScreenModel(
     private val appRepository: AppRepository,
     private val homeRepository: HomeRepository,
     private val quranRepository: QuranRepository,
-) : StateScreenModel<MainScreenModel.State>(State()) {
+) : ViewModel() {
+    val mutableState = MutableStateFlow(State())
+    val state: StateFlow<State> = mutableState.asStateFlow()
+
     data class State(
         val acceptPrivacyPolicy: Boolean = true, // for offline connection
         val location: AppSetting.Location? = null,
@@ -113,13 +119,13 @@ class MainScreenModel(
     }
 
     fun updatePage(page: PageState) {
-        screenModelScope.launch {
+        viewModelScope.launch {
             mutableState.value = state.value.copy(pageState = page)
         }
     }
 
     fun onViewed() {
-        screenModelScope.launch {
+        viewModelScope.launch {
             val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
 
             mutableState.value =
@@ -135,7 +141,7 @@ class MainScreenModel(
     }
 
     fun acceptPrivacyPolicy() {
-        screenModelScope.launch {
+        viewModelScope.launch {
             appRepository.updateAcceptPrivacyPolicy()
             mutableState.value =
                 state.value.copy(
@@ -145,7 +151,7 @@ class MainScreenModel(
     }
 
     fun getMain() {
-        screenModelScope.launch {
+        viewModelScope.launch {
             homeRepository.fetchHomeTemplates().collectLatest {
                 val mainState =
                     when (it) {
@@ -160,7 +166,7 @@ class MainScreenModel(
     }
 
     fun getQuran() {
-        screenModelScope.launch {
+        viewModelScope.launch {
             quranRepository.fetchChapters().collectLatest {
                 var downloadState: QuranDownloadState = QuranDownloadState.Done
                 var juzState: QuranJuzState = QuranJuzState.Loading
@@ -222,7 +228,7 @@ class MainScreenModel(
     }
 
     fun addOrRemoveFavorite(verse: VerseFavorite) {
-        screenModelScope.launch {
+        viewModelScope.launch {
             quranRepository.addOrRemoveVerseFavorites(verse)
 
             mutableState.value =
@@ -234,7 +240,7 @@ class MainScreenModel(
     }
 
     fun downloadAllVerses() {
-        screenModelScope.launch {
+        viewModelScope.launch {
             mutableState.value =
                 state.value.copy(
                     quranState = state.value.quranState.copy(downloadState = QuranDownloadState.Downloading),

@@ -1,15 +1,21 @@
 package feature.study.screen
 
-import cafe.adriel.voyager.core.model.StateScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import core.util.searchBy
 import feature.study.service.StudyRepository
 import feature.study.service.model.Note
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class NoteListScreenModel(
     private val repository: StudyRepository,
-) : StateScreenModel<NoteListScreenModel.State>(State()) {
+) : ViewModel() {
+    val mutableState = MutableStateFlow(State())
+    val state: StateFlow<State> = mutableState.asStateFlow()
+
     data class State(
         val notes: List<Note> = listOf(),
         val searchQuery: String = "",
@@ -35,14 +41,14 @@ class NoteListScreenModel(
     }
 
     fun getNotes() {
-        screenModelScope.launch {
+        viewModelScope.launch {
             val notes = repository.fetchNotes()
             mutableState.value = state.value.copy(notes = notes)
         }
     }
 
     fun filterApplied(filter: State.Filter) {
-        screenModelScope.launch {
+        viewModelScope.launch {
             val notes =
                 state.value.notes
                     .filter {
@@ -55,7 +61,7 @@ class NoteListScreenModel(
     }
 
     fun sortApplied(sortType: State.SortType) {
-        screenModelScope.launch {
+        viewModelScope.launch {
             val notes = state.value.notes
 
             when (sortType) {

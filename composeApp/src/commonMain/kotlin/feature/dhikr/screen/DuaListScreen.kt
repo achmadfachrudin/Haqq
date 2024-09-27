@@ -22,10 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.koin.koinNavigatorScreenModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import core.ui.component.BaseItemCard
 import core.ui.component.BaseOutlineTextField
 import core.ui.component.BaseTopAppBar
@@ -34,92 +30,99 @@ import core.ui.component.LoadingState
 import core.util.searchBy
 import feature.other.service.mapper.getString
 import feature.other.service.model.AppString
+import kotlinx.serialization.Serializable
+import org.koin.compose.viewmodel.koinViewModel
+
+@Serializable
+data class DuaListNav(
+    val duaCategoryTag: String,
+    val duaCategoryTitle: String,
+)
 
 @OptIn(ExperimentalFoundationApi::class)
-class DuaListScreen(
-    private val duaCategoryTag: String,
-    val duaCategoryTitle: String,
-) : Screen {
-    @Composable
-    override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
-        val screenModel = navigator.koinNavigatorScreenModel<DuaListScreenModel>()
-        val state by screenModel.state.collectAsState()
+@Composable
+fun DuaListScreen(
+    nav: DuaListNav,
+    onBackClick: () -> Unit,
+    onDuaDetailClick: (DuaPagerNav) -> Unit,
+) {
+    val vm = koinViewModel<DuaListScreenModel>()
+    val state by vm.state.collectAsState()
 
-        Scaffold(
-            topBar = {
-                BaseTopAppBar(
-                    title = duaCategoryTitle,
-                    onLeftButtonClick = {
-                        navigator.pop()
-                    },
-                )
-            },
-        ) { paddingValues ->
-            Column(
-                modifier = Modifier.padding(paddingValues).fillMaxSize(),
-            ) {
-                when (val display = state) {
-                    is DuaListScreenModel.State.Content -> {
-                        val valueSearch = remember { mutableStateOf("") }
-                        val query = valueSearch.value.lowercase()
-                        val duaFiltered =
-                            display.duas.filter {
-                                it.title.searchBy(query)
-                            }
+    Scaffold(
+        topBar = {
+            BaseTopAppBar(
+                title = nav.duaCategoryTitle,
+                onLeftButtonClick = {
+                    onBackClick()
+                },
+            )
+        },
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier.padding(paddingValues).fillMaxSize(),
+        ) {
+            when (val display = state) {
+                is DuaListScreenModel.State.Content -> {
+                    val valueSearch = remember { mutableStateOf("") }
+                    val query = valueSearch.value.lowercase()
+                    val duaFiltered =
+                        display.duas.filter {
+                            it.title.searchBy(query)
+                        }
 
-                        LazyColumn {
-                            stickyHeader {
-                                Surface(Modifier.fillMaxWidth()) {
-                                    BaseOutlineTextField(
-                                        modifier = Modifier.padding(16.dp),
-                                        value = valueSearch.value,
-                                        onValueChange = { newText ->
-                                            valueSearch.value =
-                                                newText
-                                                    .trim()
-                                                    .filter { it.isLetterOrDigit() }
-                                        },
-                                        label = AppString.SEARCH_DUA.getString(),
-                                        trailingClick = { valueSearch.value = "" },
-                                        keyboardOptions =
-                                            KeyboardOptions.Default.copy(
-                                                keyboardType = KeyboardType.Text,
-                                                imeAction = ImeAction.Done,
-                                            ),
-                                    )
-                                }
-                            }
-                            items(duaFiltered) { dua ->
-                                BaseItemCard(
-                                    title = dua.title,
-                                    onClick = {
-                                        navigator.push(
-                                            DuaDetailScreen(
-                                                duaCategoryTitle = duaCategoryTitle,
-                                                duaId = dua.id,
-                                            ),
-                                        )
+                    LazyColumn {
+                        stickyHeader {
+                            Surface(Modifier.fillMaxWidth()) {
+                                BaseOutlineTextField(
+                                    modifier = Modifier.padding(16.dp),
+                                    value = valueSearch.value,
+                                    onValueChange = { newText ->
+                                        valueSearch.value =
+                                            newText
+                                                .trim()
+                                                .filter { it.isLetterOrDigit() }
                                     },
+                                    label = AppString.SEARCH_DUA.getString(),
+                                    trailingClick = { valueSearch.value = "" },
+                                    keyboardOptions =
+                                        KeyboardOptions.Default.copy(
+                                            keyboardType = KeyboardType.Text,
+                                            imeAction = ImeAction.Done,
+                                        ),
                                 )
                             }
                         }
+                        items(duaFiltered) { dua ->
+                            BaseItemCard(
+                                title = dua.title,
+                                onClick = {
+                                    onDuaDetailClick(
+                                        DuaPagerNav(
+                                            duaCategoryTag = nav.duaCategoryTag,
+                                            duaCategoryTitle = nav.duaCategoryTitle,
+                                            duaId = dua.id,
+                                        ),
+                                    )
+                                },
+                            )
+                        }
                     }
+                }
 
-                    is DuaListScreenModel.State.Error -> {
-                        ErrorState(display.message)
-                    }
+                is DuaListScreenModel.State.Error -> {
+                    ErrorState(display.message)
+                }
 
-                    DuaListScreenModel.State.Loading -> {
-                        LoadingState()
-                    }
+                DuaListScreenModel.State.Loading -> {
+                    LoadingState()
                 }
             }
         }
+    }
 
-        LaunchedEffect(currentCompositeKeyHash) {
-            trackScreen(DuaListScreen::class)
-            screenModel.getDuaByTag(duaCategoryTag)
-        }
+    LaunchedEffect(currentCompositeKeyHash) {
+        trackScreen("DuaListScreen")
+        vm.getDuaByTag(nav.duaCategoryTag)
     }
 }
