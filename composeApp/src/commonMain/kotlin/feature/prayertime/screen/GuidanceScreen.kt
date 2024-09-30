@@ -52,7 +52,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Serializable
 data class GuidanceNav(
-    val guidanceType: GuidanceType,
+    val guidanceTypeName: String,
 )
 
 @Composable
@@ -70,8 +70,10 @@ fun GuidanceScreen(
     val openShare = remember { mutableStateOf(false) }
     val shareContent = remember { mutableStateOf("") }
 
+    val guidanceType = enumValueOf<GuidanceType>(nav.guidanceTypeName)
+
     val title =
-        when (nav.guidanceType) {
+        when (guidanceType) {
             GuidanceType.WUDHU -> AppString.LEARN_THAHARAH_WUDHU.getString()
             GuidanceType.TAYAMMUM -> AppString.LEARN_THAHARAH_TAYAMMUM.getString()
             GuidanceType.JUNUB -> AppString.LEARN_THAHARAH_JUNUB.getString()
@@ -215,6 +217,6 @@ fun GuidanceScreen(
     }
 
     LaunchedEffect(currentCompositeKeyHash) {
-        vm.getGuidance(nav.guidanceType)
+        vm.getGuidance(guidanceType)
     }
 }

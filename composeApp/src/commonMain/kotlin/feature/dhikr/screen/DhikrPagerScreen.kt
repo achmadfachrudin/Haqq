@@ -52,7 +52,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Serializable
 data class DhikrPagerNav(
-    val dhikrType: DhikrType,
+    val dhikrTypeName: String,
 )
 
 @Composable
@@ -71,8 +71,10 @@ fun DhikrPagerScreen(
     val openShare = remember { mutableStateOf(false) }
     val shareContent = remember { mutableStateOf("") }
 
+    val dhikrType = enumValueOf<DhikrType>(nav.dhikrTypeName)
+
     val title =
-        when (nav.dhikrType) {
+        when (dhikrType) {
             DhikrType.MORNING -> AppString.DHIKR_MORNING_TITLE.getString()
             DhikrType.AFTERNOON -> AppString.DHIKR_AFTERNOON_TITLE.getString()
             DhikrType.PRAY -> AppString.DHIKR_PRAY_TITLE.getString()
@@ -240,6 +242,6 @@ fun DhikrPagerScreen(
 
     LaunchedEffect(currentCompositeKeyHash) {
         trackScreen("DhikrListScreen")
-        vm.getDzikir(nav.dhikrType)
+        vm.getDzikir(dhikrType)
     }
 }

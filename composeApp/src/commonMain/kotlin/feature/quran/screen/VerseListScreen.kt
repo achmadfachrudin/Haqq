@@ -76,7 +76,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Serializable
 data class VerseListNav(
-    val readMode: ReadMode,
+    val readModeName: String,
     val id: Int, // chapterId / juzId / pageId
     val verseNumber: Int = 1,
 )
@@ -102,8 +102,10 @@ fun VerseListScreen(
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
 
+    val readMode = enumValueOf<ReadMode>(nav.readModeName)
+
     val title =
-        when (nav.readMode) {
+        when (readMode) {
             ReadMode.BY_CHAPTER -> state.chapter?.nameSimple.orEmpty()
             ReadMode.BY_JUZ -> "Juz ${state.juz?.juzNumber}"
             ReadMode.BY_PAGE -> "${AppString.PAGE.getString()} ${state.page?.pageNumber}"
@@ -454,7 +456,7 @@ fun VerseListScreen(
 
     LaunchedEffect(currentCompositeKeyHash) {
         scope.launch {
-            when (nav.readMode) {
+            when (readMode) {
                 ReadMode.BY_CHAPTER -> {
                     vm.getVersesByChapter(nav.id)
                     listState.scrollToItem(index = nav.verseNumber - 1)

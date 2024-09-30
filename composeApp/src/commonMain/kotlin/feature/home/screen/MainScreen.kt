@@ -148,7 +148,7 @@ fun MainScreen(
                                     onPrayerTimeDailyClick(PrayerTimeDailyNav)
                                 },
                                 onDhikrClick = { dhikrType ->
-                                    onDhikrListClick(DhikrPagerNav(dhikrType = dhikrType))
+                                    onDhikrListClick(DhikrPagerNav(dhikrTypeName = dhikrType.name))
                                 },
                                 onWebClick = { url ->
                                     onWebClick(WebNav(url = url))
@@ -156,7 +156,7 @@ fun MainScreen(
                                 onVerseClick = { chapterNumber: Int, verseNumber: Int ->
                                     onVerseListClick(
                                         VerseListNav(
-                                            readMode = ReadMode.BY_CHAPTER,
+                                            readModeName = ReadMode.BY_CHAPTER.name,
                                             id = chapterNumber,
                                             verseNumber = verseNumber,
                                         ),
@@ -175,7 +175,7 @@ fun MainScreen(
                         MainScreenModel.PageState.DHIKR -> {
                             MainPageDhikr(
                                 onDzikirClick = { dhikrType ->
-                                    onDhikrListClick(DhikrPagerNav(dhikrType = dhikrType))
+                                    onDhikrListClick(DhikrPagerNav(dhikrTypeName = dhikrType.name))
                                 },
                                 onDuaQuranClick = {
                                     val category = vm.getQuranicDuaCategory()
@@ -202,7 +202,7 @@ fun MainScreen(
                                 onLastReadClick = { verse ->
                                     onVerseListClick(
                                         VerseListNav(
-                                            readMode = ReadMode.BY_CHAPTER,
+                                            readModeName = ReadMode.BY_CHAPTER.name,
                                             id = verse.chapterId,
                                             verseNumber = verse.verseNumber,
                                         ),
@@ -214,7 +214,7 @@ fun MainScreen(
                                 onChapterClick = { chapter ->
                                     onVerseListClick(
                                         VerseListNav(
-                                            readMode = ReadMode.BY_CHAPTER,
+                                            readModeName = ReadMode.BY_CHAPTER.name,
                                             id = chapter.id,
                                         ),
                                     )
@@ -222,7 +222,7 @@ fun MainScreen(
                                 onJuzClick = { juz ->
                                     onVerseListClick(
                                         VerseListNav(
-                                            readMode = ReadMode.BY_JUZ,
+                                            readModeName = ReadMode.BY_JUZ.name,
                                             id = juz.id,
                                         ),
                                     )
@@ -230,7 +230,7 @@ fun MainScreen(
                                 onPageClick = { page ->
                                     onVerseListClick(
                                         VerseListNav(
-                                            readMode = ReadMode.BY_PAGE,
+                                            readModeName = ReadMode.BY_PAGE.name,
                                             id = page.id,
                                         ),
                                     )
@@ -238,7 +238,7 @@ fun MainScreen(
                                 onFavoriteClick = { verse ->
                                     onVerseListClick(
                                         VerseListNav(
-                                            readMode = ReadMode.BY_CHAPTER,
+                                            readModeName = ReadMode.BY_CHAPTER.name,
                                             id = verse.chapterId,
                                             verseNumber = verse.verseNumber,
                                         ),
@@ -273,7 +273,7 @@ fun MainScreen(
                                     onZakatClick(ZakatNav)
                                 },
                                 onGuideClick = { guidanceType ->
-                                    onGuidanceClick(GuidanceNav(guidanceType))
+                                    onGuidanceClick(GuidanceNav(guidanceTypeName = guidanceType.name))
                                 },
                             )
                         }
