@@ -8,7 +8,7 @@ import feature.web.screen.WebNav
 import getPlatform
 import openExternalLink
 
-fun openSupport2(navHostController: NavHostController) {
+fun openSupport(navHostController: NavHostController) {
     if (getPlatform().isIOS) {
         openExternalLink(URL_SUPPORT)
     } else {
