@@ -19,4 +19,5 @@ class DhikrRealm : RealmObject {
     var hadithEn = ""
     var maxCount = 0
     var count = 0
+    var latestUpdate = ""
 }
