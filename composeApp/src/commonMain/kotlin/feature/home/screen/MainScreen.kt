@@ -1,6 +1,7 @@
 package feature.home.screen
 
 import AppConstant
+import AppConstant.URL_SUPPORT
 import KottieAnimation
 import OpenPage
 import PlatformPage
@@ -87,7 +88,6 @@ fun MainScreen(
     onVerseListClick: (VerseListNav) -> Unit,
     onOtherClick: (OtherNav) -> Unit,
     onSettingClick: (SettingNav) -> Unit,
-    onSupportClick: () -> Unit,
     onWebClick: (WebNav) -> Unit,
     onYoutubeClick: (YoutubeNav) -> Unit,
     onZakatClick: (ZakatNav) -> Unit,
@@ -131,7 +131,13 @@ fun MainScreen(
                         onSettingClick(SettingNav)
                     },
                     onOptionalButtonClick = {
-                        onSupportClick()
+                        onWebClick(
+                            WebNav(
+                                url = URL_SUPPORT,
+                                title = AppString.SUPPORT_TITLE.getString(),
+                                openExternalIOS = true,
+                            ),
+                        )
                     },
                     onRightButtonClick = {
                         onOtherClick(OtherNav)

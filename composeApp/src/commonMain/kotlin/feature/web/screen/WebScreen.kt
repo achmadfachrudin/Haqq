@@ -25,12 +25,15 @@ import haqq.composeapp.generated.resources.Res
 import haqq.composeapp.generated.resources.copy
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import openExternalLink
 import org.jetbrains.compose.resources.painterResource
 
 @Serializable
 data class WebNav(
     val url: String,
     val title: String = "",
+    val openExternalIOS: Boolean = false,
+    val openExternalAndroid: Boolean = false,
 )
 
 @Composable
@@ -38,6 +41,17 @@ fun WebScreen(
     webNav: WebNav,
     onBackClick: () -> Unit,
 ) {
+    when {
+        getPlatform().isIOS && webNav.openExternalIOS -> {
+            openExternalLink(webNav.url)
+            onBackClick()
+        }
+        getPlatform().isAndroid && webNav.openExternalAndroid -> {
+            openExternalLink(webNav.url)
+            onBackClick()
+        }
+    }
+
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     val clipboardManager = LocalClipboardManager.current

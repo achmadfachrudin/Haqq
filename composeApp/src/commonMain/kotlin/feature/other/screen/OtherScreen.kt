@@ -1,6 +1,7 @@
 package feature.other.screen
 
 import AppConstant
+import AppConstant.URL_SUPPORT
 import AppConstant.USERNAME_INSTAGRAM
 import KottieAnimation
 import SendMail
@@ -58,7 +59,6 @@ object OtherNav
 @Composable
 fun OtherScreen(
     onBackClick: () -> Unit,
-    onSupportClick: () -> Unit,
     onWebClick: (WebNav) -> Unit,
 ) {
     val vm = koinViewModel<OtherScreenModel>()
@@ -127,7 +127,13 @@ fun OtherScreen(
                     )
                 },
             ) {
-                onSupportClick()
+                onWebClick(
+                    WebNav(
+                        url = URL_SUPPORT,
+                        title = AppString.SUPPORT_TITLE.getString(),
+                        openExternalIOS = true,
+                    ),
+                )
             }
 
             BaseDivider()

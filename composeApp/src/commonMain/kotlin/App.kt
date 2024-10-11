@@ -11,7 +11,6 @@ import feature.charity.screen.CharityDetailNav
 import feature.charity.screen.CharityDetailScreen
 import feature.charity.screen.CharityListNav
 import feature.charity.screen.CharityListScreen
-import feature.charity.screen.openSupport
 import feature.conversation.screen.ConversationNav
 import feature.conversation.screen.ConversationScreen
 import feature.dhikr.screen.AsmaulHusnaNav
@@ -75,7 +74,6 @@ fun App() {
                     onNoteListClick = { navController.navigate(it) },
                     onOtherClick = { navController.navigate(it) },
                     onSettingClick = { navController.navigate(it) },
-                    onSupportClick = { openSupport(navController) },
                     onVerseListClick = { navController.navigate(it) },
                     onWebClick = { navController.navigate(it) },
                     onYoutubeClick = { navController.navigate(it) },
@@ -202,7 +200,6 @@ fun App() {
             composable<OtherNav> {
                 OtherScreen(
                     onBackClick = { navController.popBackStack() },
-                    onSupportClick = { openSupport(navController) },
                     onWebClick = { navController.navigate(it) },
                 )
             }
