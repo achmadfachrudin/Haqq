@@ -1,17 +1,23 @@
 package feature.zakat.screen
 
-import cafe.adriel.voyager.core.model.StateScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import core.data.DataState
 import core.util.toLongDefault
 import feature.prayertime.service.PrayerRepository
 import feature.prayertime.service.model.PrayerTime
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class ZakatScreenModel(
     private val repository: PrayerRepository,
-) : StateScreenModel<ZakatScreenModel.State>(State()) {
+) : ViewModel() {
+    val mutableState = MutableStateFlow(State())
+    val state: StateFlow<State> = mutableState.asStateFlow()
+
     data class State(
         var zakatResultState: ZakatDialogState = ZakatDialogState.Hide,
         var currentTime: PrayerTime? = null,
@@ -42,7 +48,7 @@ class ZakatScreenModel(
     }
 
     fun getHijri() {
-        screenModelScope.launch {
+        viewModelScope.launch {
             repository.fetchTodayTomorrowPrayerTimes().collectLatest {
                 if (it.data.isNotEmpty()) {
                     val currentTime = it.data.first()
@@ -77,7 +83,7 @@ class ZakatScreenModel(
     }
 
     fun hideDialog() {
-        screenModelScope.launch {
+        viewModelScope.launch {
             mutableState.value =
                 state.value.copy(
                     zakatResultState = State.ZakatDialogState.Hide,
@@ -89,7 +95,7 @@ class ZakatScreenModel(
         valueTotalPeople: String,
         valueRicePrice: String,
     ) {
-        screenModelScope.launch {
+        viewModelScope.launch {
             val totalPeople = valueTotalPeople.toLongDefault()
             val ricePrice = valueRicePrice.toLongDefault()
             val totalZakatInLiter = (3.5 * totalPeople)
@@ -114,7 +120,7 @@ class ZakatScreenModel(
         valueGoldPrice: String,
         valueTotalGoldInGram: String,
     ) {
-        screenModelScope.launch {
+        viewModelScope.launch {
             val totalDebt = valueTotalDebt.toLongDefault()
             val totalSaving = valueTotalSaving.toLongDefault()
             val goldPrice = valueGoldPrice.toLongDefault()

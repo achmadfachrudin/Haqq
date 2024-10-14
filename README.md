@@ -1,14 +1,17 @@
-This is a Kotlin Multiplatform project targeting Android, iOS.
+# Haqq
 
-* `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - `commonMain` is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    `iosMain` would be the right folder for such calls.
+![GitHub Release](https://img.shields.io/github/v/release/achmadfachrudin/Haqq)
 
-* `/iosApp` contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform, 
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+**Haqq** is the ultimate all-in-one app for Muslims, offering essential tools to enhance your spiritual journey.
 
+Built with **Compose Multiplatform**, delivering a seamless experience across Android and other platforms.
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+## License
+
+This project is licensed under the GNU General Public License v3.0. See the [LICENSE](https://github.com/achmadfachrudin/Haqq?tab=GPL-3.0-1-ov-file) file for details.
+
+## Contact
+
+For any inquiries or support, please contact us at [haqqsunnah@gmail.com](mailto:haqqsunnah@gmail.com).
+
+Also, follow us on Instagram for updates: [@haqq_sunnah](https://www.instagram.com/haqq_sunnah).

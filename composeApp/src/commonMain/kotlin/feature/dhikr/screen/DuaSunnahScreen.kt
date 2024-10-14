@@ -27,10 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.koin.koinScreenModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import core.ui.component.BaseOutlineTextField
 import core.ui.component.BaseTitle
 import core.ui.component.BaseTopAppBar
@@ -39,106 +35,111 @@ import core.ui.component.LoadingState
 import core.util.searchBy
 import feature.other.service.mapper.getString
 import feature.other.service.model.AppString
+import kotlinx.serialization.Serializable
+import org.koin.compose.viewmodel.koinViewModel
 
-class DuaSunnahScreen : Screen {
-    @Composable
-    override fun Content() {
-        val screenModel = koinScreenModel<DuaSunnahScreenModel>()
-        val state by screenModel.state.collectAsState()
-        val navigator = LocalNavigator.currentOrThrow
+@Serializable
+object DuaSunnahNav
 
-        Scaffold(
-            topBar = {
-                BaseTopAppBar(
-                    title = AppString.DUA_SUNNAH.getString(),
-                    onLeftButtonClick = {
-                        navigator.pop()
-                    },
-                )
-            },
-        ) { paddingValues ->
-            when (val display = state) {
-                is DuaSunnahScreenModel.State.Loading -> {
-                    LoadingState()
-                }
+@Composable
+fun DuaSunnahScreen(
+    onBackClick: () -> Unit,
+    onDuaListClick: (DuaListNav) -> Unit,
+) {
+    val vm = koinViewModel<DuaSunnahScreenModel>()
+    val state by vm.state.collectAsState()
 
-                is DuaSunnahScreenModel.State.Content -> {
-                    val valueSearch = remember { mutableStateOf("") }
-                    val query = valueSearch.value.lowercase()
-                    val categoriesFiltered =
-                        display.categories.filter {
-                            it.title.searchBy(query)
-                        }
+    Scaffold(
+        topBar = {
+            BaseTopAppBar(
+                title = AppString.DUA_SUNNAH.getString(),
+                onLeftButtonClick = {
+                    onBackClick()
+                },
+            )
+        },
+    ) { paddingValues ->
+        when (val display = state) {
+            is DuaSunnahScreenModel.State.Loading -> {
+                LoadingState()
+            }
 
-                    LazyVerticalGrid(
-                        modifier = Modifier.padding(paddingValues),
-                        columns = GridCells.Fixed(2),
-                        contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    ) {
-                        item(
-                            span = { GridItemSpan(this.maxLineSpan) },
-                            content = {
-                                Surface(Modifier.fillMaxWidth()) {
-                                    BaseOutlineTextField(
-                                        value = valueSearch.value,
-                                        onValueChange = { newText ->
-                                            valueSearch.value =
-                                                newText
-                                                    .trim()
-                                                    .filter { it.isLetterOrDigit() }
-                                        },
-                                        label = AppString.SEARCH_DUA.getString(),
-                                        trailingClick = { valueSearch.value = "" },
-                                        keyboardOptions =
-                                            KeyboardOptions.Default.copy(
-                                                keyboardType = KeyboardType.Text,
-                                                imeAction = ImeAction.Done,
-                                            ),
-                                    )
-                                }
-                            },
-                        )
+            is DuaSunnahScreenModel.State.Content -> {
+                val valueSearch = remember { mutableStateOf("") }
+                val query = valueSearch.value.lowercase()
+                val categoriesFiltered =
+                    display.categories.filter {
+                        it.title.searchBy(query)
+                    }
 
-                        items(categoriesFiltered) { category ->
-                            Card(
-                                modifier = Modifier.fillMaxWidth(),
-                                onClick = {
-                                    navigator.push(
-                                        DuaListScreen(
-                                            category.tag,
-                                            category.title,
+                LazyVerticalGrid(
+                    modifier = Modifier.padding(paddingValues),
+                    columns = GridCells.Fixed(2),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    item(
+                        span = { GridItemSpan(this.maxLineSpan) },
+                        content = {
+                            Surface(Modifier.fillMaxWidth()) {
+                                BaseOutlineTextField(
+                                    value = valueSearch.value,
+                                    onValueChange = { newText ->
+                                        valueSearch.value =
+                                            newText
+                                                .trim()
+                                                .filter { it.isLetterOrDigit() }
+                                    },
+                                    label = AppString.SEARCH_DUA.getString(),
+                                    trailingClick = { valueSearch.value = "" },
+                                    keyboardOptions =
+                                        KeyboardOptions.Default.copy(
+                                            keyboardType = KeyboardType.Text,
+                                            imeAction = ImeAction.Done,
                                         ),
-                                    )
-                                },
+                                )
+                            }
+                        },
+                    )
+
+                    items(categoriesFiltered) { category ->
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            onClick = {
+                                onDuaListClick(
+                                    DuaListNav(
+                                        duaCategoryTitle = category.title,
+                                        duaCategoryTag = category.tag,
+                                    ),
+                                )
+                            },
+                        ) {
+                            Box(
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .height(120.dp)
+                                        .padding(16.dp),
                             ) {
-                                Box(
-                                    modifier =
-                                        Modifier
-                                            .fillMaxWidth()
-                                            .height(120.dp)
-                                            .padding(16.dp),
-                                ) {
-                                    BaseTitle(
-                                        modifier = Modifier.align(Alignment.BottomStart),
-                                        text = category.title,
-                                    )
-                                }
+                                BaseTitle(
+                                    modifier = Modifier.align(Alignment.BottomStart),
+                                    text = category.title,
+                                )
                             }
                         }
                     }
                 }
+            }
 
-                is DuaSunnahScreenModel.State.Error -> {
-                    ErrorState(display.message)
-                }
+            is DuaSunnahScreenModel.State.Error -> {
+                ErrorState(display.message)
             }
         }
+    }
 
-        LaunchedEffect(currentCompositeKeyHash) {
-            trackScreen(DuaSunnahScreen::class)
-            screenModel.getDoaCategories()
-        }
+    LaunchedEffect(currentCompositeKeyHash) {
+        trackScreen("DuaSunnahScreen")
+        vm.getDoaCategories()
     }
 }

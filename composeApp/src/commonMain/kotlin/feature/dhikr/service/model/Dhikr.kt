@@ -1,5 +1,6 @@
 package feature.dhikr.service.model
 
+import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -12,4 +13,5 @@ data class Dhikr(
     val hadith: String,
     val maxCount: Int,
     val count: Int = 0,
+    val latestUpdate: LocalDate,
 )

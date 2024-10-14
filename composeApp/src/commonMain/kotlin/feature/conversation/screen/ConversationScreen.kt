@@ -26,10 +26,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.koin.koinScreenModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import core.ui.component.ArabicCard
 import core.ui.component.BaseOutlineTextField
 import core.ui.component.BaseTopAppBar
@@ -39,107 +35,109 @@ import core.util.searchBy
 import feature.other.service.mapper.getString
 import feature.other.service.model.AppString
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
+import org.koin.compose.viewmodel.koinViewModel
 
-class ConversationScreen : Screen {
-    @OptIn(ExperimentalFoundationApi::class)
-    @Composable
-    override fun Content() {
-        val screenModel = koinScreenModel<ConversationScreenModel>()
-        val state by screenModel.state.collectAsState()
-        val navigator = LocalNavigator.currentOrThrow
-        val scope = rememberCoroutineScope()
-        val snackbarHostState = remember { SnackbarHostState() }
-        val clipboardManager = LocalClipboardManager.current
+@Serializable
+object ConversationNav
 
-        Scaffold(
-            topBar = {
-                BaseTopAppBar(
-                    title = AppString.CONVERSATION_TITLE.getString(),
-                    onLeftButtonClick = {
-                        navigator.pop()
-                    },
-                )
-            },
-            snackbarHost = {
-                SnackbarHost(hostState = snackbarHostState)
-            },
-        ) { paddingValues ->
-            Column(
-                modifier = Modifier.padding(paddingValues).fillMaxSize(),
-            ) {
-                when (val display = state) {
-                    is ConversationScreenModel.State.Loading -> {
-                        LoadingState()
-                    }
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun ConversationScreen(onBackClick: () -> Unit) {
+    val vm = koinViewModel<ConversationScreenModel>()
+    val state by vm.state.collectAsState()
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val clipboardManager = LocalClipboardManager.current
 
-                    is ConversationScreenModel.State.Content -> {
-                        val valueSearch = remember { mutableStateOf("") }
-                        val query = valueSearch.value.lowercase()
-                        val conversationFiltered =
-                            display.conversations.filter {
-                                it.textTransliteration.searchBy(query) ||
-                                    it.textTranslation.searchBy(query)
-                            }
+    Scaffold(
+        topBar = {
+            BaseTopAppBar(
+                title = AppString.CONVERSATION_TITLE.getString(),
+                onLeftButtonClick = {
+                    onBackClick()
+                },
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier.padding(paddingValues).fillMaxSize(),
+        ) {
+            when (val display = state) {
+                is ConversationScreenModel.State.Loading -> {
+                    LoadingState()
+                }
 
-                        LazyColumn {
-                            stickyHeader {
-                                Surface(Modifier.fillMaxWidth()) {
-                                    BaseOutlineTextField(
-                                        modifier = Modifier.padding(16.dp),
-                                        value = valueSearch.value,
-                                        onValueChange = { newText ->
-                                            valueSearch.value =
-                                                newText
-                                                    .trim()
-                                                    .filter { it.isLetterOrDigit() }
-                                        },
-                                        label = AppString.SEARCH_CONVERSATION.getString(),
-                                        trailingClick = { valueSearch.value = "" },
-                                        keyboardOptions =
-                                            KeyboardOptions.Default.copy(
-                                                keyboardType = KeyboardType.Text,
-                                                imeAction = ImeAction.Done,
-                                            ),
-                                    )
-                                }
-                            }
+                is ConversationScreenModel.State.Content -> {
+                    val valueSearch = remember { mutableStateOf("") }
+                    val query = valueSearch.value.lowercase()
+                    val conversationFiltered =
+                        display.conversations.filter {
+                            it.textTransliteration.searchBy(query) ||
+                                it.textTranslation.searchBy(query)
+                        }
 
-                            items(conversationFiltered) { conversation ->
-                                ArabicCard(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    textArabic = conversation.textArabic,
-                                    textTransliteration = conversation.textTransliteration,
-                                    textTranslation = conversation.textTranslation,
-                                    onClick = {
-                                        clipboardManager.setText(
-                                            AnnotatedString(
-                                                """
-                                                ${conversation.textArabic}
-                                                ${conversation.textTransliteration}
-                                                ${conversation.textTranslation}
-                                                """.trimIndent(),
-                                            ),
-                                        )
-                                        scope.launch {
-                                            snackbarHostState.showSnackbar(
-                                                AppString.COPIED.getString(),
-                                            )
-                                        }
+                    LazyColumn {
+                        stickyHeader {
+                            Surface(Modifier.fillMaxWidth()) {
+                                BaseOutlineTextField(
+                                    modifier = Modifier.padding(16.dp),
+                                    value = valueSearch.value,
+                                    onValueChange = { newText ->
+                                        valueSearch.value =
+                                            newText
+                                                .trim()
+                                                .filter { it.isLetterOrDigit() }
                                     },
+                                    label = AppString.SEARCH_CONVERSATION.getString(),
+                                    trailingClick = { valueSearch.value = "" },
+                                    keyboardOptions =
+                                        KeyboardOptions.Default.copy(
+                                            keyboardType = KeyboardType.Text,
+                                            imeAction = ImeAction.Done,
+                                        ),
                                 )
                             }
                         }
-                    }
 
-                    is ConversationScreenModel.State.Error -> {
-                        ErrorState(display.message)
+                        items(conversationFiltered) { conversation ->
+                            ArabicCard(
+                                modifier = Modifier.fillMaxWidth(),
+                                textArabic = conversation.textArabic,
+                                textTransliteration = conversation.textTransliteration,
+                                textTranslation = conversation.textTranslation,
+                                onClick = {
+                                    clipboardManager.setText(
+                                        AnnotatedString(
+                                            """
+                                            ${conversation.textArabic}
+                                            ${conversation.textTransliteration}
+                                            ${conversation.textTranslation}
+                                            """.trimIndent(),
+                                        ),
+                                    )
+                                    scope.launch {
+                                        snackbarHostState.showSnackbar(
+                                            AppString.COPIED.getString(),
+                                        )
+                                    }
+                                },
+                            )
+                        }
                     }
+                }
+
+                is ConversationScreenModel.State.Error -> {
+                    ErrorState(display.message)
                 }
             }
         }
+    }
 
-        LaunchedEffect(currentCompositeKeyHash) {
-            screenModel.getConversation()
-        }
+    LaunchedEffect(currentCompositeKeyHash) {
+        vm.getConversation()
     }
 }

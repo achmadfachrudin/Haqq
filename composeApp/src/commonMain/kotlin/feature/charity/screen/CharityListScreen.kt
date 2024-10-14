@@ -18,10 +18,6 @@ import androidx.compose.runtime.currentCompositeKeyHash
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.koin.koinScreenModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import core.ui.component.BaseButton
 import core.ui.component.BaseImage
 import core.ui.component.BaseTopAppBar
@@ -31,73 +27,77 @@ import core.ui.theme.ExtraColor
 import core.ui.theme.ExtraColor.PINK
 import feature.other.service.mapper.getString
 import feature.other.service.model.AppString
+import kotlinx.serialization.Serializable
+import org.koin.compose.viewmodel.koinViewModel
 
-class CharityListScreen : Screen {
-    @Composable
-    override fun Content() {
-        val screenModel = koinScreenModel<CharityListScreenModel>()
-        val state by screenModel.state.collectAsState()
-        val navigator = LocalNavigator.currentOrThrow
+@Serializable
+object CharityListNav
 
-        Scaffold(
-            topBar = {
-                BaseTopAppBar(
-                    title = AppString.CHARITY_TITLE.getString(),
-                    onLeftButtonClick = {
-                        navigator.pop()
-                    },
-                )
-            },
-        ) { paddingValues ->
-            Column(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
-                when (val display = state) {
-                    is CharityListScreenModel.State.Loading -> {
-                        LoadingState()
-                    }
+@Composable
+fun CharityListScreen(
+    onBackClick: () -> Unit,
+    onCharityDetailClick: (CharityDetailNav) -> Unit,
+    onSupportClick: () -> Unit,
+) {
+    val vm = koinViewModel<CharityListScreenModel>()
+    val state by vm.state.collectAsState()
 
-                    is CharityListScreenModel.State.Content -> {
-                        LazyVerticalGrid(
-                            columns = GridCells.Fixed(3),
-                            modifier = Modifier.weight(1f),
-                        ) {
-                            items(display.images) {
-                                BaseImage(
-                                    modifier =
-                                        Modifier
-                                            .aspectRatio(1f)
-                                            .clickable {
-                                                navigator.push(
-                                                    CharityDetailScreen(it),
-                                                )
-                                            },
-                                    imageUrl = it,
-                                )
-                            }
+    Scaffold(
+        topBar = {
+            BaseTopAppBar(
+                title = AppString.CHARITY_TITLE.getString(),
+                onLeftButtonClick = {
+                    onBackClick()
+                },
+            )
+        },
+    ) { paddingValues ->
+        Column(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
+            when (val display = state) {
+                is CharityListScreenModel.State.Loading -> {
+                    LoadingState()
+                }
+
+                is CharityListScreenModel.State.Content -> {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(3),
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        items(display.images) {
+                            BaseImage(
+                                modifier =
+                                    Modifier
+                                        .aspectRatio(1f)
+                                        .clickable {
+                                            onCharityDetailClick(CharityDetailNav(it))
+                                        },
+                                imageUrl = it,
+                            )
                         }
-
-                        BaseButton(
-                            modifier = Modifier.padding(16.dp).fillMaxWidth(),
-                            colors =
-                                ButtonDefaults.buttonColors(
-                                    containerColor = ExtraColor.getPairColor(PINK).first,
-                                    contentColor = ExtraColor.getPairColor(PINK).second,
-                                ),
-                            text = AppString.SUPPORT_TITLE.getString(),
-                            onClick = {
-                                openSupport(navigator)
-                            },
-                        )
                     }
 
-                    is CharityListScreenModel.State.Error -> {
-                        ErrorState(display.message)
-                    }
+                    BaseButton(
+                        modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor = ExtraColor.getPairColor(PINK).first,
+                                contentColor = ExtraColor.getPairColor(PINK).second,
+                            ),
+                        text = AppString.SUPPORT_TITLE.getString(),
+                        onClick = {
+                            onSupportClick()
+                        },
+                    )
+                }
+
+                is CharityListScreenModel.State.Error -> {
+                    ErrorState(display.message)
                 }
             }
         }
+    }
 
-        LaunchedEffect(currentCompositeKeyHash) {
-            screenModel.getCharity()
-        }
+    LaunchedEffect(currentCompositeKeyHash) {
+        vm.getCharity()
     }
 }

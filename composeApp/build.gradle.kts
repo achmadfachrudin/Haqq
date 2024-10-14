@@ -56,13 +56,15 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
+            implementation(libs.jetbrains.lifecycle.runtime.compose)
+            implementation(libs.jetbrains.lifecycle.viewmodel.compose)
+            implementation(libs.jetbrains.navigation.compose)
 
             // UI
             api(libs.compose.webview)
             implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.core)
-            implementation(libs.voyager.navigator)
-            implementation(libs.voyager.koin)
+            implementation(libs.koin.kmp.compose)
             implementation(libs.coil.core)
             implementation(libs.coil.network)
             implementation(libs.coil.compose)
@@ -107,8 +109,8 @@ android {
             libs.versions.android.targetSdk
                 .get()
                 .toInt()
-        versionName = "1.0.12"
-        versionCode = 12
+        versionName = "1.0.13"
+        versionCode = 13
     }
     packaging {
         resources {

@@ -1,19 +1,25 @@
 package feature.prayertime.screen
 
-import cafe.adriel.voyager.core.model.StateScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import core.data.DataState
 import feature.prayertime.service.PrayerRepository
 import feature.prayertime.service.mapper.DEFAULT_HIJRI_MONTH
 import feature.prayertime.service.mapper.DEFAULT_HIJRI_YEAR
 import feature.prayertime.service.model.HaqqCalendar
 import feature.prayertime.service.model.PrayerTime
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class PrayerTimeScreenModel(
+class PrayerTimeDailyScreenModel(
     private val prayerRepository: PrayerRepository,
-) : StateScreenModel<PrayerTimeScreenModel.State>(State()) {
+) : ViewModel() {
+    val mutableState = MutableStateFlow(State())
+    val state: StateFlow<State> = mutableState.asStateFlow()
+
     data class State(
         var monthSelected: Int = DEFAULT_HIJRI_MONTH,
         var yearSelected: Int = DEFAULT_HIJRI_YEAR,
@@ -45,15 +51,8 @@ class PrayerTimeScreenModel(
         ) : CalendarState()
     }
 
-    fun onViewed() {
-        screenModelScope.launch {
-            getPrayerTime()
-            getHijriMonth()
-        }
-    }
-
     fun getPrayerTime() {
-        screenModelScope.launch {
+        viewModelScope.launch {
             prayerRepository.fetchTodayTomorrowPrayerTimes().collectLatest {
                 val monthSelected =
                     it.data
@@ -71,12 +70,14 @@ class PrayerTimeScreenModel(
                         monthSelected = monthSelected,
                         yearSelected = yearSelected,
                     )
+
+                getHijriMonth()
             }
         }
     }
 
-    fun getHijriMonth() {
-        screenModelScope.launch {
+    private fun getHijriMonth() {
+        viewModelScope.launch {
             prayerRepository
                 .fetchHijriMonthTimes(
                     state.value.monthSelected,

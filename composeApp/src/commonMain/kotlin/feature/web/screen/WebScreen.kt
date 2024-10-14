@@ -14,9 +14,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.multiplatform.webview.web.LoadingState
 import com.multiplatform.webview.web.WebView
 import com.multiplatform.webview.web.rememberWebViewState
@@ -27,74 +24,92 @@ import getPlatform
 import haqq.composeapp.generated.resources.Res
 import haqq.composeapp.generated.resources.copy
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
+import openExternalLink
 import org.jetbrains.compose.resources.painterResource
 
-class WebScreen(
+@Serializable
+data class WebNav(
     val url: String,
     val title: String = "",
-) : Screen {
-    @Composable
-    override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
-        val scope = rememberCoroutineScope()
-        val snackbarHostState = remember { SnackbarHostState() }
-        val clipboardManager = LocalClipboardManager.current
+    val openExternalIOS: Boolean = false,
+    val openExternalAndroid: Boolean = false,
+)
 
-        Scaffold(
-            topBar = {
-                BaseTopAppBar(
-                    title = title.ifEmpty { AppString.APP_NAME.getString() },
-                    showRightButton = true,
-                    rightButtonImage = painterResource(Res.drawable.copy),
-                    onLeftButtonClick = { navigator.pop() },
-                    onRightButtonClick = {
-                        clipboardManager.setText(AnnotatedString(url))
-                        scope.launch {
-                            snackbarHostState.showSnackbar(
-                                AppString.URL_COPIED.getString(),
-                            )
-                        }
-                    },
-                )
-            },
-            snackbarHost = {
-                SnackbarHost(hostState = snackbarHostState)
-            },
-        ) { paddingValues ->
-            Column(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
-                val state = rememberWebViewState(url)
+@Composable
+fun WebScreen(
+    webNav: WebNav,
+    onBackClick: () -> Unit,
+) {
+    when {
+        getPlatform().isIOS && webNav.openExternalIOS -> {
+            openExternalLink(webNav.url)
+            onBackClick()
+        }
+        getPlatform().isAndroid && webNav.openExternalAndroid -> {
+            openExternalLink(webNav.url)
+            onBackClick()
+        }
+    }
 
-                state.webSettings.apply {
-                    isJavaScriptEnabled = true
-                    customUserAgentString = getPlatform().name
-                    androidWebSettings.domStorageEnabled = true
-                    androidWebSettings.safeBrowsingEnabled = true
-                }
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val clipboardManager = LocalClipboardManager.current
 
-                when (val loadingState = state.loadingState) {
-                    LoadingState.Finished -> {
-                    }
-
-                    LoadingState.Initializing -> {
-                        LinearProgressIndicator(
-                            progress = { 20f },
-                            modifier = Modifier.fillMaxWidth(),
+    Scaffold(
+        topBar = {
+            BaseTopAppBar(
+                title = webNav.title.ifEmpty { AppString.APP_NAME.getString() },
+                showRightButton = true,
+                rightButtonImage = painterResource(Res.drawable.copy),
+                onLeftButtonClick = { onBackClick() },
+                onRightButtonClick = {
+                    clipboardManager.setText(AnnotatedString(webNav.url))
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            AppString.URL_COPIED.getString(),
                         )
                     }
+                },
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
+    ) { paddingValues ->
+        Column(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
+            val state = rememberWebViewState(webNav.url)
 
-                    is LoadingState.Loading -> {
-                        LinearProgressIndicator(
-                            progress = { loadingState.progress },
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                    }
-                }
-
-                WebView(
-                    modifier = Modifier.fillMaxSize(),
-                    state = state,
-                )
+            state.webSettings.apply {
+                isJavaScriptEnabled = true
+                customUserAgentString = getPlatform().name
+                androidWebSettings.domStorageEnabled = true
+                androidWebSettings.safeBrowsingEnabled = true
             }
+
+            when (val loadingState = state.loadingState) {
+                LoadingState.Finished -> {
+                }
+
+                LoadingState.Initializing -> {
+                    LinearProgressIndicator(
+                        progress = { 20f },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+
+                is LoadingState.Loading -> {
+                    LinearProgressIndicator(
+                        progress = { loadingState.progress },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+            }
+
+            WebView(
+                modifier = Modifier.fillMaxSize(),
+                state = state,
+            )
         }
     }
 }

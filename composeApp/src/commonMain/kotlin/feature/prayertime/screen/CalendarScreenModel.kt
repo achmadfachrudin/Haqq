@@ -1,7 +1,7 @@
 package feature.prayertime.screen
 
-import cafe.adriel.voyager.core.model.StateScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import core.data.DataState
 import feature.prayertime.service.PrayerRepository
 import feature.prayertime.service.mapper.DEFAULT_HIJRI_DATE
@@ -9,6 +9,9 @@ import feature.prayertime.service.mapper.DEFAULT_HIJRI_MONTH
 import feature.prayertime.service.mapper.DEFAULT_HIJRI_YEAR
 import feature.prayertime.service.model.HaqqCalendar
 import feature.prayertime.service.model.HijriMonth
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -18,7 +21,10 @@ import kotlinx.datetime.todayIn
 
 class CalendarScreenModel(
     private val prayerRepository: PrayerRepository,
-) : StateScreenModel<CalendarScreenModel.State>(State()) {
+) : ViewModel() {
+    val mutableState = MutableStateFlow(State())
+    val state: StateFlow<State> = mutableState.asStateFlow()
+
     data class State(
         var dateSelected: Int = DEFAULT_HIJRI_DATE,
         var monthSelected: Int = DEFAULT_HIJRI_MONTH,
@@ -42,7 +48,7 @@ class CalendarScreenModel(
     }
 
     fun onPrevClicked() {
-        screenModelScope.launch {
+        viewModelScope.launch {
             val yearSelected = state.value.yearSelected
             val monthSelected = state.value.monthSelected
 
@@ -64,7 +70,7 @@ class CalendarScreenModel(
     }
 
     fun onNextClicked() {
-        screenModelScope.launch {
+        viewModelScope.launch {
             val yearSelected = state.value.yearSelected
             val monthSelected = state.value.monthSelected
 
@@ -86,7 +92,7 @@ class CalendarScreenModel(
     }
 
     fun getHijriDate() {
-        screenModelScope.launch {
+        viewModelScope.launch {
             val today: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
 
             prayerRepository
@@ -119,8 +125,8 @@ class CalendarScreenModel(
         }
     }
 
-    fun getHijriMonth() {
-        screenModelScope.launch {
+    private fun getHijriMonth() {
+        viewModelScope.launch {
             prayerRepository
                 .fetchHijriMonthTimes(
                     state.value.monthSelected,

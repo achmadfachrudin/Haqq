@@ -1,7 +1,7 @@
 package feature.quran.screen
 
-import cafe.adriel.voyager.core.model.StateScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import core.data.DataState
 import core.util.orZero
 import feature.other.service.mapper.getString
@@ -16,12 +16,18 @@ import feature.quran.service.model.QuranConstant.MAX_PAGE
 import feature.quran.service.model.ReadMode
 import feature.quran.service.model.Verse
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class VerseListScreenModel(
     private val repository: QuranRepository,
-) : StateScreenModel<VerseListScreenModel.State>(State()) {
+) : ViewModel() {
+    val mutableState = MutableStateFlow(State())
+    val state: StateFlow<State> = mutableState.asStateFlow()
+
     data class State(
         val title: String = "",
         val chapter: Chapter? = null,
@@ -57,29 +63,8 @@ class VerseListScreenModel(
         REPORT,
     }
 
-    fun getAllChapter() {
-        screenModelScope.launch {
-            repository.fetchChapters().collectLatest {
-                when (it) {
-                    is DataState.Error,
-                    DataState.Loading,
-                    -> {
-                    }
-
-                    is DataState.Success -> {
-                        mutableState.value =
-                            state.value.copy(
-                                readMode = ReadMode.BY_CHAPTER,
-                                chapters = it.data,
-                            )
-                    }
-                }
-            }
-        }
-    }
-
     fun getVersesByChapter(chapterId: Int) {
-        screenModelScope.launch {
+        viewModelScope.launch {
             repository.fetchVersesByChapter(chapterId).collectLatest {
                 val verseState =
                     when (it) {
@@ -107,7 +92,7 @@ class VerseListScreenModel(
     }
 
     fun getVersesByJuz(juzId: Int) {
-        screenModelScope.launch {
+        viewModelScope.launch {
             repository.fetchVersesByJuz(juzId).collectLatest {
                 val verseState =
                     when (it) {
@@ -128,7 +113,7 @@ class VerseListScreenModel(
     }
 
     fun getVersesByPage(pageId: Int) {
-        screenModelScope.launch {
+        viewModelScope.launch {
             repository.fetchVersesByPage(pageId).collectLatest {
                 val verseState =
                     when (it) {
@@ -149,7 +134,7 @@ class VerseListScreenModel(
     }
 
     fun resetVerses(id: Int) {
-        screenModelScope.launch {
+        viewModelScope.launch {
             when (state.value.readMode) {
                 ReadMode.BY_CHAPTER -> {
                     repository.resetVersesByChapter(id)
@@ -173,19 +158,19 @@ class VerseListScreenModel(
     }
 
     fun updateLastRead(verseId: Int) {
-        screenModelScope.launch {
+        viewModelScope.launch {
             repository.updateLastRead(verseId)
         }
     }
 
     fun addOrRemoveFavorite(verse: Verse) {
-        screenModelScope.launch {
+        viewModelScope.launch {
             repository.addOrRemoveVerseFavorites(verse)
         }
     }
 
     fun updateQuery(newQuery: String) {
-        screenModelScope.launch {
+        viewModelScope.launch {
             mutableState.value =
                 state.value.copy(
                     query = newQuery,
@@ -212,24 +197,6 @@ class VerseListScreenModel(
     }
 
     fun getChapter(chapterNumber: Int): Chapter = repository.getChapterById(chapterNumber)
-
-    fun getVersesCount(): Int =
-        when (state.value.readMode) {
-            ReadMode.BY_CHAPTER ->
-                state.value.chapter
-                    ?.versesCount
-                    .orZero()
-
-            ReadMode.BY_JUZ ->
-                state.value.juz
-                    ?.versesCount
-                    .orZero()
-
-            ReadMode.BY_PAGE ->
-                state.value.page
-                    ?.versesCount
-                    .orZero()
-        }
 
     fun goToNext() =
         when (state.value.readMode) {

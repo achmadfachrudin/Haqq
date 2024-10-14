@@ -32,10 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.koin.koinScreenModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import core.ui.component.BaseDialog
 import core.ui.component.BaseDivider
 import core.ui.component.BaseText
@@ -56,259 +52,264 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
+import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.viewmodel.koinViewModel
 
-class NoteDetailScreen(
-    private val noteId: Int = 0,
-) : Screen {
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    override fun Content() {
-        val screenModel = koinScreenModel<NoteDetailScreenModel>()
-        val state by screenModel.state.collectAsState()
-        val navigator = LocalNavigator.currentOrThrow
+@Serializable
+data class NoteDetailNav(
+    val noteId: Int = 0,
+)
 
-        val datePickerState = rememberDatePickerState()
-        val valueTitle = remember { mutableStateOf("") }
-        val valueKitab = remember { mutableStateOf("") }
-        val valueSpeaker = remember { mutableStateOf("") }
-        val valueDate = remember { mutableStateOf("") }
-        val valueText = remember { mutableStateOf("") }
-        val openDateDialog = remember { mutableStateOf(false) }
-        val openConfirmationDialog = remember { mutableStateOf(false) }
-        val initialUpdate = remember { mutableStateOf(true) }
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun NoteDetailScreen(
+    nav: NoteDetailNav,
+    onBackClick: () -> Unit,
+) {
+    val vm = koinViewModel<NoteDetailScreenModel>()
+    val state by vm.state.collectAsState()
 
-        Scaffold(
-            topBar = {
-                BaseTopAppBar(
-                    title = AppString.STUDY_NOTE_NEW.getString(),
-                    showOptionalButton = !state.note?.id.isNullOrZero(),
-                    showRightButton = true,
-                    optionalButtonImage = painterResource(Res.drawable.trash_2),
-                    rightButtonImage = painterResource(Res.drawable.save),
-                    onLeftButtonClick = {
-                        navigator.pop()
-                    },
-                    onOptionalButtonClick = {
-                        openConfirmationDialog.value = true
-                    },
-                    onRightButtonClick = {
-                        state.note?.let { note ->
-                            val created =
-                                if (note.createdAt > 0) {
-                                    note.createdAt
-                                } else {
-                                    Clock.System.now().toEpochMilliseconds()
-                                }
+    val datePickerState = rememberDatePickerState()
+    val valueTitle = remember { mutableStateOf("") }
+    val valueKitab = remember { mutableStateOf("") }
+    val valueSpeaker = remember { mutableStateOf("") }
+    val valueDate = remember { mutableStateOf("") }
+    val valueText = remember { mutableStateOf("") }
+    val openDateDialog = remember { mutableStateOf(false) }
+    val openConfirmationDialog = remember { mutableStateOf(false) }
+    val initialUpdate = remember { mutableStateOf(true) }
 
-                            screenModel.saveNote(
-                                Note(
-                                    id = note.id,
-                                    title = valueTitle.value,
-                                    text = valueText.value,
-                                    kitab = valueKitab.value,
-                                    speaker = valueSpeaker.value,
-                                    createdAt = created,
-                                    studyAt =
-                                        formatDateTimeToLong(
-                                            valueDate.value,
-                                            DateUtil.dd_MM_yyyy,
-                                        ),
-                                ),
-                            )
-                            navigator.pop()
-                        }
-                    },
-                )
-            },
-        ) { paddingValues ->
-            Column(
-                modifier =
-                    Modifier
-                        .padding(paddingValues)
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                        .padding(vertical = 16.dp),
-            ) {
-                state.note?.let { note ->
-                    if (initialUpdate.value) {
-                        initialUpdate.value = false
-
-                        val studyAtLocalDateTime =
-                            if (note.studyAt > 0) {
-                                note.studyAt.toLocalDateTime()
+    Scaffold(
+        topBar = {
+            BaseTopAppBar(
+                title = AppString.STUDY_NOTE_NEW.getString(),
+                showOptionalButton = !state.note?.id.isNullOrZero(),
+                showRightButton = true,
+                optionalButtonImage = painterResource(Res.drawable.trash_2),
+                rightButtonImage = painterResource(Res.drawable.save),
+                onLeftButtonClick = {
+                    onBackClick()
+                },
+                onOptionalButtonClick = {
+                    openConfirmationDialog.value = true
+                },
+                onRightButtonClick = {
+                    state.note?.let { note ->
+                        val created =
+                            if (note.createdAt > 0) {
+                                note.createdAt
                             } else {
-                                Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+                                Clock.System.now().toEpochMilliseconds()
                             }
-                        val studyAtMillis =
-                            studyAtLocalDateTime
-                                .toInstant(TimeZone.currentSystemDefault())
-                                .toEpochMilliseconds()
-                        val studyAtString =
-                            formatDateTimeToString(studyAtLocalDateTime, DateUtil.dd_MM_yyyy)
 
-                        datePickerState.selectedDateMillis = studyAtMillis
-                        datePickerState.displayedMonthMillis = studyAtMillis
-                        valueTitle.value = note.title
-                        valueKitab.value = note.kitab
-                        valueSpeaker.value = note.speaker
-                        valueDate.value = studyAtString
-                        valueText.value = note.text
+                        vm.saveNote(
+                            Note(
+                                id = note.id,
+                                title = valueTitle.value,
+                                text = valueText.value,
+                                kitab = valueKitab.value,
+                                speaker = valueSpeaker.value,
+                                createdAt = created,
+                                studyAt =
+                                    formatDateTimeToLong(
+                                        valueDate.value,
+                                        DateUtil.dd_MM_yyyy,
+                                    ),
+                            ),
+                        )
+                        onBackClick()
                     }
+                },
+            )
+        },
+    ) { paddingValues ->
+        Column(
+            modifier =
+                Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(vertical = 16.dp),
+        ) {
+            state.note?.let { note ->
+                if (initialUpdate.value) {
+                    initialUpdate.value = false
 
-                    val textFieldColor =
-                        TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            disabledContainerColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent,
-                        )
+                    val studyAtLocalDateTime =
+                        if (note.studyAt > 0) {
+                            note.studyAt.toLocalDateTime()
+                        } else {
+                            Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+                        }
+                    val studyAtMillis =
+                        studyAtLocalDateTime
+                            .toInstant(TimeZone.currentSystemDefault())
+                            .toEpochMilliseconds()
+                    val studyAtString =
+                        formatDateTimeToString(studyAtLocalDateTime, DateUtil.dd_MM_yyyy)
 
-                    TextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = valueTitle.value,
-                        onValueChange = { newText ->
-                            valueTitle.value = newText.take(40)
-                        },
-                        label = { BaseText(AppString.NOTE_TITLE.getString()) },
-                        keyboardOptions =
-                            KeyboardOptions.Default.copy(
-                                imeAction = ImeAction.Next,
-                            ),
-                        maxLines = 2,
-                        colors = textFieldColor,
-                    )
-
-                    BaseDivider()
-
-                    TextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = valueKitab.value,
-                        onValueChange = { newText ->
-                            valueKitab.value = newText.take(40)
-                        },
-                        label = { BaseText(AppString.NOTE_KITAB.getString()) },
-                        keyboardOptions =
-                            KeyboardOptions.Default.copy(
-                                imeAction = ImeAction.Next,
-                            ),
-                        maxLines = 2,
-                        colors = textFieldColor,
-                    )
-
-                    BaseDivider()
-
-                    TextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = valueSpeaker.value,
-                        onValueChange = { newText ->
-                            valueSpeaker.value = newText.take(40)
-                        },
-                        label = { BaseText(AppString.NOTE_SPEAKER.getString()) },
-                        keyboardOptions =
-                            KeyboardOptions.Default.copy(
-                                imeAction = ImeAction.Next,
-                            ),
-                        maxLines = 2,
-                        colors = textFieldColor,
-                    )
-
-                    BaseDivider()
-
-                    Column(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .height(TextFieldDefaults.MinHeight)
-                                .clickable { openDateDialog.value = true }
-                                .padding(TextFieldDefaults.contentPaddingWithLabel()),
-                    ) {
-                        BaseText(
-                            text = AppString.NOTE_DATE.getString(),
-                            style = getHaqqTypography().bodySmall,
-                            color = MaterialTheme.colorScheme.primary,
-                        )
-                        BaseText(
-                            text = valueDate.value,
-                        )
-                    }
-
-                    BaseDivider()
-
-                    TextField(
-                        modifier = Modifier.fillMaxWidth().imePadding(),
-                        value = valueText.value,
-                        onValueChange = { newText ->
-                            valueText.value = newText
-                        },
-                        label = { BaseText(AppString.NOTE_TEXT.getString()) },
-                        singleLine = false,
-                        colors = textFieldColor,
-                    )
+                    datePickerState.selectedDateMillis = studyAtMillis
+                    datePickerState.displayedMonthMillis = studyAtMillis
+                    valueTitle.value = note.title
+                    valueKitab.value = note.kitab
+                    valueSpeaker.value = note.speaker
+                    valueDate.value = studyAtString
+                    valueText.value = note.text
                 }
-            }
 
-            if (openDateDialog.value) {
-                val confirmEnabled =
-                    remember {
-                        derivedStateOf { datePickerState.selectedDateMillis != null }
-                    }
+                val textFieldColor =
+                    TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        disabledContainerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
+                    )
 
-                DatePickerDialog(
-                    onDismissRequest = {
-                        openDateDialog.value = false
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = valueTitle.value,
+                    onValueChange = { newText ->
+                        valueTitle.value = newText.take(40)
                     },
-                    confirmButton = {
-                        TextButton(
-                            onClick = {
-                                openDateDialog.value = false
-                                datePickerState.selectedDateMillis?.let {
-                                    valueDate.value =
-                                        formatDateTimeToString(
-                                            it.toLocalDateTime(),
-                                            DateUtil.dd_MM_yyyy,
-                                        )
-                                }
-                            },
-                            enabled = confirmEnabled.value,
-                        ) {
-                            Text(AppString.OK.getString())
-                        }
+                    label = { BaseText(AppString.NOTE_TITLE.getString()) },
+                    keyboardOptions =
+                        KeyboardOptions.Default.copy(
+                            imeAction = ImeAction.Next,
+                        ),
+                    maxLines = 2,
+                    colors = textFieldColor,
+                )
+
+                BaseDivider()
+
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = valueKitab.value,
+                    onValueChange = { newText ->
+                        valueKitab.value = newText.take(40)
                     },
-                    dismissButton = {
-                        TextButton(
-                            onClick = {
-                                openDateDialog.value = false
-                            },
-                        ) {
-                            Text(AppString.CANCEL.getString())
-                        }
+                    label = { BaseText(AppString.NOTE_KITAB.getString()) },
+                    keyboardOptions =
+                        KeyboardOptions.Default.copy(
+                            imeAction = ImeAction.Next,
+                        ),
+                    maxLines = 2,
+                    colors = textFieldColor,
+                )
+
+                BaseDivider()
+
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = valueSpeaker.value,
+                    onValueChange = { newText ->
+                        valueSpeaker.value = newText.take(40)
                     },
+                    label = { BaseText(AppString.NOTE_SPEAKER.getString()) },
+                    keyboardOptions =
+                        KeyboardOptions.Default.copy(
+                            imeAction = ImeAction.Next,
+                        ),
+                    maxLines = 2,
+                    colors = textFieldColor,
+                )
+
+                BaseDivider()
+
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(TextFieldDefaults.MinHeight)
+                            .clickable { openDateDialog.value = true }
+                            .padding(TextFieldDefaults.contentPaddingWithLabel()),
                 ) {
-                    DatePicker(state = datePickerState)
+                    BaseText(
+                        text = AppString.NOTE_DATE.getString(),
+                        style = getHaqqTypography().bodySmall,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                    BaseText(
+                        text = valueDate.value,
+                    )
                 }
-            }
 
-            if (openConfirmationDialog.value) {
-                BaseDialog(
-                    onDismissRequest = { openConfirmationDialog.value = false },
-                    title = AppString.DELETE_CONFIRMATION_TITLE.getString(),
-                    desc = AppString.DELETE_CONFIRMATION_DESC.getString(),
-                    negativeButtonText = AppString.CANCEL.getString(),
-                    positiveButtonText = AppString.DELETE.getString(),
-                    onPositiveClicked = {
-                        screenModel.deleteNote(noteId)
-                        openConfirmationDialog.value = false
-                        navigator.pop()
+                BaseDivider()
+
+                TextField(
+                    modifier = Modifier.fillMaxWidth().imePadding(),
+                    value = valueText.value,
+                    onValueChange = { newText ->
+                        valueText.value = newText
                     },
+                    label = { BaseText(AppString.NOTE_TEXT.getString()) },
+                    singleLine = false,
+                    colors = textFieldColor,
                 )
             }
         }
 
-        LaunchedEffect(currentCompositeKeyHash) {
-            screenModel.getNoteDetail(noteId = noteId)
+        if (openDateDialog.value) {
+            val confirmEnabled =
+                remember {
+                    derivedStateOf { datePickerState.selectedDateMillis != null }
+                }
+
+            DatePickerDialog(
+                onDismissRequest = {
+                    openDateDialog.value = false
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            openDateDialog.value = false
+                            datePickerState.selectedDateMillis?.let {
+                                valueDate.value =
+                                    formatDateTimeToString(
+                                        it.toLocalDateTime(),
+                                        DateUtil.dd_MM_yyyy,
+                                    )
+                            }
+                        },
+                        enabled = confirmEnabled.value,
+                    ) {
+                        Text(AppString.OK.getString())
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            openDateDialog.value = false
+                        },
+                    ) {
+                        Text(AppString.CANCEL.getString())
+                    }
+                },
+            ) {
+                DatePicker(state = datePickerState)
+            }
         }
+
+        if (openConfirmationDialog.value) {
+            BaseDialog(
+                onDismissRequest = { openConfirmationDialog.value = false },
+                title = AppString.DELETE_CONFIRMATION_TITLE.getString(),
+                desc = AppString.DELETE_CONFIRMATION_DESC.getString(),
+                negativeButtonText = AppString.CANCEL.getString(),
+                positiveButtonText = AppString.DELETE.getString(),
+                onPositiveClicked = {
+                    vm.deleteNote(nav.noteId)
+                    openConfirmationDialog.value = false
+                    onBackClick()
+                },
+            )
+        }
+    }
+
+    LaunchedEffect(currentCompositeKeyHash) {
+        vm.getNoteDetail(noteId = nav.noteId)
     }
 }

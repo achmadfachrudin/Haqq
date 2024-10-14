@@ -1,18 +1,24 @@
 package feature.dhikr.screen
 
-import cafe.adriel.voyager.core.model.StateScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import core.data.DataState
 import feature.dhikr.service.DhikrRepository
 import feature.dhikr.service.model.Dhikr
 import feature.dhikr.service.model.DhikrType
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class DhikrListScreenModel(
     private val repository: DhikrRepository,
-) : StateScreenModel<DhikrListScreenModel.State>(State.Loading) {
+) : ViewModel() {
+    val mutableState = MutableStateFlow<State>(State.Loading)
+    val state: StateFlow<State> = mutableState.asStateFlow()
+
     private lateinit var dhikrType: DhikrType
     var currentPage = 0
 
@@ -29,7 +35,7 @@ class DhikrListScreenModel(
     }
 
     fun getDzikir(type: DhikrType) {
-        screenModelScope.launch {
+        viewModelScope.launch {
             dhikrType = type
 
             repository.fetchDhikr(dhikrType).collectLatest {
@@ -44,7 +50,7 @@ class DhikrListScreenModel(
     }
 
     fun dhikrClicked(dhikr: Dhikr) {
-        screenModelScope.launch {
+        viewModelScope.launch {
             if (dhikr.count + 1 <= dhikr.maxCount) {
                 val newDhikr = dhikr.copy(count = dhikr.count + 1)
 
@@ -62,7 +68,7 @@ class DhikrListScreenModel(
     }
 
     fun resetDhikrCount() {
-        screenModelScope.launch {
+        viewModelScope.launch {
             repository.resetDhikrCount(dhikrType)
 
             delay(200)

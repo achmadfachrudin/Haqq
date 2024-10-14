@@ -10,7 +10,6 @@ data class TranslationsEntity(
 ) {
     @Serializable
     data class TranslationEntity(
-//        @SerialName("id") val id: Int?,
         @SerialName("resource_id") val resourceId: Int?,
         @SerialName("text") val text: String?,
     )

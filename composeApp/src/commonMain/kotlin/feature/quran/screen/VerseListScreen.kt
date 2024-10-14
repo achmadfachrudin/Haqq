@@ -25,6 +25,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.currentCompositeKeyHash
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,10 +39,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.koin.koinScreenModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import core.ui.component.ArabicCard
 import core.ui.component.BaseButton
 import core.ui.component.BaseDialog
@@ -73,252 +70,368 @@ import haqq.composeapp.generated.resources.search
 import haqq.composeapp.generated.resources.share
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.viewmodel.koinViewModel
 
-class VerseListScreen(
-    val readMode: ReadMode,
+@Serializable
+data class VerseListNav(
+    val readModeName: String,
     val id: Int, // chapterId / juzId / pageId
     val verseNumber: Int = 1,
-) : Screen {
-    @Composable
-    override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
-        val screenModel = koinScreenModel<VerseListScreenModel>()
-        val state by screenModel.state.collectAsState()
+)
 
-        val openSearchDialog = remember { mutableStateOf(false) }
-        val openResetDialog = remember { mutableStateOf(false) }
-        val openJumpVerseDialog = remember { mutableStateOf(false) }
-        val openVerseDialog = remember { mutableStateOf(false) }
-        val openMail = remember { mutableStateOf(false) }
-        val openShare = remember { mutableStateOf(false) }
-        val shareContent = remember { mutableStateOf("") }
-        val selectedVerse = remember { mutableStateOf<Verse?>(null) }
-        val clipboardManager = LocalClipboardManager.current
+@Composable
+fun VerseListScreen(
+    nav: VerseListNav,
+    onBackClick: () -> Unit,
+) {
+    val vm = koinViewModel<VerseListScreenModel>()
+    val state by vm.state.collectAsState()
 
-        val listState = rememberLazyListState()
-        val scope = rememberCoroutineScope()
+    val openSearchDialog = remember { mutableStateOf(false) }
+    val openResetDialog = remember { mutableStateOf(false) }
+    val openJumpVerseDialog = remember { mutableStateOf(false) }
+    val openVerseDialog = remember { mutableStateOf(false) }
+    val openMail = remember { mutableStateOf(false) }
+    val openShare = remember { mutableStateOf(false) }
+    val shareContent = remember { mutableStateOf("") }
+    val selectedVerse = remember { mutableStateOf<Verse?>(null) }
+    val clipboardManager = LocalClipboardManager.current
 
-        val title =
-            when (readMode) {
-                ReadMode.BY_CHAPTER -> state.chapter?.nameSimple.orEmpty()
-                ReadMode.BY_JUZ -> "Juz ${state.juz?.juzNumber}"
-                ReadMode.BY_PAGE -> "${AppString.PAGE.getString()} ${state.page?.pageNumber}"
-            }
+    val listState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
 
-        Scaffold(
-            topBar = {
-                BaseTopAppBar(
-                    title = title,
-                    showOptionalButton = state.verseState is VerseListScreenModel.VerseState.Content && state.readMode != ReadMode.BY_PAGE,
-                    showRightButton = state.verseState is VerseListScreenModel.VerseState.Content && state.readMode != ReadMode.BY_PAGE,
-                    optionalButtonImage = painterResource(Res.drawable.corner_left_down),
-                    rightButtonImage = painterResource(Res.drawable.search),
-                    onLeftButtonClick = {
-                        navigator.pop()
-                    },
-                    onOptionalButtonClick = { openJumpVerseDialog.value = true },
-                    onRightButtonClick = { openSearchDialog.value = true },
-                )
-            },
-        ) { paddingValues ->
-            Column(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
-                when (val display = state.verseState) {
-                    is VerseListScreenModel.VerseState.Loading -> {
-                        LoadingState()
-                    }
+    val readMode = enumValueOf<ReadMode>(nav.readModeName)
 
-                    is VerseListScreenModel.VerseState.Content -> {
-                        when (state.readMode) {
-                            ReadMode.BY_CHAPTER,
-                            ReadMode.BY_JUZ,
-                            -> {
-                                if (state.query.isNotEmpty()) {
-                                    Column(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalAlignment = Alignment.CenterHorizontally,
-                                    ) {
-                                        BaseText(
-                                            color = MaterialTheme.colorScheme.tertiary,
-                                            text = "${AppString.SEARCH_CONTENT.getString()} ${state.query}",
-                                        )
+    val title =
+        when (readMode) {
+            ReadMode.BY_CHAPTER -> state.chapter?.nameSimple.orEmpty()
+            ReadMode.BY_JUZ -> "Juz ${state.juz?.juzNumber}"
+            ReadMode.BY_PAGE -> "${AppString.PAGE.getString()} ${state.page?.pageNumber}"
+        }
 
-                                        TextButton(onClick = {
-                                            screenModel.updateQuery("")
-                                        }) {
-                                            Text(AppString.CLEAR_SEARCH.getString())
-                                        }
-                                    }
-                                }
+    Scaffold(
+        topBar = {
+            BaseTopAppBar(
+                title = title,
+                showOptionalButton = state.verseState is VerseListScreenModel.VerseState.Content && state.readMode != ReadMode.BY_PAGE,
+                showRightButton = state.verseState is VerseListScreenModel.VerseState.Content && state.readMode != ReadMode.BY_PAGE,
+                optionalButtonImage = painterResource(Res.drawable.corner_left_down),
+                rightButtonImage = painterResource(Res.drawable.search),
+                onLeftButtonClick = {
+                    onBackClick()
+                },
+                onOptionalButtonClick = { openJumpVerseDialog.value = true },
+                onRightButtonClick = { openSearchDialog.value = true },
+            )
+        },
+    ) { paddingValues ->
+        Column(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
+            when (val display = state.verseState) {
+                is VerseListScreenModel.VerseState.Loading -> {
+                    LoadingState()
+                }
 
-                                val query = state.query
-                                val versesFiltered =
-                                    display.verses.filter {
-                                        it.textTranslation.searchBy(query) ||
-                                            it.textTransliteration.searchBy(query) ||
-                                            it.verseNumber.toString().searchBy(query)
-                                    }
+                is VerseListScreenModel.VerseState.Content -> {
+                    when (state.readMode) {
+                        ReadMode.BY_CHAPTER,
+                        ReadMode.BY_JUZ,
+                        -> {
+                            if (state.query.isNotEmpty()) {
+                                Column(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                ) {
+                                    BaseText(
+                                        color = MaterialTheme.colorScheme.tertiary,
+                                        text = "${AppString.SEARCH_CONTENT.getString()} ${state.query}",
+                                    )
 
-                                LazyColumn(state = listState) {
-                                    itemsIndexed(versesFiltered) { index, verse ->
-                                        if (verse.verseNumber == 1 && state.query.isEmpty()) {
-                                            HeaderChapter(screenModel.getChapter(verse.chapterId))
-                                        }
-
-                                        ArabicCard(
-                                            title = "${verse.chapterId}:${verse.verseNumber}",
-                                            textArabic = verse.textArabic,
-                                            textTransliteration = verse.textTransliteration,
-                                            textTranslation = verse.textTranslation,
-                                            verseNumber = verse.verseNumber,
-                                            sajdahNumber = verse.sajdahNumber,
-                                            onClick = {
-                                                selectedVerse.value = verse
-                                                openVerseDialog.value = true
-                                            },
-                                        )
-                                    }
-
-                                    // next button
-                                    if (query.isEmpty() &&
-                                        (state.nextChapter != null || state.nextJuz != null)
-                                    ) {
-                                        item {
-                                            BaseButton(
-                                                modifier = Modifier.padding(16.dp).fillMaxWidth(),
-                                                text = screenModel.getNextText(),
-                                                onClick = {
-                                                    scope.launch {
-                                                        screenModel.goToNext()
-                                                        listState.scrollToItem(index = 0)
-                                                    }
-                                                },
-                                            )
-                                        }
+                                    TextButton(onClick = {
+                                        vm.updateQuery("")
+                                    }) {
+                                        Text(AppString.CLEAR_SEARCH.getString())
                                     }
                                 }
                             }
 
-                            ReadMode.BY_PAGE -> {
-                                Column(
-                                    modifier =
-                                        Modifier
-                                            .fillMaxSize()
-                                            .verticalScroll(rememberScrollState()),
-                                ) {
-                                    val subList = screenModel.splitVersesById(display.verses)
-                                    subList.forEach {
-                                        if (it.first().verseNumber == 1) {
-                                            HeaderChapter(screenModel.getChapter(it.first().chapterId))
-                                        }
+                            val query = state.query
+                            val versesFiltered =
+                                display.verses.filter {
+                                    it.textTranslation.searchBy(query) ||
+                                        it.textTransliteration.searchBy(query) ||
+                                        it.verseNumber.toString().searchBy(query)
+                                }
 
-                                        BasePageQuran(
-                                            it,
-                                            modifier = Modifier.padding(horizontal = 16.dp),
-                                        )
-
-                                        BaseSpacerVertical()
+                            LazyColumn(state = listState) {
+                                itemsIndexed(versesFiltered) { index, verse ->
+                                    if (verse.verseNumber == 1 && state.query.isEmpty()) {
+                                        HeaderChapter(vm.getChapter(verse.chapterId))
                                     }
 
-                                    BaseButton(
-                                        modifier = Modifier.padding(16.dp).fillMaxWidth(),
-                                        text = screenModel.getNextText(),
+                                    ArabicCard(
+                                        title = "${verse.chapterId}:${verse.verseNumber}",
+                                        textArabic = verse.textArabic,
+                                        textTransliteration = verse.textTransliteration,
+                                        textTranslation = verse.textTranslation,
+                                        verseNumber = verse.verseNumber,
+                                        sajdahNumber = verse.sajdahNumber,
                                         onClick = {
-                                            scope.launch {
-                                                screenModel.goToNext()
-                                            }
+                                            selectedVerse.value = verse
+                                            openVerseDialog.value = true
                                         },
                                     )
                                 }
+
+                                // next button
+                                if (query.isEmpty() &&
+                                    (state.nextChapter != null || state.nextJuz != null)
+                                ) {
+                                    item {
+                                        BaseButton(
+                                            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                                            text = vm.getNextText(),
+                                            onClick = {
+                                                scope.launch {
+                                                    vm.goToNext()
+                                                    listState.scrollToItem(index = 0)
+                                                }
+                                            },
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
+                        ReadMode.BY_PAGE -> {
+                            Column(
+                                modifier =
+                                    Modifier
+                                        .fillMaxSize()
+                                        .verticalScroll(rememberScrollState()),
+                            ) {
+                                val subList = vm.splitVersesById(display.verses)
+                                subList.forEach {
+                                    if (it.first().verseNumber == 1) {
+                                        HeaderChapter(vm.getChapter(it.first().chapterId))
+                                    }
+
+                                    BasePageQuran(
+                                        it,
+                                        modifier = Modifier.padding(horizontal = 16.dp),
+                                    )
+
+                                    BaseSpacerVertical()
+                                }
+
+                                BaseButton(
+                                    modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                                    text = vm.getNextText(),
+                                    onClick = {
+                                        scope.launch {
+                                            vm.goToNext()
+                                        }
+                                    },
+                                )
                             }
                         }
                     }
+                }
 
-                    is VerseListScreenModel.VerseState.Error -> {
-                        ErrorState(
-                            message = display.message,
-                            showRetryButton = state.readMode != ReadMode.BY_CHAPTER,
-                            onRetryButtonClick = { openResetDialog.value = true },
-                        )
-                    }
+                is VerseListScreenModel.VerseState.Error -> {
+                    ErrorState(
+                        message = display.message,
+                        showRetryButton = state.readMode != ReadMode.BY_CHAPTER,
+                        onRetryButtonClick = { openResetDialog.value = true },
+                    )
                 }
             }
         }
+    }
 
-        if (openSearchDialog.value) {
-            SearchDialog(
-                currentQuery = state.query,
-                onDismissRequest = { openSearchDialog.value = false },
-                onSearchClicked = {
-                    openSearchDialog.value = false
-                    screenModel.updateQuery(it)
-                },
-            )
-        }
+    if (openSearchDialog.value) {
+        SearchDialog(
+            currentQuery = state.query,
+            onDismissRequest = { openSearchDialog.value = false },
+            onSearchClicked = {
+                openSearchDialog.value = false
+                vm.updateQuery(it)
+            },
+        )
+    }
 
-        if (openResetDialog.value) {
+    if (openResetDialog.value) {
+        BaseDialog(
+            onDismissRequest = { openResetDialog.value = false },
+            title = AppString.RESET_CONFIRMATION_TITLE.getString(),
+            desc = AppString.RESET_VERSE_NOTE.getString(),
+            negativeButtonText = AppString.CANCEL.getString(),
+            positiveButtonText = AppString.RESET.getString(),
+            onPositiveClicked = {
+                vm.resetVerses(nav.id)
+                openResetDialog.value = false
+            },
+        )
+    }
+
+    if (openJumpVerseDialog.value) {
+        BaseDialog(
+            onDismissRequest = { openJumpVerseDialog.value = false },
+            title = AppString.JUMP_TO_AYAH.getString(),
+            shouldCustomContent = true,
+            content = {
+                val valueSearch = remember { mutableStateOf("") }
+
+                BaseOutlineTextField(
+                    value = valueSearch.value,
+                    onValueChange = { newText ->
+                        valueSearch.value =
+                            newText
+                                .trim()
+                                .filter { it.isDigit() }
+                    },
+                    label = AppString.SEARCH_AYAH.getString(),
+                    trailingClick = { valueSearch.value = "" },
+                    keyboardOptions =
+                        KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Search,
+                        ),
+                )
+
+                BaseSpacerVertical()
+
+                if (state.verseState is VerseListScreenModel.VerseState.Content) {
+                    val versesFiltered =
+                        (state.verseState as VerseListScreenModel.VerseState.Content).verses.filter {
+                            it.verseNumber.toString().searchBy(valueSearch.value)
+                        }
+
+                    LazyColumn(modifier = Modifier.height(300.dp)) {
+                        items(versesFiltered) { verse ->
+                            BaseItemCard(
+                                title = "${verse.chapterId}:${verse.verseNumber}",
+                                onClick = {
+                                    vm.updateQuery("")
+                                    scope.launch {
+                                        delay(500)
+                                        listState.scrollToItem(
+                                            index =
+                                                vm.getIndex(
+                                                    verse,
+                                                ),
+                                        )
+                                    }
+                                    openJumpVerseDialog.value = false
+                                },
+                            )
+                        }
+                    }
+                }
+            },
+        )
+    }
+
+    if (openVerseDialog.value) {
+        selectedVerse.value?.let { verse ->
+            val chapterNameSimple = vm.getChapter(verse.chapterId).nameSimple
+            val isFavorite = vm.isFavorite(verse.id)
+
+            val shareTitle =
+                AppString.SURAH_AYAH
+                    .getString()
+                    .replace("%1", chapterNameSimple)
+                    .replace("%2", "${verse.verseNumber}")
+
+            val shareMessage =
+                """
+                ${verse.textArabic}
+                ${verse.textTransliteration}
+                ${verse.textTranslation}
+                ($shareTitle)
+                """.trimIndent()
+
             BaseDialog(
-                onDismissRequest = { openResetDialog.value = false },
-                title = AppString.RESET_CONFIRMATION_TITLE.getString(),
-                desc = AppString.RESET_VERSE_NOTE.getString(),
-                negativeButtonText = AppString.CANCEL.getString(),
-                positiveButtonText = AppString.RESET.getString(),
-                onPositiveClicked = {
-                    screenModel.resetVerses(id)
-                    openResetDialog.value = false
-                },
-            )
-        }
-
-        if (openJumpVerseDialog.value) {
-            BaseDialog(
-                onDismissRequest = { openJumpVerseDialog.value = false },
-                title = AppString.JUMP_TO_AYAH.getString(),
+                onDismissRequest = { openVerseDialog.value = false },
+                title = shareTitle,
                 shouldCustomContent = true,
                 content = {
-                    val valueSearch = remember { mutableStateOf("") }
-
-                    BaseOutlineTextField(
-                        value = valueSearch.value,
-                        onValueChange = { newText ->
-                            valueSearch.value =
-                                newText
-                                    .trim()
-                                    .filter { it.isDigit() }
-                        },
-                        label = AppString.SEARCH_AYAH.getString(),
-                        trailingClick = { valueSearch.value = "" },
-                        keyboardOptions =
-                            KeyboardOptions.Default.copy(
-                                keyboardType = KeyboardType.Number,
-                                imeAction = ImeAction.Search,
-                            ),
-                    )
-
-                    BaseSpacerVertical()
-
-                    if (state.verseState is VerseListScreenModel.VerseState.Content) {
-                        val versesFiltered =
-                            (state.verseState as VerseListScreenModel.VerseState.Content).verses.filter {
-                                it.verseNumber.toString().searchBy(valueSearch.value)
+                    VerseListScreenModel.VerseAction.entries.forEach { verseAction ->
+                        when (verseAction) {
+                            VerseListScreenModel.VerseAction.SAVE_AS_LASTREAD -> {
+                                BaseItemCard(
+                                    title = AppString.SAVE_AS_LASTREAD.getString(),
+                                    iconResource = Res.drawable.bookmark,
+                                    onClick = {
+                                        vm.updateLastRead(verse.id)
+                                        openVerseDialog.value = false
+                                        selectedVerse.value = null
+                                    },
+                                )
                             }
 
-                        LazyColumn(modifier = Modifier.height(300.dp)) {
-                            items(versesFiltered) { verse ->
+                            VerseListScreenModel.VerseAction.ADD_OR_REMOVE_FAVORITE -> {
+                                val itemTitle =
+                                    if (isFavorite) {
+                                        AppString.REMOVE_FROM_FAVORITE.getString()
+                                    } else {
+                                        AppString.ADD_TO_FAVORITE.getString()
+                                    }
+
+                                val itemIcon =
+                                    if (isFavorite) {
+                                        Res.drawable.heart_filled
+                                    } else {
+                                        Res.drawable.heart
+                                    }
+
                                 BaseItemCard(
-                                    title = "${verse.chapterId}:${verse.verseNumber}",
+                                    title = itemTitle,
+                                    iconResource = itemIcon,
+                                    iconTint = MaterialTheme.colorScheme.error,
                                     onClick = {
-                                        screenModel.updateQuery("")
-                                        scope.launch {
-                                            delay(500)
-                                            listState.scrollToItem(
-                                                index =
-                                                    screenModel.getIndex(
-                                                        verse,
-                                                    ),
-                                            )
-                                        }
-                                        openJumpVerseDialog.value = false
+                                        vm.addOrRemoveFavorite(verse)
+                                        openVerseDialog.value = false
+                                        selectedVerse.value = null
+                                    },
+                                )
+                            }
+
+                            VerseListScreenModel.VerseAction.SHARE -> {
+                                BaseItemCard(
+                                    title = AppString.SHARE.getString(),
+                                    iconResource = Res.drawable.share,
+                                    onClick = {
+                                        shareContent.value = shareMessage
+                                        openShare.value = true
+                                        openVerseDialog.value = false
+                                        selectedVerse.value = null
+                                    },
+                                )
+                            }
+
+                            VerseListScreenModel.VerseAction.COPY -> {
+                                BaseItemCard(
+                                    title = AppString.COPY.getString(),
+                                    iconResource = Res.drawable.copy,
+                                    onClick = {
+                                        clipboardManager.setText(AnnotatedString(shareMessage))
+                                        openVerseDialog.value = false
+                                        selectedVerse.value = null
+                                    },
+                                )
+                            }
+
+                            VerseListScreenModel.VerseAction.REPORT -> {
+                                BaseItemCard(
+                                    title = AppString.REPORT.getString(),
+                                    iconResource = Res.drawable.alert_circle,
+                                    onClick = {
+                                        shareContent.value = shareMessage
+                                        openMail.value = true
+                                        openVerseDialog.value = false
+                                        selectedVerse.value = null
                                     },
                                 )
                             }
@@ -327,228 +440,119 @@ class VerseListScreen(
                 },
             )
         }
+    }
 
-        if (openVerseDialog.value) {
-            selectedVerse.value?.let { verse ->
-                val chapterNameSimple = screenModel.getChapter(verse.chapterId).nameSimple
-                val isFavorite = screenModel.isFavorite(verse.id)
+    if (openMail.value) {
+        SendMail(subject = "[Verse-Report]", message = shareContent.value)
+        openMail.value = false
+        openVerseDialog.value = false
+    }
 
-                val shareTitle =
-                    AppString.SURAH_AYAH
-                        .getString()
-                        .replace("%1", chapterNameSimple)
-                        .replace("%2", "${verse.verseNumber}")
+    if (openShare.value) {
+        ShareText(shareContent.value)
+        openShare.value = false
+        openVerseDialog.value = false
+    }
 
-                val shareMessage =
-                    """
-                    ${verse.textArabic}
-                    ${verse.textTransliteration}
-                    ${verse.textTranslation}
-                    ($shareTitle)
-                    """.trimIndent()
+    LaunchedEffect(currentCompositeKeyHash) {
+        scope.launch {
+            when (readMode) {
+                ReadMode.BY_CHAPTER -> {
+                    vm.getVersesByChapter(nav.id)
+                    listState.scrollToItem(index = nav.verseNumber - 1)
+                }
 
-                BaseDialog(
-                    onDismissRequest = { openVerseDialog.value = false },
-                    title = shareTitle,
-                    shouldCustomContent = true,
-                    content = {
-                        VerseListScreenModel.VerseAction.entries.forEach { verseAction ->
-                            when (verseAction) {
-                                VerseListScreenModel.VerseAction.SAVE_AS_LASTREAD -> {
-                                    BaseItemCard(
-                                        title = AppString.SAVE_AS_LASTREAD.getString(),
-                                        iconResource = Res.drawable.bookmark,
-                                        onClick = {
-                                            screenModel.updateLastRead(verse.id)
-                                            openVerseDialog.value = false
-                                            selectedVerse.value = null
-                                        },
-                                    )
-                                }
+                ReadMode.BY_JUZ -> {
+                    vm.getVersesByJuz(nav.id)
+                    listState.scrollToItem(index = 0)
+                }
 
-                                VerseListScreenModel.VerseAction.ADD_OR_REMOVE_FAVORITE -> {
-                                    val itemTitle =
-                                        if (isFavorite) {
-                                            AppString.REMOVE_FROM_FAVORITE.getString()
-                                        } else {
-                                            AppString.ADD_TO_FAVORITE.getString()
-                                        }
-
-                                    val itemIcon =
-                                        if (isFavorite) {
-                                            Res.drawable.heart_filled
-                                        } else {
-                                            Res.drawable.heart
-                                        }
-
-                                    BaseItemCard(
-                                        title = itemTitle,
-                                        iconResource = itemIcon,
-                                        iconTint = MaterialTheme.colorScheme.error,
-                                        onClick = {
-                                            screenModel.addOrRemoveFavorite(verse)
-                                            openVerseDialog.value = false
-                                            selectedVerse.value = null
-                                        },
-                                    )
-                                }
-
-                                VerseListScreenModel.VerseAction.SHARE -> {
-                                    BaseItemCard(
-                                        title = AppString.SHARE.getString(),
-                                        iconResource = Res.drawable.share,
-                                        onClick = {
-                                            shareContent.value = shareMessage
-                                            openShare.value = true
-                                            openVerseDialog.value = false
-                                            selectedVerse.value = null
-                                        },
-                                    )
-                                }
-
-                                VerseListScreenModel.VerseAction.COPY -> {
-                                    BaseItemCard(
-                                        title = AppString.COPY.getString(),
-                                        iconResource = Res.drawable.copy,
-                                        onClick = {
-                                            clipboardManager.setText(AnnotatedString(shareMessage))
-                                            openVerseDialog.value = false
-                                            selectedVerse.value = null
-                                        },
-                                    )
-                                }
-
-                                VerseListScreenModel.VerseAction.REPORT -> {
-                                    BaseItemCard(
-                                        title = AppString.REPORT.getString(),
-                                        iconResource = Res.drawable.alert_circle,
-                                        onClick = {
-                                            shareContent.value = shareMessage
-                                            openMail.value = true
-                                            openVerseDialog.value = false
-                                            selectedVerse.value = null
-                                        },
-                                    )
-                                }
-                            }
-                        }
-                    },
-                )
-            }
-        }
-
-        if (openMail.value) {
-            SendMail(subject = "[Verse-Report]", message = shareContent.value)
-            openMail.value = false
-            openVerseDialog.value = false
-        }
-
-        if (openShare.value) {
-            ShareText(shareContent.value)
-            openShare.value = false
-            openVerseDialog.value = false
-        }
-
-        LaunchedEffect(Unit) {
-            scope.launch {
-                when (readMode) {
-                    ReadMode.BY_CHAPTER -> {
-                        screenModel.getVersesByChapter(id)
-                        listState.scrollToItem(index = verseNumber - 1)
-                    }
-
-                    ReadMode.BY_JUZ -> {
-                        screenModel.getVersesByJuz(id)
-                        listState.scrollToItem(index = 0)
-                    }
-
-                    ReadMode.BY_PAGE -> {
-                        screenModel.getVersesByPage(id)
-                        listState.scrollToItem(index = 0)
-                    }
+                ReadMode.BY_PAGE -> {
+                    vm.getVersesByPage(nav.id)
+                    listState.scrollToItem(index = 0)
                 }
             }
         }
     }
+}
 
-    @Composable
-    private fun HeaderChapter(chapter: Chapter) {
-        Box {
-            Image(
+@Composable
+private fun HeaderChapter(chapter: Chapter) {
+    Box {
+        Image(
+            modifier = Modifier.fillMaxWidth(),
+            painter = painterResource(Res.drawable.bg_frame_surah),
+            contentDescription = "",
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
+        )
+        Column(modifier = Modifier.fillMaxSize().align(Alignment.Center)) {
+            BaseText(
                 modifier = Modifier.fillMaxWidth(),
-                painter = painterResource(Res.drawable.bg_frame_surah),
-                contentDescription = "",
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
+                text = chapter.nameArabic,
+                style = getHaqqTypography().titleLarge,
+                horizontalArrangement = Arrangement.Center,
             )
-            Column(modifier = Modifier.fillMaxSize().align(Alignment.Center)) {
-                BaseText(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = chapter.nameArabic,
-                    style = getHaqqTypography().titleLarge,
-                    horizontalArrangement = Arrangement.Center,
-                )
-                BaseText(
-                    modifier = Modifier.fillMaxWidth(),
-                    text =
-                        AppString.SURAH_DESC
-                            .getString()
-                            .replace("%1", chapter.nameTranslation)
-                            .replace(
-                                "%2",
-                                chapter.versesCount.toString(),
-                            ).replace("%3", chapter.revelationPlace),
-                    horizontalArrangement = Arrangement.Center,
-                )
-                if (chapter.bismillahPre) {
-                    BismillahCard()
-                }
+            BaseText(
+                modifier = Modifier.fillMaxWidth(),
+                text =
+                    AppString.SURAH_DESC
+                        .getString()
+                        .replace("%1", chapter.nameTranslation)
+                        .replace(
+                            "%2",
+                            chapter.versesCount.toString(),
+                        ).replace("%3", chapter.revelationPlace),
+                horizontalArrangement = Arrangement.Center,
+            )
+            if (chapter.bismillahPre) {
+                BismillahCard()
             }
         }
     }
+}
 
-    @Composable
-    private fun SearchDialog(
-        currentQuery: String,
-        onDismissRequest: () -> Unit,
-        onSearchClicked: (keyword: String) -> Unit,
-    ) {
-        val valueSearch = remember { mutableStateOf("") }
-        valueSearch.value = currentQuery
+@Composable
+private fun SearchDialog(
+    currentQuery: String,
+    onDismissRequest: () -> Unit,
+    onSearchClicked: (keyword: String) -> Unit,
+) {
+    val valueSearch = remember { mutableStateOf("") }
+    valueSearch.value = currentQuery
 
-        Dialog(onDismissRequest = { onDismissRequest() }) {
-            Card {
-                Column(modifier = Modifier.fillMaxWidth().padding(24.dp)) {
-                    BaseOutlineTextField(
-                        value = valueSearch.value,
-                        onValueChange = { newText ->
-                            valueSearch.value =
-                                newText
-                                    .trim()
-                                    .filter { it.isLetterOrDigit() }
-                        },
-                        label = AppString.SEARCH_AYAH.getString(),
-                        trailingClick = { valueSearch.value = "" },
-                        supportingText = {
-                            BaseText(
-                                text = AppString.SEARCH_AYAH_HINT.getString(),
-                                style = getHaqqTypography().labelSmall,
-                            )
-                        },
-                        keyboardOptions =
-                            KeyboardOptions.Default.copy(
-                                keyboardType = KeyboardType.Text,
-                                imeAction = ImeAction.Done,
-                            ),
-                    )
+    Dialog(onDismissRequest = { onDismissRequest() }) {
+        Card {
+            Column(modifier = Modifier.fillMaxWidth().padding(24.dp)) {
+                BaseOutlineTextField(
+                    value = valueSearch.value,
+                    onValueChange = { newText ->
+                        valueSearch.value =
+                            newText
+                                .trim()
+                                .filter { it.isLetterOrDigit() }
+                    },
+                    label = AppString.SEARCH_AYAH.getString(),
+                    trailingClick = { valueSearch.value = "" },
+                    supportingText = {
+                        BaseText(
+                            text = AppString.SEARCH_AYAH_HINT.getString(),
+                            style = getHaqqTypography().labelSmall,
+                        )
+                    },
+                    keyboardOptions =
+                        KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Done,
+                        ),
+                )
 
-                    BaseSpacerVertical()
+                BaseSpacerVertical()
 
-                    BaseButton(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = AppString.SEARCH.getString(),
-                        onClick = { onSearchClicked(valueSearch.value) },
-                    )
-                }
+                BaseButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = AppString.SEARCH.getString(),
+                    onClick = { onSearchClicked(valueSearch.value) },
+                )
             }
         }
     }
