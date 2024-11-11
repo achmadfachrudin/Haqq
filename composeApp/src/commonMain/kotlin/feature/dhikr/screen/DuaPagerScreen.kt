@@ -66,6 +66,7 @@ fun DuaPagerScreen(
     val openMail = remember { mutableStateOf(false) }
     val openShare = remember { mutableStateOf(false) }
     val shareContent = remember { mutableStateOf("") }
+    val isFirstLaunch = remember { mutableStateOf(true) }
 
     Scaffold(
         topBar = {
@@ -88,11 +89,13 @@ fun DuaPagerScreen(
                     val duas = display.duas
                     val tabTitles = duas.map { it.title }
                     val pagerState = rememberPagerState(pageCount = { tabTitles.size })
-                    val dua = duas[pagerState.currentPage]
-
-                    scope.launch {
-                        pagerState.scrollToPage(duas.indexOfFirst { it.id == nav.duaId })
+                    if (isFirstLaunch.value) {
+                        isFirstLaunch.value = false
+                        scope.launch {
+                            pagerState.scrollToPage(duas.indexOfFirst { it.id == nav.duaId })
+                        }
                     }
+                    val dua = duas[pagerState.currentPage]
 
                     BaseScrollableTabRow(
                         pagerState = pagerState,
