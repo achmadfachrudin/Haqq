@@ -4,14 +4,13 @@ import AnalyticsConstant.trackScreen
 import SendMail
 import ShareText
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -27,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.unit.dp
 import core.ui.component.ArabicCard
 import core.ui.component.BaseIconButton
 import core.ui.component.BaseScrollableTabRow
@@ -66,6 +64,7 @@ fun DuaPagerScreen(
     val openMail = remember { mutableStateOf(false) }
     val openShare = remember { mutableStateOf(false) }
     val shareContent = remember { mutableStateOf("") }
+    val isFirstLaunch = remember { mutableStateOf(true) }
 
     Scaffold(
         topBar = {
@@ -88,11 +87,13 @@ fun DuaPagerScreen(
                     val duas = display.duas
                     val tabTitles = duas.map { it.title }
                     val pagerState = rememberPagerState(pageCount = { tabTitles.size })
-                    val dua = duas[pagerState.currentPage]
-
-                    scope.launch {
-                        pagerState.scrollToPage(duas.indexOfFirst { it.id == nav.duaId })
+                    if (isFirstLaunch.value) {
+                        isFirstLaunch.value = false
+                        scope.launch {
+                            pagerState.scrollToPage(duas.indexOfFirst { it.id == nav.duaId })
+                        }
                     }
+                    val dua = duas[pagerState.currentPage]
 
                     BaseScrollableTabRow(
                         pagerState = pagerState,
@@ -122,55 +123,55 @@ fun DuaPagerScreen(
                         )
                     }
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    ) {
-                        val message =
-                            """
-                            ${nav.duaCategoryTitle}
+                    BottomAppBar(
+                        actions = {
+                            val message =
+                                """
+                                ${nav.duaCategoryTitle}
 
-                            ${dua.title}
-                            ${dua.textArabic}
-                            ${dua.textTransliteration}
-                            ${dua.textTranslation}
-                            ${dua.hadith}
-                            """.trimIndent()
+                                ${dua.title}
+                                ${dua.textArabic}
+                                ${dua.textTransliteration}
+                                ${dua.textTranslation}
+                                ${dua.hadith}
+                                """.trimIndent()
 
-                        BaseIconButton(
-                            iconResource = Res.drawable.alert_circle,
-                            onClick = {
-                                shareContent.value = message
-                                openMail.value = true
-                            },
-                            contentDescription = AppString.REPORT.getString(),
-                        )
+                            BaseIconButton(
+                                iconResource = Res.drawable.alert_circle,
+                                onClick = {
+                                    shareContent.value = message
+                                    openMail.value = true
+                                },
+                                contentDescription = AppString.REPORT.getString(),
+                            )
 
-                        BaseSpacerHorizontal()
+                            BaseSpacerHorizontal()
 
-                        BaseIconButton(
-                            iconResource = Res.drawable.copy,
-                            onClick = {
-                                clipboardManager.setText(AnnotatedString(message))
-                                scope.launch {
-                                    snackbarHostState.showSnackbar(
-                                        AppString.COPIED.getString(),
-                                    )
-                                }
-                            },
-                            contentDescription = AppString.COPIED.getString(),
-                        )
+                            BaseIconButton(
+                                iconResource = Res.drawable.copy,
+                                onClick = {
+                                    clipboardManager.setText(AnnotatedString(message))
+                                    scope.launch {
+                                        snackbarHostState.showSnackbar(
+                                            AppString.COPIED.getString(),
+                                        )
+                                    }
+                                },
+                                contentDescription = AppString.COPIED.getString(),
+                            )
 
-                        BaseSpacerHorizontal()
+                            BaseSpacerHorizontal()
 
-                        BaseIconButton(
-                            iconResource = Res.drawable.share,
-                            onClick = {
-                                shareContent.value = message
-                                openShare.value = true
-                            },
-                            contentDescription = AppString.SHARE.getString(),
-                        )
-                    }
+                            BaseIconButton(
+                                iconResource = Res.drawable.share,
+                                onClick = {
+                                    shareContent.value = message
+                                    openShare.value = true
+                                },
+                                contentDescription = AppString.SHARE.getString(),
+                            )
+                        },
+                    )
 
                     if (openMail.value) {
                         SendMail(subject = "[Dua-Report]", message = shareContent.value)
