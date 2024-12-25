@@ -1,16 +1,17 @@
 [versions]
 # Multiplatform Version
-compose-plugin = "1.7.1"
+compose-plugin = "1.7.3"
 kotlin = "2.0.20"
 jetbrains-lifecycle = "2.8.4"
-jetbrains-navigation = "2.8.0-alpha10"
-ktor = "3.0.2"
+jetbrains-navigation = "2.8.0-alpha11"
+jetbrains-material3-adaptive = "1.0.1"
+ktor = "3.0.3"
 ksoup = "0.4.0"
 coil = "3.0.4"
 kottie = "2.0.1"
 kotlinx-serialization = "1.7.3"
 kotlinx-datetime = "0.6.1"
-koin-bom = "4.0.1-Beta1"
+koin-bom = "4.0.1"
 realm = "3.0.0"
 webview = "1.9.40"
 napier = "2.7.1"
@@ -37,6 +38,7 @@ firebase-crashlytics-plugin = "3.0.2"
 jetbrains-lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "jetbrains-lifecycle" }
 jetbrains-lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "jetbrains-lifecycle" }
 jetbrains-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "jetbrains-navigation" }
+jetbrains-material3-adaptive-compose = { module = "org.jetbrains.compose.material3.adaptive:adaptive", version.ref = "jetbrains-material3-adaptive" }
 ktor-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }

@@ -9,7 +9,6 @@ struct ComposeView: UIViewControllerRepresentable {
     @StateObject private var locationViewModel = LocationViewModel()
 
     func makeUIViewController(context: Context) -> UIViewController {
-            let storage = SharedStorage.init(context: NSObject())
             let appRepository = KoinHelper().appRepository
 
             // Start updating location when the view appears
