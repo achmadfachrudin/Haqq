@@ -29,7 +29,7 @@ androidx-test-junit = "1.2.1"
 play-services-location = "21.3.0"
 firebase-bom = "33.9.0"
 junit = "4.13.2"
-agp = "8.5.2"
+agp = "8.8.1"
 google-services-plugin = "4.4.2"
 firebase-crashlytics-plugin = "3.0.3"
 
