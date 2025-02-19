@@ -8,13 +8,7 @@ class AndroidPlatform : Platform {
         get() = "Android ${Build.VERSION.RELEASE} SDK ${Build.VERSION.SDK_INT}"
 
     override val device: String
-        get() =
-            """
-            DEVICE ${Build.DEVICE}
-            MODEL ${Build.MODEL}
-            BRAND ${Build.BRAND}
-            USER ${Build.USER}
-            """.trimIndent()
+        get() = "${Build.MANUFACTURER} - ${Build.MODEL} - ${Build.BRAND}"
 
     override val appVersionName: String
         get() = "1.0.15"
@@ -33,8 +27,7 @@ class AndroidPlatform : Platform {
             """
             App version: $appVersionName
             OS version: $osVersion
-            Device:
-            $device
+            Device: $device
             """.trimIndent()
 }
 
