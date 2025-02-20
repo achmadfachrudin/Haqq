@@ -5,16 +5,16 @@ class IOSPlatform : Platform {
         get() = UIDevice.currentDevice.systemName
 
     override val osVersion: String
-        get() = UIDevice.currentDevice.systemName + " " + UIDevice.currentDevice.systemVersion
+        get() = "${UIDevice.currentDevice.systemName} ${UIDevice.currentDevice.systemVersion}"
 
     override val device: String
         get() = UIDevice.currentDevice.name
 
     override val appVersionName: String
-        get() = "1.0.13"
+        get() = "1.0.15"
 
     override val appVersionCode: Int
-        get() = 13
+        get() = 15
 
     override val isIOS: Boolean = true
 
@@ -25,8 +25,7 @@ class IOSPlatform : Platform {
             """
             App version: $appVersionName
             OS version: $osVersion
-            Device:
-            $device
+            Device: $device
             """.trimIndent()
 }
 

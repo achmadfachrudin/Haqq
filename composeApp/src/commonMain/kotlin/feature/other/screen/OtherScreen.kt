@@ -1,7 +1,6 @@
 package feature.other.screen
 
 import AppConstant
-import AppConstant.URL_SUPPORT
 import AppConstant.USERNAME_INSTAGRAM
 import KottieAnimation
 import SendMail
@@ -129,7 +128,7 @@ fun OtherScreen(
             ) {
                 onWebClick(
                     WebNav(
-                        url = URL_SUPPORT,
+                        url = AppConstant.getSupportUrl(languageId),
                         title = AppString.SUPPORT_TITLE.getString(),
                         openExternalIOS = true,
                     ),
@@ -153,7 +152,7 @@ fun OtherScreen(
             ) {
                 onWebClick(
                     WebNav(
-                        url = AppConstant.getPrivacyPoilicyUrl(languageId),
+                        url = AppConstant.getPrivacyPolicyUrl(languageId),
                         title = AppString.PRIVACY_POLICY.getString(),
                     ),
                 )

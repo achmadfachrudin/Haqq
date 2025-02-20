@@ -1,7 +1,6 @@
 package feature.home.screen
 
 import AppConstant
-import AppConstant.URL_SUPPORT
 import KottieAnimation
 import OpenPage
 import PlatformPage
@@ -94,6 +93,8 @@ fun MainScreen(
 ) {
     val vm = koinViewModel<MainScreenModel>()
     val state by vm.state.collectAsState()
+    val appRepository = KoinPlatform.getKoin().get<AppRepository>()
+    val languageId = appRepository.getSetting().language.id
 
     var animation by remember { mutableStateOf("") }
     val composition =
@@ -133,7 +134,7 @@ fun MainScreen(
                     onOptionalButtonClick = {
                         onWebClick(
                             WebNav(
-                                url = URL_SUPPORT,
+                                url = AppConstant.getSupportUrl(languageId),
                                 title = AppString.SUPPORT_TITLE.getString(),
                                 openExternalIOS = true,
                             ),
@@ -348,7 +349,7 @@ private fun DialogPrivacyPolicy() {
         },
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
-            val url = AppConstant.getPrivacyPoilicyUrl(appRepository.getSetting().language.id)
+            val url = AppConstant.getPrivacyPolicyUrl(appRepository.getSetting().language.id)
 
             val state = rememberWebViewState(url)
 
