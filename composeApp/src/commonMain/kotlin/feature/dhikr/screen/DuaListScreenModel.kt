@@ -1,5 +1,8 @@
 package feature.dhikr.screen
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import core.data.DataState
@@ -16,6 +19,7 @@ class DuaListScreenModel(
 ) : ViewModel() {
     val mutableState = MutableStateFlow<State>(State.Loading)
     val state: StateFlow<State> = mutableState.asStateFlow()
+    var shouldRefresh by mutableStateOf(true)
 
     sealed class State {
         object Loading : State()

@@ -1,5 +1,6 @@
 package feature.charity.screen
 
+import AnalyticsConstant.trackScreen
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -14,7 +15,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.currentCompositeKeyHash
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -25,10 +25,13 @@ import core.ui.component.ErrorState
 import core.ui.component.LoadingState
 import core.ui.theme.ExtraColor
 import core.ui.theme.ExtraColor.PINK
+import feature.other.service.AppRepository
 import feature.other.service.mapper.getString
 import feature.other.service.model.AppString
+import feature.web.screen.WebNav
 import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.mp.KoinPlatform
 
 @Serializable
 object CharityListNav
@@ -37,10 +40,12 @@ object CharityListNav
 fun CharityListScreen(
     onBackClick: () -> Unit,
     onCharityDetailClick: (CharityDetailNav) -> Unit,
-    onSupportClick: () -> Unit,
+    onSupportClick: (WebNav) -> Unit,
 ) {
     val vm = koinViewModel<CharityListScreenModel>()
     val state by vm.state.collectAsState()
+    val appRepository = KoinPlatform.getKoin().get<AppRepository>()
+    val languageId = appRepository.getSetting().language.id
 
     Scaffold(
         topBar = {
@@ -85,7 +90,13 @@ fun CharityListScreen(
                             ),
                         text = AppString.SUPPORT_TITLE.getString(),
                         onClick = {
-                            onSupportClick()
+                            onSupportClick(
+                                WebNav(
+                                    url = AppConstant.getSupportUrl(languageId),
+                                    title = AppString.SUPPORT_TITLE.getString(),
+                                    openExternalIOS = true,
+                                ),
+                            )
                         },
                     )
                 }
@@ -97,7 +108,8 @@ fun CharityListScreen(
         }
     }
 
-    LaunchedEffect(currentCompositeKeyHash) {
+    LaunchedEffect(Unit) {
+        trackScreen("CharityListScreen")
         vm.getCharity()
     }
 }

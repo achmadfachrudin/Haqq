@@ -79,14 +79,14 @@ private fun LabelCard() {
         )
         BaseText(
             modifier = Modifier.weight(1f),
-            text = AppString.PRAYER_FAJR.getString(),
+            text = AppString.PRAYER_IMSAK.getString(),
             horizontalArrangement = Arrangement.Center,
             color = contentColor,
             style = textStyle,
         )
         BaseText(
             modifier = Modifier.weight(1f),
-            text = AppString.PRAYER_IMSAK.getString(),
+            text = AppString.PRAYER_FAJR.getString(),
             horizontalArrangement = Arrangement.Center,
             color = contentColor,
             style = textStyle,

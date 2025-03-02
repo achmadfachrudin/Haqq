@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <resources>
-    <string name="hello">Hello English</string>
+    <string name="hello">Hello Default</string>
 </resources>

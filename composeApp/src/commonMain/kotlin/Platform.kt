@@ -1,3 +1,5 @@
+import org.koin.core.module.Module
+
 interface Platform {
     val name: String
     val osVersion: String
@@ -10,3 +12,5 @@ interface Platform {
 }
 
 expect fun getPlatform(): Platform
+
+expect val targetModule: Module

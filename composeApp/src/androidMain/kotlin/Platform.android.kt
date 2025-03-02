@@ -1,4 +1,6 @@
 import android.os.Build
+import org.koin.android.ext.koin.androidContext
+import org.koin.dsl.module
 
 class AndroidPlatform : Platform {
     override val name: String
@@ -32,3 +34,8 @@ class AndroidPlatform : Platform {
 }
 
 actual fun getPlatform(): Platform = AndroidPlatform()
+
+actual val targetModule =
+    module {
+        single<Localization> { Localization(context = androidContext()) }
+    }

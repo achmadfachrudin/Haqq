@@ -369,13 +369,14 @@ private fun getInlineText(verseNumber: Int): InlineTextContent {
 @Composable
 fun BaseTransliteration(
     text: String,
-    fontSize: Int,
     modifier: Modifier = Modifier,
 ) {
+    val setting: AppSetting = KoinPlatform.getKoin().get<AppRepository>().getSetting()
+
     BaseText(
         text = text,
         style = getHaqqTypography().bodyLarge,
-        fontSize = fontSize.sp,
+        fontSize = setting.transliterationFontSize.sp,
         modifier = modifier,
     )
 }
@@ -383,14 +384,15 @@ fun BaseTransliteration(
 @Composable
 fun BaseTranslation(
     text: String,
-    fontSize: Int,
     modifier: Modifier = Modifier,
 ) {
+    val setting: AppSetting = KoinPlatform.getKoin().get<AppRepository>().getSetting()
+
     BaseText(
         text = text,
         style = getHaqqTypography().bodyLarge,
         fontFamily = FontFamily(Font(Res.font.Rubik_Bold)),
-        fontSize = fontSize.sp,
+        fontSize = setting.translationFontSize.sp,
         modifier = modifier,
     )
 }

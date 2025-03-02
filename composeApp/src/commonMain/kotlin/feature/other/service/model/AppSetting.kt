@@ -20,11 +20,12 @@ data class AppSetting(
 ) {
     enum class Language(
         val display: String,
-        val id: String,
-        val translation: Int,
+        val id: String, // for service
+        val iso: String, // for localization
+        val translationId: Int, // for service
     ) {
-        ENGLISH("English", "en", 131), // Dr. Mustafa Khattab, The Clear Quran
-        INDONESIAN("Bahasa", "id", 134), //
+        ENGLISH("English", "en", "en", 131), // Dr. Mustafa Khattab, The Clear Quran
+        INDONESIAN("Bahasa", "id", "in", 134), // King Fahd Quran Complex
     }
 
     enum class Theme(

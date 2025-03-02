@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import core.ui.theme.getHaqqTypography
 import feature.other.service.AppRepository
 import feature.other.service.mapper.getString
 import feature.other.service.model.AppSetting
@@ -114,7 +115,6 @@ fun ArabicCard(
             BaseSpacerVertical(4)
             BaseTransliteration(
                 text = textTransliteration,
-                fontSize = setting.transliterationFontSize,
             )
         }
 
@@ -122,7 +122,6 @@ fun ArabicCard(
             BaseSpacerVertical(4)
             BaseTranslation(
                 text = textTranslation,
-                fontSize = setting.translationFontSize,
             )
         }
 
@@ -136,7 +135,9 @@ fun ArabicCard(
 @Composable
 fun BaseMessageCard(
     textArabic: String = "",
+    textTranslation: String = "",
     textMessage: String = "",
+    textCaption: String = "",
     verseNumber: Int = 0,
     buttonText: String = "",
     onItemClick: () -> Unit,
@@ -156,8 +157,19 @@ fun BaseMessageCard(
                 )
             }
 
+            if (textTranslation.isNotEmpty()) {
+                BaseTranslation(text = textTranslation)
+            }
+
             if (textMessage.isNotEmpty()) {
                 BaseText(text = textMessage)
+            }
+
+            if (textCaption.isNotEmpty()) {
+                BaseText(
+                    text = textCaption,
+                    style = getHaqqTypography().bodySmall,
+                )
             }
 
             if (buttonText.isNotEmpty()) {

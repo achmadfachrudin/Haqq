@@ -1,5 +1,6 @@
 package feature.other.screen
 
+import AnalyticsConstant.trackScreen
 import AppConstant
 import AppConstant.USERNAME_INSTAGRAM
 import KottieAnimation
@@ -15,7 +16,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.currentCompositeKeyHash
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -69,6 +69,9 @@ fun OtherScreen(
     val clipboardManager = LocalClipboardManager.current
 
     var animation by remember { mutableStateOf("") }
+    scope.launch {
+        animation = Res.readBytes("files/love.json").decodeToString()
+    }
     val composition =
         rememberKottieComposition(
             spec = KottieCompositionSpec.File(animation),
@@ -249,9 +252,8 @@ fun OtherScreen(
         }
     }
 
-    LaunchedEffect(currentCompositeKeyHash) {
-        animation = Res.readBytes("files/love.json").decodeToString()
-
+    LaunchedEffect(Unit) {
+        trackScreen("SettingScreen")
         vm.fetchSetting()
     }
 }

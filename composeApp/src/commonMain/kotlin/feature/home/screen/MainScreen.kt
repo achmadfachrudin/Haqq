@@ -16,10 +16,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.currentCompositeKeyHash
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,6 +56,7 @@ import getPlatform
 import haqq.composeapp.generated.resources.Res
 import haqq.composeapp.generated.resources.more_horizontal
 import haqq.composeapp.generated.resources.settings
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kottieComposition.KottieCompositionSpec
 import kottieComposition.animateKottieCompositionAsState
@@ -95,8 +96,12 @@ fun MainScreen(
     val state by vm.state.collectAsState()
     val appRepository = KoinPlatform.getKoin().get<AppRepository>()
     val languageId = appRepository.getSetting().language.id
+    val scope = rememberCoroutineScope()
 
     var animation by remember { mutableStateOf("") }
+    scope.launch {
+        animation = Res.readBytes("files/love.json").decodeToString()
+    }
     val composition =
         rememberKottieComposition(
             spec = KottieCompositionSpec.File(animation),
@@ -150,7 +155,7 @@ fun MainScreen(
                     when (state.pageState) {
                         MainScreenModel.PageState.HOME -> {
                             MainPageHome(
-                                state = state.mainState,
+                                state = state.homeState,
                                 onPrayerTimeClick = {
                                     onPrayerTimeDailyClick(PrayerTimeDailyNav)
                                 },
@@ -185,11 +190,10 @@ fun MainScreen(
                                     onDhikrListClick(DhikrPagerNav(dhikrTypeName = dhikrType.name))
                                 },
                                 onDuaQuranClick = {
-                                    val category = vm.getQuranicDuaCategory()
                                     onDuaListClick(
                                         DuaListNav(
-                                            duaCategoryTitle = category.title,
-                                            duaCategoryTag = category.tag,
+                                            duaCategoryTitle = AppString.DUA_QURAN.getString(),
+                                            duaCategoryTag = "quran",
                                         ),
                                     )
                                 },
@@ -204,7 +208,7 @@ fun MainScreen(
 
                         MainScreenModel.PageState.QURAN -> {
                             MainPageQuran(
-                                state = state.quranState,
+                                state = state,
                                 onRetryClick = { vm.getQuran() },
                                 onLastReadClick = { verse ->
                                     onVerseListClick(
@@ -303,6 +307,14 @@ fun MainScreen(
                                     onCharityListClick(CharityListNav)
                                 },
                                 onContentClick = { },
+                                onKidsActivityClick = {
+                                    onWebClick(
+                                        WebNav(
+                                            url = AppConstant.URL_LYNK_KIDS_ACTIVITY,
+                                            title = AppString.KIDS_ACTIVITY_TITLE.getString(),
+                                        ),
+                                    )
+                                },
                             )
                         }
                     }
@@ -327,10 +339,12 @@ fun MainScreen(
         openActivity.value = false
     }
 
-    LaunchedEffect(currentCompositeKeyHash) {
-        animation = Res.readBytes("files/love.json").decodeToString()
-
-        vm.onViewed()
+    LaunchedEffect(Unit) {
+        vm.getLastRead()
+        if (vm.shouldRefresh) {
+            vm.onViewed()
+            vm.shouldRefresh = false
+        }
     }
 }
 

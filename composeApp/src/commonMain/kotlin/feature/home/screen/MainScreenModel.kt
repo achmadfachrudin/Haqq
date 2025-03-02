@@ -1,9 +1,11 @@
 package feature.home.screen
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import core.data.DataState
-import feature.dhikr.service.model.DuaCategory
 import feature.home.service.HomeRepository
 import feature.home.service.model.HomeTemplate
 import feature.other.service.AppRepository
@@ -34,14 +36,21 @@ class MainScreenModel(
 ) : ViewModel() {
     val mutableState = MutableStateFlow(State())
     val state: StateFlow<State> = mutableState.asStateFlow()
+    var shouldRefresh by mutableStateOf(true)
 
     data class State(
         val acceptPrivacyPolicy: Boolean = true, // for offline connection
         val location: AppSetting.Location? = null,
-        val pageState: PageState = PageState.HOME,
-        val mainState: MainState = MainState.Loading,
-        val quranState: QuranState = QuranState(),
         val shouldShowSupport: Boolean = false,
+        val pageState: PageState = PageState.HOME,
+        val homeState: HomeState = HomeState.Loading,
+        val lastRead: LastRead = LastRead(),
+        val quranDownloadState: QuranDownloadState = QuranDownloadState.Done,
+        val quranChapterState: QuranChapterState = QuranChapterState.Loading,
+        val quranJuzState: QuranJuzState = QuranJuzState.Loading,
+        val quranPageState: QuranPageState = QuranPageState.Loading,
+        val favorites: List<VerseFavorite> = listOf(),
+        val verseDownloading: Int = 1,
     )
 
     enum class PageState {
@@ -52,27 +61,17 @@ class MainScreenModel(
         ACTIVITY,
     }
 
-    sealed class MainState {
-        object Loading : MainState()
+    sealed class HomeState {
+        object Loading : HomeState()
 
         data class Error(
             val message: String,
-        ) : MainState()
+        ) : HomeState()
 
         data class Content(
             val templates: List<HomeTemplate>,
-        ) : MainState()
+        ) : HomeState()
     }
-
-    data class QuranState(
-        val lastRead: LastRead? = null,
-        val downloadState: QuranDownloadState = QuranDownloadState.Done,
-        val chapterState: QuranChapterState = QuranChapterState.Loading,
-        val juzState: QuranJuzState = QuranJuzState.Loading,
-        val pageState: QuranPageState = QuranPageState.Loading,
-        val favorites: List<VerseFavorite> = listOf(),
-        val verseDownloading: Int = 1,
-    )
 
     sealed class QuranDownloadState {
         object Ready : QuranDownloadState()
@@ -153,14 +152,14 @@ class MainScreenModel(
     fun getMain() {
         viewModelScope.launch {
             homeRepository.fetchHomeTemplates().collectLatest {
-                val mainState =
+                val homeState =
                     when (it) {
-                        is DataState.Error -> MainState.Error(it.message)
-                        DataState.Loading -> MainState.Loading
-                        is DataState.Success -> MainState.Content(templates = it.data)
+                        is DataState.Error -> HomeState.Error(it.message)
+                        DataState.Loading -> HomeState.Loading
+                        is DataState.Success -> HomeState.Content(templates = it.data)
                     }
 
-                mutableState.value = state.value.copy(mainState = mainState)
+                mutableState.value = state.value.copy(homeState = homeState)
             }
         }
     }
@@ -168,7 +167,7 @@ class MainScreenModel(
     fun getQuran() {
         viewModelScope.launch {
             quranRepository.fetchChapters().collectLatest {
-                var downloadState: QuranDownloadState = QuranDownloadState.Done
+                var downloadState: QuranDownloadState = QuranDownloadState.Ready
                 var juzState: QuranJuzState = QuranJuzState.Loading
                 var pageState: QuranPageState = QuranPageState.Loading
 
@@ -204,54 +203,42 @@ class MainScreenModel(
 
                 mutableState.value =
                     state.value.copy(
-                        quranState =
-                            QuranState(
-                                lastRead = quranRepository.getLastRead(),
-                                downloadState = downloadState,
-                                chapterState = chapterState,
-                                juzState = juzState,
-                                pageState = pageState,
-                                favorites = quranRepository.getVerseFavorites(),
-                            ),
+                        lastRead = quranRepository.getLastRead(),
+                        quranDownloadState = downloadState,
+                        quranChapterState = chapterState,
+                        quranJuzState = juzState,
+                        quranPageState = pageState,
+                        favorites = quranRepository.getVerseFavorites(),
                     )
             }
         }
     }
 
-    fun getQuranicDuaCategory(): DuaCategory {
-        val title =
-            when (appRepository.getSetting().language) {
-                AppSetting.Language.ENGLISH -> "Quran"
-                AppSetting.Language.INDONESIAN -> "al-Quran"
-            }
-        return DuaCategory("quran", title)
+    fun getLastRead() {
+        viewModelScope.launch {
+            val lastRead = quranRepository.getLastRead()
+
+            mutableState.value = state.value.copy(lastRead = lastRead)
+        }
     }
 
     fun addOrRemoveFavorite(verse: VerseFavorite) {
         viewModelScope.launch {
             quranRepository.addOrRemoveVerseFavorites(verse)
 
-            mutableState.value =
-                state.value.copy(
-                    quranState =
-                        state.value.quranState.copy(favorites = quranRepository.getVerseFavorites()),
-                )
+            mutableState.value = state.value.copy(favorites = quranRepository.getVerseFavorites())
         }
     }
 
     fun downloadAllVerses() {
         viewModelScope.launch {
             mutableState.value =
-                state.value.copy(
-                    quranState = state.value.quranState.copy(downloadState = QuranDownloadState.Downloading),
-                )
+                state.value.copy(quranDownloadState = QuranDownloadState.Downloading)
 
             for (i in 1..MAX_CHAPTER) {
                 quranRepository.downloadVerses(i).collect()
                 mutableState.value =
-                    state.value.copy(
-                        quranState = state.value.quranState.copy(verseDownloading = i),
-                    )
+                    state.value.copy(verseDownloading = i)
             }
 
             getQuran()

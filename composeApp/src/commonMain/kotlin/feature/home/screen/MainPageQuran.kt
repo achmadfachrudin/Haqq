@@ -27,6 +27,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
@@ -39,7 +40,6 @@ import core.ui.component.BaseArabic
 import core.ui.component.BaseButton
 import core.ui.component.BaseDialog
 import core.ui.component.BaseOutlineTextField
-import core.ui.component.BaseSpacerHorizontal
 import core.ui.component.BaseSpacerVertical
 import core.ui.component.BaseTabRow
 import core.ui.component.BaseText
@@ -58,14 +58,13 @@ import feature.quran.service.model.Page
 import feature.quran.service.model.QuranConstant.MAX_CHAPTER
 import feature.quran.service.model.VerseFavorite
 import haqq.composeapp.generated.resources.Res
-import haqq.composeapp.generated.resources.download
 import haqq.composeapp.generated.resources.hexagonal
 import org.jetbrains.compose.resources.painterResource
 import org.koin.mp.KoinPlatform
 
 @Composable
 internal fun MainPageQuran(
-    state: MainScreenModel.QuranState,
+    state: MainScreenModel.State,
     onRetryClick: () -> Unit,
     onLastReadClick: (lastRead: LastRead) -> Unit,
     onDownloadClick: () -> Unit,
@@ -89,16 +88,14 @@ internal fun MainPageQuran(
             )
         val pagerState = rememberPagerState(pageCount = { tabTitles.size })
 
-        state.lastRead?.let {
-            LastReadCard(
-                lastRead = state.lastRead,
-                onClick = {
-                    onLastReadClick(state.lastRead)
-                },
-            )
-        }
+        LastReadCard(
+            lastRead = state.lastRead,
+            onClick = {
+                onLastReadClick(state.lastRead)
+            },
+        )
 
-        if (state.downloadState == MainScreenModel.QuranDownloadState.Ready) {
+        if (state.quranDownloadState == MainScreenModel.QuranDownloadState.Ready) {
             BaseButton(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 onClick = { openDownloadConfirmationDialog.value = true },
@@ -119,24 +116,28 @@ internal fun MainPageQuran(
             when (index) {
                 0 -> {
                     ChapterContent(
-                        state = state.chapterState,
+                        state = state.quranChapterState,
                         onRetryClick = onRetryClick,
                         onChapterClick = onChapterClick,
                     )
                 }
 
                 1 -> {
-                    JuzContent(
-                        state = state.juzState,
-                        onRetryClick = onRetryClick,
-                        onJuzClick = onJuzClick,
-                    )
+                    if (state.quranDownloadState == MainScreenModel.QuranDownloadState.Done) {
+                        JuzContent(
+                            state = state.quranJuzState,
+                            onRetryClick = onRetryClick,
+                            onJuzClick = onJuzClick,
+                        )
+                    } else {
+                        ErrorState(AppString.PLEASE_DOWNLOAD_MUSHAF.getString())
+                    }
                 }
 
                 2 -> {
-                    if (state.downloadState == MainScreenModel.QuranDownloadState.Done) {
+                    if (state.quranDownloadState == MainScreenModel.QuranDownloadState.Done) {
                         PageContent(
-                            state = state.pageState,
+                            state = state.quranPageState,
                             onRetryClick = onRetryClick,
                             onPageClick = onPageClick,
                         )
@@ -170,7 +171,7 @@ internal fun MainPageQuran(
         )
     }
 
-    if (state.downloadState == MainScreenModel.QuranDownloadState.Downloading) {
+    if (state.quranDownloadState == MainScreenModel.QuranDownloadState.Downloading) {
         val downloadMessage = "${state.verseDownloading}/${MAX_CHAPTER}"
         val downloadPercent = state.verseDownloading.toFloat() / MAX_CHAPTER.toFloat()
 
@@ -222,7 +223,7 @@ private fun ChapterContent(
         }
 
         is MainScreenModel.QuranChapterState.Content -> {
-            val valueSearch = remember { mutableStateOf("") }
+            val valueSearch = rememberSaveable { mutableStateOf("") }
             val query = valueSearch.value.lowercase()
             val chapterFiltered =
                 state.chapters.filter {
@@ -291,7 +292,7 @@ private fun JuzContent(
         }
 
         is MainScreenModel.QuranJuzState.Content -> {
-            val valueSearch = remember { mutableStateOf("") }
+            val valueSearch = rememberSaveable { mutableStateOf("") }
             val query = valueSearch.value.lowercase()
             val juzFiltered =
                 state.juzs.filter {
@@ -355,7 +356,7 @@ private fun PageContent(
         }
 
         is MainScreenModel.QuranPageState.Content -> {
-            val valueSearch = remember { mutableStateOf("") }
+            val valueSearch = rememberSaveable { mutableStateOf("") }
             val query = valueSearch.value.lowercase()
             val pageFiltered =
                 state.pages.filter {
@@ -516,50 +517,44 @@ private fun ChapterCard(
     val verses = "${chapter.versesCount} ${AppString.AYAHS.getString()}"
     val chapterNumber = "${chapter.id}"
 
-    Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .clickable {
-                    onClick(chapter)
-                }.padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-        Box(contentAlignment = Alignment.Center) {
-            Icon(
-                modifier = Modifier.size(38.dp),
-                painter = painterResource(Res.drawable.hexagonal),
-                tint = MaterialTheme.colorScheme.primary,
-                contentDescription = chapterNumber,
-            )
-            BaseText(text = chapterNumber, style = getHaqqTypography().bodySmall)
-        }
-        Column(modifier = Modifier.weight(1f).padding(horizontal = 16.dp)) {
-            BaseText(
-                text = chapter.nameComplex,
-            )
-            BaseText(
-                text = chapter.nameTranslation,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
-        Column(horizontalAlignment = Alignment.End) {
-            BaseArabic(
-                text = chapter.nameArabic,
-            )
-            BaseText(
-                text = verses,
-            )
-        }
-        if (!chapter.isDownloaded) {
-            BaseSpacerHorizontal(8)
-
-            Icon(
-                painter = painterResource(Res.drawable.download),
-                contentDescription = null,
-            )
+    if (chapter.isDownloaded) {
+        Row(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        onClick(chapter)
+                    }.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    modifier = Modifier.size(38.dp),
+                    painter = painterResource(Res.drawable.hexagonal),
+                    tint = MaterialTheme.colorScheme.primary,
+                    contentDescription = chapterNumber,
+                )
+                BaseText(text = chapterNumber, style = getHaqqTypography().bodySmall)
+            }
+            Column(modifier = Modifier.weight(1f).padding(horizontal = 16.dp)) {
+                BaseText(
+                    text = chapter.nameComplex,
+                )
+                BaseText(
+                    text = chapter.nameTranslation,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+            Column(horizontalAlignment = Alignment.End) {
+                BaseArabic(
+                    text = chapter.nameArabic,
+                )
+                BaseText(
+                    text = verses,
+                )
+            }
         }
     }
 }

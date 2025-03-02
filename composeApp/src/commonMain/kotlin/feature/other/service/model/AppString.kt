@@ -181,16 +181,16 @@ enum class AppString(
         "Download",
     ),
     DOWNLOAD_ALERT(
-        "Please ensure you have a stable internet connection throughout the download. Do not close the app until the process is complete.",
-        "Pastikan kamu memiliki koneksi internet yang stabil selama proses pengunduhan. Jangan tutup aplikasi hingga proses selesai.",
+        "Please ensure you have a stable internet connection throughout the download.\nDo not close the app until the process is complete.",
+        "Pastikan kamu memiliki koneksi internet yang stabil selama proses pengunduhan.\nJangan tutup aplikasi hingga proses selesai.",
     ),
     DOWNLOAD_ALL_SURAHS(
         "Download all surahs ",
         "Download semua surat",
     ),
     DOWNLOAD_IN_PROGRESS(
-        "Currently the download process is in progress. Please wait a moment. Do not close the app until the process is complete.",
-        "Saat ini proses download sedang berlangsung. Silakan tunggu beberapa saat. Jangan tutup aplikasi hingga proses selesai.",
+        "Currently the download process is in progress. Please wait a moment.\nDo not close the app until the process is complete.",
+        "Saat ini proses download sedang berlangsung. Silakan tunggu beberapa saat.\nJangan tutup aplikasi hingga proses selesai.",
     ),
     DUA(
         "Dua ",
@@ -231,6 +231,10 @@ enum class AppString(
     JUZ_TITLE(
         "Juzs ",
         "Juz",
+    ),
+    KIDS_ACTIVITY_TITLE(
+        "Kids Activity",
+        "Aktivitas Anak",
     ),
     LANGUAGE(
         "Language ",

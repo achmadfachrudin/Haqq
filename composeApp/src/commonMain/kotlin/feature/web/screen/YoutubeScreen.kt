@@ -10,7 +10,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.currentCompositeKeyHash
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.multiplatform.webview.web.LoadingState
@@ -105,7 +104,7 @@ fun YoutubeScreen(youtubeNav: YoutubeNav) {
                     data = html,
                 )
 
-            LaunchedEffect(currentCompositeKeyHash) {
+            LaunchedEffect(Unit) {
                 state.webSettings.apply {
                     isJavaScriptEnabled = true
                     customUserAgentString = getPlatform().name

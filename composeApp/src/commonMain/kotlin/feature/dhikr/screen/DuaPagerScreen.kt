@@ -17,7 +17,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.currentCompositeKeyHash
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -194,8 +193,8 @@ fun DuaPagerScreen(
             }
         }
 
-        LaunchedEffect(currentCompositeKeyHash) {
-            trackScreen("DuaDetailScreen")
+        LaunchedEffect(Unit) {
+            trackScreen("DuaPagerScreen-${nav.duaCategoryTag}")
             vm.getDuaByTag(nav.duaCategoryTag)
         }
     }

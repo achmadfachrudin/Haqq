@@ -29,6 +29,7 @@ import feature.other.screen.OtherNav
 import feature.other.screen.OtherScreen
 import feature.other.screen.SettingNav
 import feature.other.screen.SettingScreen
+import feature.other.service.AppRepository
 import feature.prayertime.screen.CalendarNav
 import feature.prayertime.screen.CalendarScreen
 import feature.prayertime.screen.GuidanceNav
@@ -51,10 +52,15 @@ import feature.web.screen.YoutubeNav
 import feature.web.screen.YoutubeScreen
 import feature.zakat.screen.ZakatNav
 import feature.zakat.screen.ZakatScreen
+import org.koin.compose.koinInject
 
 @Composable
 fun App() {
     HaqqTheme {
+        val appRepository = koinInject<AppRepository>()
+        val languageIso = appRepository.getSetting().language.iso
+        val localization = koinInject<Localization>()
+        localization.applyLanguage(languageIso)
         val navController: NavHostController = rememberNavController()
 
         NavHost(navController, startDestination = MainNav) {
