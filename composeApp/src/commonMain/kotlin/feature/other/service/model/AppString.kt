@@ -13,19 +13,19 @@ enum class AppString(
         "Tentang",
     ),
     ACCEPT(
-        "Accept ",
+        "Accept",
         "Menerima",
     ),
     ACTIVITY_TITLE(
-        "Activity ",
+        "Activity",
         "Aktifitas",
     ),
     ADD_TO_FAVORITE(
-        "Add to favorite ",
+        "Add to favorite",
         "Tambahkan ke favorit",
     ),
     APP_NAME(
-        "Haqq ",
+        "Haqq",
         "Haqq",
     ),
     ARABIC_STYLE(
@@ -33,7 +33,7 @@ enum class AppString(
         "Penulisan Arab",
     ),
     ARABIC_TEXT_SIZE(
-        "Arabic Text Size ",
+        "Arabic Text Size",
         "Ukuran Teks Arab",
     ),
     ARTICLE_TITLE(
@@ -66,7 +66,7 @@ enum class AppString(
     ),
     CALENDAR_MUHARRAM(
         "9, 10 Muharram (Tasua & Asyura)",
-        "9,10 Muharram (Tasua & Asyura)",
+        "9, 10 Muharram (Tasua & Asyura)",
     ),
     CALENDAR_RAMADHAN(
         "Ramadhan",
@@ -153,15 +153,15 @@ enum class AppString(
         "Perangkat kamu tidak support",
     ),
     DHIKR(
-        "Dhikr ",
+        "Dhikr",
         "Dzikir",
     ),
     DHIKR_AFTERNOON_TITLE(
-        "Afternoon ",
+        "Afternoon",
         "Petang",
     ),
     DHIKR_MORNING_TITLE(
-        "Morning ",
+        "Morning",
         "Pagi",
     ),
     DHIKR_PRAY_TITLE(
@@ -169,7 +169,7 @@ enum class AppString(
         "Sesudah Sholat",
     ),
     DHIKR_RUQYAH_TITLE(
-        "Ruqyah ",
+        "Ruqyah",
         "Ruqyah",
     ),
     DHIKR_SLEEP_TITLE(
@@ -177,7 +177,7 @@ enum class AppString(
         "Sebelum Tidur",
     ),
     DOWNLOAD(
-        "Download ",
+        "Download",
         "Download",
     ),
     DOWNLOAD_ALERT(
@@ -185,7 +185,7 @@ enum class AppString(
         "Pastikan kamu memiliki koneksi internet yang stabil selama proses pengunduhan.\nJangan tutup aplikasi hingga proses selesai.",
     ),
     DOWNLOAD_ALL_SURAHS(
-        "Download all surahs ",
+        "Download all surahs",
         "Download semua surat",
     ),
     DOWNLOAD_IN_PROGRESS(
@@ -193,7 +193,7 @@ enum class AppString(
         "Saat ini proses download sedang berlangsung. Silakan tunggu beberapa saat.\nJangan tutup aplikasi hingga proses selesai.",
     ),
     DUA(
-        "Dua ",
+        "Dua",
         "Doa",
     ),
     DUA_QURAN(
@@ -221,15 +221,15 @@ enum class AppString(
         "Dari %1 ayat %2",
     ),
     HOME_TITLE(
-        "Home ",
+        "Home",
         "Beranda",
     ),
     JUMP_TO_AYAH(
-        "Jump to ayah ",
+        "Jump to ayah",
         "Lompat ke ayat",
     ),
     JUZ_TITLE(
-        "Juzs ",
+        "Juzs",
         "Juz",
     ),
     KIDS_ACTIVITY_TITLE(
@@ -237,7 +237,7 @@ enum class AppString(
         "Aktivitas Anak",
     ),
     LANGUAGE(
-        "Language ",
+        "Language",
         "Bahasa",
     ),
     LASTREAD_CONTINUE(
@@ -265,7 +265,7 @@ enum class AppString(
         "Panduan Sholat",
     ),
     LEARN_THAHARAH_JUNUB(
-        "Junub Bath Guidance ",
+        "Junub Bath Guidance",
         "Panduan Mandi Junub",
     ),
     LEARN_THAHARAH_TAYAMMUM(
@@ -297,15 +297,15 @@ enum class AppString(
         "Tanggal Kajian",
     ),
     NOTE_KITAB(
-        "Book ",
+        "Book",
         "Kitab",
     ),
     NOTE_SPEAKER(
-        "Speaker ",
+        "Speaker",
         "Pemateri",
     ),
     NOTE_TEXT(
-        "Note ",
+        "Note",
         "Catatan",
     ),
     NOTE_TITLE(
@@ -317,15 +317,15 @@ enum class AppString(
         "Ok",
     ),
     OTHER_TITLE(
-        "Others ",
+        "Others",
         "Lainnya",
     ),
     PAGE(
-        "Page ",
+        "Page",
         "Halaman",
     ),
     PAGES_TITLE(
-        "Pages ",
+        "Pages",
         "Halaman",
     ),
     PLEASE_DOWNLOAD_MUSHAF(
@@ -333,11 +333,11 @@ enum class AppString(
         "Silakan download semua surat untuk menggunakan fitur ini",
     ),
     PRAYER_ASR(
-        "Asr ",
+        "Asr",
         "Ashar",
     ),
     PRAYER_DHUHR(
-        "Dhuhr ",
+        "Dhuhr",
         "Zhuhur",
     ),
     PRAYER_ENABLE_GPS(
@@ -349,19 +349,19 @@ enum class AppString(
         "Hitung Zakat",
     ),
     PRAYER_FAJR(
-        "Fajr ",
+        "Fajr",
         "Subuh",
     ),
     PRAYER_IMSAK(
-        "Imsak ",
+        "Imsak",
         "Imsak",
     ),
     PRAYER_ISHA(
-        "Isha ",
+        "Isha",
         "Isya",
     ),
     PRAYER_MAGHRIB(
-        "Maghrib ",
+        "Maghrib",
         "Maghrib",
     ),
     PRAYER_NOTE(
@@ -412,12 +412,8 @@ enum class AppString(
         "Make sure you place the device on a flat surface before opening this Qibla feature",
         "Pastikan kamu meletakan device pada permukaan yang datar sebelum membuka fitur kiblat ini",
     ),
-    TODAY(
-        "Today",
-        "Hari ini",
-    ),
     QIBLA_STATUS_CORRECT(
-        "You are facing Qibla",
+        "You are facing qibla",
         "Kamu menghadap kiblat",
     ),
     QIBLA_STATUS_INCORRECT(
@@ -449,16 +445,16 @@ enum class AppString(
         "Dzikir",
     ),
     REMOVE_FROM_FAVORITE(
-        "Remove from favorite ",
-        "Hapus dari favorit ",
+        "Remove from favorite",
+        "Hapus dari favorit",
     ),
     REPEAT(
-        "Repeat ",
-        "Ulangi ",
+        "Repeat",
+        "Ulangi",
     ),
     REPORT(
-        "Report ",
-        "Laporkan ",
+        "Report",
+        "Laporkan",
     ),
     RESET_CONFIRMATION_TITLE(
         "Confirm Reset",
@@ -477,8 +473,8 @@ enum class AppString(
         "Reset",
     ),
     RESTART_PLEASE(
-        "Restart application please ",
-        "Silakan restart aplikasi ",
+        "Restart application please",
+        "Silakan restart aplikasi",
     ),
     SAVE_AS_LASTREAD(
         "Bookmark as last read",
@@ -545,7 +541,7 @@ enum class AppString(
         "Bagikan",
     ),
     SOCIAL(
-        "Social ",
+        "Social",
         "Sosial",
     ),
     SORT(
@@ -591,6 +587,10 @@ enum class AppString(
     THEME(
         "Theme",
         "Tema",
+    ),
+    TODAY(
+        "Today",
+        "Hari ini",
     ),
     TOMORROW(
         "Tomorrow",

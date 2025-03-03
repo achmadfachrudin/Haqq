@@ -1,3 +1,188 @@
 <resources>
-    <string name="hello">Halo Indonesia In</string>
+    <string name="hello">Hello Indonesia In</string>
+    <string name="about">Tentang</string>
+    <string name="accept">Menerima</string>
+    <string name="activity_title">Aktifitas</string>
+    <string name="add_to_favorite">Tambahkan ke favorit</string>
+    <string name="app_name">Haqq</string>
+    <string name="arabic_style">Penulisan Arab</string>
+    <string name="arabic_text_size">Ukuran Teks Arab</string>
+    <string name="article_title">Baca Artikel</string>
+    <string name="asmaul_husna_title">Asma 'ul Husna</string>
+    <string name="ayahs">Ayat</string>
+    <string name="calendar_ayyamulbidh">Ayyamul bidh: 11,12,13 setiap bulan</string>
+    <string name="calendar_fasting">Kalender Puasa</string>
+    <string name="calendar_haram">Haram puasa:\n1 Syawwal &amp; 10,11,12,13 Dzulhijjah</string>
+    <string name="calendar_dzulhijjah">9 Dzulhijjah (Arafah)</string>
+    <string name="calendar_muharram">9, 10 Muharram (Tasua &amp; Asyura)</string>
+    <string name="calendar_ramadhan">Ramadhan</string>
+    <string name="cancel">Batalkan</string>
+    <string name="charity_title">Bantu Sesama</string>
+    <string name="clear_all_data">Bersihkan Semua Data</string>
+    <string name="clear_data">Bersihkan Data</string>
+    <string name="clear_data_note">Pilih data yang ingin kamu bersihkan</string>
+    <string name="clear_search">Bersihkan Pencarian</string>
+    <string name="close">Tutup</string>
+    <string name="color">Warna</string>
+    <string name="content_title">Bagikan Konten</string>
+    <string name="continue_read">Lanjut baca %1</string>
+    <string name="conversation_title">Percakapan Arab</string>
+    <string name="copied">Berhasil disalin</string>
+    <string name="copy">Salin</string>
+    <string name="copy_url">Salin URL</string>
+    <string name="created_at">Dibuat</string>
+    <string name="current_version">Versi saat ini</string>
+    <string name="delete">Hapus</string>
+    <string name="delete_confirmation_desc">Apakah kamu yakin ingin menghapus?</string>
+    <string name="delete_confirmation_title">Konfirmasi Hapus</string>
+    <string name="device_not_supported">Perangkat kamu tidak support</string>
+    <string name="dhikr">Dzikir</string>
+    <string name="dhikr_afternoon_title">Petang</string>
+    <string name="dhikr_morning_title">Pagi</string>
+    <string name="dhikr_pray_title">Sesudah Sholat</string>
+    <string name="dhikr_ruqyah_title">Ruqyah</string>
+    <string name="dhikr_sleep_title">Sebelum Tidur</string>
+    <string name="download">Download</string>
+    <string name="download_alert">Pastikan kamu memiliki koneksi internet yang stabil selama proses pengunduhan.\nJangan tutup aplikasi hingga proses selesai.</string>
+    <string name="download_all_surahs">Download semua surat</string>
+    <string name="download_in_progress">Saat ini proses download sedang berlangsung. Silakan tunggu beberapa saat.\nJangan tutup aplikasi hingga proses selesai.</string>
+    <string name="dua">Doa</string>
+    <string name="dua_quran">Doa al-Quran</string>
+    <string name="dua_sunnah">Doa as-Sunnah</string>
+    <string name="feedback">Beri masukan atau laporkan</string>
+    <string name="filter">Filter</string>
+    <string name="follow">Ikuti @haqq_sunnah</string>
+    <string name="from_surah_and_ayah">Dari %1 ayat %2</string>
+    <string name="home_title">Beranda</string>
+    <string name="jump_to_ayah">Lompat ke ayat</string>
+    <string name="juz_title">Juz</string>
+    <string name="kids_activity_title">Aktivitas Anak</string>
+    <string name="language">Bahasa</string>
+    <string name="lastread_continue">Lanjut baca</string>
+    <string name="latest_version">Versi terakhir</string>
+    <string name="learn">Belajar</string>
+    <string name="learn_fasting">Panduan Puasa</string>
+    <string name="learn_hajj_umrah">Panduan Haji</string>
+    <string name="learn_salah">Panduan Sholat</string>
+    <string name="learn_thaharah_junub">Panduan Mandi Junub</string>
+    <string name="learn_thaharah_tayammum">Panduan Tayamum</string>
+    <string name="learn_thaharah_wudhu">Panduan Wudhu</string>
+    <string name="learn_zakat_fitrah">Panduan Fitrah</string>
+    <string name="learn_zakat_mal">Panduan Mal</string>
+    <string name="licenses">Lisensi</string>
+    <string name="next_prayer_time">Waktu sholat selanjutnya :</string>
+    <string name="note_date">Tanggal Kajian</string>
+    <string name="note_kitab">Kitab</string>
+    <string name="note_speaker">Pemateri</string>
+    <string name="note_text">Catatan</string>
+    <string name="note_title">Judul Kajian</string>
+    <string name="ok">Ok</string>
+    <string name="other_title">Lainnya</string>
+    <string name="page">Halaman</string>
+    <string name="pages_title">Halaman</string>
+    <string name="please_download_mushaf">Silakan download semua surat untuk menggunakan fitur ini</string>
+    <string name="prayer_asr">Ashar</string>
+    <string name="prayer_dhuhr">Zhuhur</string>
+    <string name="prayer_enable_gps">[GPS] Harap aktifkan GPS kamu sebelum membuka aplikasi</string>
+    <string name="zakat_calculator">Hitung Zakat</string>
+    <string name="prayer_fajr">Subuh</string>
+    <string name="prayer_imsak">Imsak</string>
+    <string name="prayer_isha">Isya</string>
+    <string name="prayer_maghrib">Maghrib</string>
+    <string name="prayer_note">Data disediakan dari https://aladhan.com\nPastikan kamu mengaktifkan GPS sebelum membuka aplikasi untuk mendapatkan data yang akurat</string>
+    <string name="prayer_sunrise">Syuruq</string>
+    <string name="prayer_time_title">Waktu Sholat</string>
+    <string name="prayer_title">Ibadah</string>
+    <string name="pray_fasting">Puasa</string>
+    <string name="pray_hajj_umrah">Haji atau Umrah</string>
+    <string name="pray_salah">Sholat</string>
+    <string name="pray_thaharah">Thaharah</string>
+    <string name="pray_zakat">Zakat</string>
+    <string name="privacy_policy">Kebijakan Privasi</string>
+    <string name="qibla_degree">Kiblat:</string>
+    <string name="qibla_note">Pastikan kamu meletakan device pada permukaan yang datar sebelum membuka fitur kiblat ini</string>
+    <string name="qibla_status_correct">Kamu menghadap kiblat</string>
+    <string name="qibla_status_incorrect">Sesuaikan posisimu</string>
+    <string name="qibla_title">Arah Kiblat</string>
+    <string name="quran_favorite_title">Favorit</string>
+    <string name="quran_title">Al-Quran</string>
+    <string name="rate">Rate</string>
+    <string name="read_dhikr">Yuk baca Dzikir %1. Allah akan mencukupi &amp; melindungimu dalam segala hal.</string>
+    <string name="dhikr_title">Dzikir</string>
+    <string name="remove_from_favorite">Hapus dari favorit</string>
+    <string name="repeat">Ulangi</string>
+    <string name="report">Laporkan</string>
+    <string name="reset_confirmation_title">Konfirmasi Reset</string>
+    <string name="reset_dhikr_note">Reset perhitungan dzikir kamu</string>
+    <string name="reset_verse_note">Jika ayat tidak lengkap silakan reset ulang surat</string>
+    <string name="reset">Reset</string>
+    <string name="restart_please">Silakan restart aplikasi</string>
+    <string name="save_as_lastread">Tandai sebagai bacaan terakhir</string>
+    <string name="search_asmaul_husna">Cari Asma' ul Husna</string>
+    <string name="search_ayah">Cari Ayat</string>
+    <string name="search_ayah_hint">Transliterasi / Terjemah / Nomor Ayat</string>
+    <string name="search">Cari</string>
+    <string name="search_channel">Cari Channel</string>
+    <string name="search_content">Hasil Pencarian:</string>
+    <string name="search_conversation">Cari Percakapan</string>
+    <string name="search_dua">Cari Doa</string>
+    <string name="search_juz">Cari Juz</string>
+    <string name="search_page">Cari Halaman</string>
+    <string name="search_study_note">Cari Catatan Kajian</string>
+    <string name="search_surah">Cari Surat</string>
+    <string name="see_all">Lihat semua</string>
+    <string name="settings">Pengaturan</string>
+    <string name="share">Bagikan</string>
+    <string name="social">Sosial</string>
+    <string name="sort">Urutkan</string>
+    <string name="sorted_by">Urutkan berdasarkan</string>
+    <string name="study_note_empty">Catatan Kajian kosong</string>
+    <string name="study_note_new">Buat Catatan Kajian</string>
+    <string name="study_note_title">Catatan Kajian</string>
+    <string name="study_title">Ikuti Kajian</string>
+    <string name="support_title">Berikan dukungan</string>
+    <string name="surah_ayah">Surat %1 ayat %2</string>
+    <string name="surah_desc">%1 • %2 ayat • %3</string>
+    <string name="surah_title">Surat</string>
+    <string name="theme">Tema</string>
+    <string name="today">Hari ini</string>
+    <string name="tomorrow">Besok</string>
+    <string name="translation">Tampilkan Terjemah</string>
+    <string name="translation_text_size">Ukuran Teks Terjemah</string>
+    <string name="transliteration">Tampilkan Latin</string>
+    <string name="transliteration_text_size">Ukuran Teks Latin</string>
+    <string name="try_again">Coba lagi</string>
+    <string name="url_copied">URL berhasil disalin</string>
+    <string name="zakat_calculation_result">Hasil Perhitungan Zakat</string>
+    <string name="zakat_fitrah">Fitrah</string>
+    <string name="zakat_fitrah_gold_price_label">Harga emas (gr)</string>
+    <string name="zakat_fitrah_result">
+        Jumlah yang hendak membayar zakat: %1 orang\n
+        Harga beras yang biasa dikonsumsi: %2 per liter\n
+        Total zakat dalam beras: %3 liter\n
+        Total zakat dalam bentuk uang: %4\n
+    </string>
+    <string name="zakat_mal_result_possible">Jumlah hutang: %1\n
+        Jumlah simpanan: %2\n
+        Jumlah emas: %3 gram\n
+        Jumlah harta: %4\n
+        Ambang nishab (emas 85 gram): %5\n
+        Total zakat: %6
+    </string>
+    <string name="zakat_mal_result_not_possible">
+        Jumlah hutang: %1\n
+        Jumlah simpanan: %2\n
+        Jumlah emas: %3 gram\n
+        Jumlah harta: %4\n
+        Ambang nishab (emas 85gr): %5\n
+        Kamu belum wajib membayar zakat karena total harta kamu lebih kecil dari ambang nishab\n
+    </string>
+    <string name="zakat_fitrah_total_people_label">Jumlah orang</string>
+    <string name="zakat_fitrah_rice_price_label">Harga beras (lt)</string>
+    <string name="zakat_calculate">Hitung Zakat</string>
+    <string name="zakat_fitrah_total_debt_label">Jumlah hutang</string>
+    <string name="zakat_fitrah_total_gold_label">Jumlah emas (gr)</string>
+    <string name="zakat_fitrah_total_saving_label">Jumlah simpanan</string>
+    <string name="zakat_mal">Mal</string>
+    <string name="zakat_mal_haul">Masukkan harta yang tersimpan sejak\n%1</string>
 </resources>
