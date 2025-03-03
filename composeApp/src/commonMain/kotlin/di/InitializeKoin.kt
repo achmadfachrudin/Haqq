@@ -17,6 +17,7 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
     startKoin {
         appDeclaration()
         modules(
+            targetModule,
             localModule,
             networkModule,
             articleFeatureModule,

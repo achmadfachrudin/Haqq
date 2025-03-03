@@ -18,7 +18,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.currentCompositeKeyHash
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -138,7 +137,7 @@ fun DuaSunnahScreen(
         }
     }
 
-    LaunchedEffect(currentCompositeKeyHash) {
+    LaunchedEffect(Unit) {
         trackScreen("DuaSunnahScreen")
         vm.getDoaCategories()
     }

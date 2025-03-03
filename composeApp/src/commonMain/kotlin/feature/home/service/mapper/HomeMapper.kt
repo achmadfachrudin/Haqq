@@ -223,21 +223,25 @@ internal suspend fun List<HomeTemplateRealm>.mapToModel(): List<HomeTemplate> =
                     }
 
                     TemplateType.QURAN_VERSE -> {
-                        var quranVerse: Verse? = null
+                        val quranVerse: Verse?
 
                         if (links.isNotEmpty()) {
                             val chapterId = links[0].toInt()
                             val verseNumber = links[1].toInt()
                             val verseId = links[2].toInt()
+                            val isRandom = links.getOrElse(3) { "false" } == "true"
 
-                            if (quranRepository.isVerseDownloaded(verseId)) {
-                                quranVerse = quranRepository.getVerseById(verseId)
-                            }
+                            quranVerse =
+                                if (!isRandom && quranRepository.isVerseDownloaded(verseId)) {
+                                    quranRepository.getVerseById(verseId)
+                                } else {
+                                    quranRepository.getRandomVerse()
+                                }
                         } else {
                             quranVerse = quranRepository.getRandomVerse()
                         }
 
-                        quranVerse?.let { verse ->
+                        quranVerse.let { verse ->
                             templates.add(
                                 HomeTemplate.QuranVerse(
                                     position = position,

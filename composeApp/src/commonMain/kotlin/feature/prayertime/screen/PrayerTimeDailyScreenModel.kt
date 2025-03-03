@@ -54,24 +54,26 @@ class PrayerTimeDailyScreenModel(
     fun getPrayerTime() {
         viewModelScope.launch {
             prayerRepository.fetchTodayTomorrowPrayerTimes().collectLatest {
-                val monthSelected =
-                    it.data
-                        .first()
-                        .hijri.month.monthNumber
-                val yearSelected =
-                    it.data
-                        .first()
-                        .hijri.year
-                val timeState = TodayTomorrowState.Content(it.data)
+                if (it.data.isNotEmpty()) {
+                    val monthSelected =
+                        it.data
+                            .first()
+                            .hijri.month.monthNumber
+                    val yearSelected =
+                        it.data
+                            .first()
+                            .hijri.year
+                    val timeState = TodayTomorrowState.Content(it.data)
 
-                mutableState.value =
-                    state.value.copy(
-                        todayTomorrowState = timeState,
-                        monthSelected = monthSelected,
-                        yearSelected = yearSelected,
-                    )
+                    mutableState.value =
+                        state.value.copy(
+                            todayTomorrowState = timeState,
+                            monthSelected = monthSelected,
+                            yearSelected = yearSelected,
+                        )
 
-                getHijriMonth()
+                    getHijriMonth()
+                }
             }
         }
     }

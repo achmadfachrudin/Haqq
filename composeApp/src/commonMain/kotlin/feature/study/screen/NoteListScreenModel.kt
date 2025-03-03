@@ -1,5 +1,8 @@
 package feature.study.screen
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import core.util.searchBy
@@ -15,6 +18,7 @@ class NoteListScreenModel(
 ) : ViewModel() {
     val mutableState = MutableStateFlow(State())
     val state: StateFlow<State> = mutableState.asStateFlow()
+    var shouldRefresh by mutableStateOf(true)
 
     data class State(
         val notes: List<Note> = listOf(),

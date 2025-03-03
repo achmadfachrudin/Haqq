@@ -198,12 +198,12 @@ internal fun VersesEntity.VerseEntity.mapToRealm(
 ): VerseRealm {
     val translationId =
         translations
-            ?.first { it.resourceId == AppSetting.Language.INDONESIAN.translation }
+            ?.first { it.resourceId == AppSetting.Language.INDONESIAN.translationId }
             ?.text
             .orEmpty()
     val translationEn =
         translations
-            ?.first { it.resourceId == AppSetting.Language.ENGLISH.translation }
+            ?.first { it.resourceId == AppSetting.Language.ENGLISH.translationId }
             ?.text
             .orEmpty()
 

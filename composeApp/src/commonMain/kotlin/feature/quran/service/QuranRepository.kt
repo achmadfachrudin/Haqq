@@ -316,7 +316,7 @@ class QuranRepository(
         flow {
             val localVerses =
                 realm.query<VerseRealm>().find().filter { it.chapterId == chapterNumber }
-            val translations = Language.entries.map { it.translation }.joinToString(",")
+            val translations = Language.entries.map { it.translationId }.joinToString(",")
 
             if (localVerses.isEmpty()) {
                 when (
@@ -337,23 +337,28 @@ class QuranRepository(
                         val uthmaniStatus = uthmani.isNotEmpty()
                         val uthmaniTajweedStatus = uthmaniTajweed.isNotEmpty()
 
-                        val remoteVerses =
-                            result.body.mapToRealm(
-                                indopak = indopak,
-                                uthmani = uthmani,
-                                uthmaniTajweed = uthmaniTajweed,
-                                transliteration = transliteration,
-                            )
+                        if (!indopakStatus || !uthmaniStatus || !uthmaniTajweedStatus) {
+                            emit(DataState.Error("empty"))
+                            return@flow
+                        } else {
+                            realm.writeBlocking {
+                                val remoteVerses =
+                                    result.body.mapToRealm(
+                                        indopak = indopak,
+                                        uthmani = uthmani,
+                                        uthmaniTajweed = uthmaniTajweed,
+                                        transliteration = transliteration,
+                                    )
 
-                        realm.writeBlocking {
-                            remoteVerses.forEach {
-                                copyToRealm(it)
+                                remoteVerses.forEach {
+                                    copyToRealm(it)
+                                }
                             }
+
+                            updateChapterIsDownloaded(chapterNumber)
+
+                            emit(DataState.Success(true))
                         }
-
-                        updateChapterIsDownloaded(chapterNumber)
-
-                        emit(DataState.Success(true))
                     }
                 }
             }
@@ -364,7 +369,7 @@ class QuranRepository(
             val localVerses =
                 realm.query<VerseRealm>().find().filter { it.chapterId == chapterNumber }
             val setting = appRepository.getSetting()
-            val translations = Language.entries.map { it.translation }.joinToString(",")
+            val translations = Language.entries.map { it.translationId }.joinToString(",")
 
             if (localVerses.isEmpty()) {
                 when (

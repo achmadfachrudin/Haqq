@@ -1,5 +1,6 @@
 package feature.prayertime.screen
 
+import AnalyticsConstant.trackScreen
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,7 +15,6 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.currentCompositeKeyHash
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,13 +40,12 @@ import haqq.composeapp.generated.resources.calendar
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.mp.KoinPlatform
 
 @Serializable
 object PrayerTimeDailyNav
 
-@OptIn(KoinExperimentalAPI::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PrayerTimeDailyScreen(onBackClick: () -> Unit) {
     val vm = koinViewModel<PrayerTimeDailyScreenModel>()
@@ -121,7 +120,8 @@ fun PrayerTimeDailyScreen(onBackClick: () -> Unit) {
         }
     }
 
-    LaunchedEffect(currentCompositeKeyHash) {
+    LaunchedEffect(Unit) {
+        trackScreen("PrayerTimeDailyScreen")
         vm.getPrayerTime()
     }
 }

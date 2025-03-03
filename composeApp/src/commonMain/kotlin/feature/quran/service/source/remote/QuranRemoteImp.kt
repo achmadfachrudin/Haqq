@@ -91,7 +91,7 @@ class QuranRemoteImp(
     ): ApiResponse<TranslationsEntity> =
         httpClient.safeRequest {
             method = HttpMethod.Get
-            url("quran/translations/${language.translation}")
+            url("quran/translations/${language.translationId}")
             parameter(Quran.PARAM_CHAPTER_NUMBER, chapterNumber)
         }
 }

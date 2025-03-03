@@ -1,4 +1,6 @@
 import android.os.Build
+import org.koin.android.ext.koin.androidContext
+import org.koin.dsl.module
 
 class AndroidPlatform : Platform {
     override val name: String
@@ -11,10 +13,10 @@ class AndroidPlatform : Platform {
         get() = "${Build.MANUFACTURER} - ${Build.MODEL} - ${Build.BRAND}"
 
     override val appVersionName: String
-        get() = "1.0.15"
+        get() = "1.0.16"
 
     override val appVersionCode: Int
-        get() = 15
+        get() = 16
 
     override val isIOS: Boolean
         get() = false
@@ -32,3 +34,8 @@ class AndroidPlatform : Platform {
 }
 
 actual fun getPlatform(): Platform = AndroidPlatform()
+
+actual val targetModule =
+    module {
+        single<Localization> { Localization(context = androidContext()) }
+    }

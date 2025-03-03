@@ -38,7 +38,7 @@ import org.koin.mp.KoinPlatform
 
 @Composable
 internal fun MainPageHome(
-    state: MainScreenModel.MainState,
+    state: MainScreenModel.HomeState,
     onPrayerTimeClick: () -> Unit,
     onDhikrClick: (dhikrType: DhikrType) -> Unit,
     onWebClick: (url: String) -> Unit,
@@ -49,11 +49,11 @@ internal fun MainPageHome(
         modifier = Modifier.fillMaxSize(),
     ) {
         when (state) {
-            MainScreenModel.MainState.Loading -> {
+            MainScreenModel.HomeState.Loading -> {
                 LoadingState()
             }
 
-            is MainScreenModel.MainState.Content -> {
+            is MainScreenModel.HomeState.Content -> {
                 LazyColumn {
                     items(state.templates) { template ->
                         when (template) {
@@ -136,7 +136,7 @@ internal fun MainPageHome(
                 }
             }
 
-            is MainScreenModel.MainState.Error -> {
+            is MainScreenModel.HomeState.Error -> {
                 ErrorState(state.message)
             }
         }
@@ -157,7 +157,6 @@ private fun PrayerTime(
     Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
         if (template.label.isNotEmpty()) {
             BaseTitle(template.label)
-            BaseSpacerVertical()
         }
         BaseText(text = header)
 
@@ -219,7 +218,6 @@ private fun DhikrCard(
     Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
         if (template.label.isNotEmpty()) {
             BaseTitle(template.label)
-            BaseSpacerVertical()
         }
         BaseMessageCard(
             textMessage = AppString.READ_DHIKR.getString().replace("%1", dhikrName),
@@ -238,15 +236,15 @@ private fun LastReadCard(
     Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
         if (template.label.isNotEmpty()) {
             BaseTitle(template.label)
-            BaseSpacerVertical()
         }
         BaseMessageCard(
             textArabic = template.arabic,
-            textMessage =
+            textCaption =
                 AppString.SURAH_AYAH
                     .getString()
                     .replace("%1", chapterNameSimple)
                     .replace("%2", "${template.verseNumber}"),
+            verseNumber = template.verseNumber,
             buttonText = AppString.LASTREAD_CONTINUE.getString(),
             onItemClick = onItemClick,
         )
@@ -268,14 +266,10 @@ private fun QuranVerseCard(
     Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
         if (template.label.isNotEmpty()) {
             BaseTitle(template.label)
-            BaseSpacerVertical()
         }
         BaseMessageCard(
-            textMessage =
-                """
-                ${template.translation}
-                $desc
-                """.trimIndent(),
+            textTranslation = template.translation,
+            textCaption = desc,
             buttonText = AppString.SEE_ALL.getString(),
             onItemClick = onItemClick,
         )
@@ -290,7 +284,6 @@ private fun MessageCard(
     Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
         if (template.label.isNotEmpty()) {
             BaseTitle(template.label)
-            BaseSpacerVertical()
         }
         BaseMessageCard(
             textMessage = template.text,
@@ -356,7 +349,6 @@ private fun VideoCard(
     Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
         if (template.label.isNotEmpty()) {
             BaseTitle(template.label)
-            BaseSpacerVertical()
         }
         BaseImage(
             modifier =

@@ -24,6 +24,7 @@ internal fun MainPageActivity(
     onConversationClick: () -> Unit,
     onCharityClick: () -> Unit,
     onContentClick: () -> Unit,
+    onKidsActivityClick: () -> Unit,
 ) {
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
@@ -60,6 +61,13 @@ internal fun MainPageActivity(
             BaseMenuLargeCard(
                 title = AppString.STUDY_NOTE_TITLE.getString(),
                 onItemClick = { onStudyNoteClick() },
+            )
+        }
+
+        item {
+            BaseMenuLargeCard(
+                title = AppString.KIDS_ACTIVITY_TITLE.getString(),
+                onItemClick = { onKidsActivityClick() },
             )
         }
 
