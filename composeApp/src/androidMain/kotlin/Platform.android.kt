@@ -13,10 +13,10 @@ class AndroidPlatform : Platform {
         get() = "${Build.MANUFACTURER} - ${Build.MODEL} - ${Build.BRAND}"
 
     override val appVersionName: String
-        get() = "1.0.15"
+        get() = "1.0.16"
 
     override val appVersionCode: Int
-        get() = 15
+        get() = 16
 
     override val isIOS: Boolean
         get() = false
