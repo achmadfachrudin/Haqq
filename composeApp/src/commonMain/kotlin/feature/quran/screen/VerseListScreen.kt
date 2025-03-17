@@ -186,7 +186,7 @@ fun VerseListScreen(
 
                                 // next button
                                 if (query.isEmpty() &&
-                                    (state.nextChapter != null || state.nextJuz != null)
+                                    (state.nextChapter != null || state.nextJuz != null || state.nextPage != null)
                                 ) {
                                     item {
                                         BaseButton(
