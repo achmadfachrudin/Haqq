@@ -186,7 +186,7 @@ fun VerseListScreen(
 
                                 // next button
                                 if (query.isEmpty() &&
-                                    (state.nextChapter != null || state.nextJuz != null || state.nextPage != null)
+                                    (state.nextChapter != null || state.nextJuz != null)
                                 ) {
                                     item {
                                         BaseButton(
@@ -225,15 +225,18 @@ fun VerseListScreen(
                                     BaseSpacerVertical()
                                 }
 
-                                BaseButton(
-                                    modifier = Modifier.padding(16.dp).fillMaxWidth(),
-                                    text = vm.getNextText(),
-                                    onClick = {
-                                        scope.launch {
-                                            vm.goToNext()
-                                        }
-                                    },
-                                )
+                                // next button
+                                if (state.nextPage != null) {
+                                    BaseButton(
+                                        modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                                        text = vm.getNextText(),
+                                        onClick = {
+                                            scope.launch {
+                                                vm.goToNext()
+                                            }
+                                        },
+                                    )
+                                }
                             }
                         }
                     }
