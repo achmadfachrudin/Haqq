@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Haqq</string>
+
+    <string name="device_not_supported">Perangkat kamu tidak support</string>
+    <string name="qibla_degree">Kiblat:</string>
+    <string name="qibla_note">Pastikan kamu meletakan device pada permukaan yang datar sebelum membuka fitur kiblat ini</string>
+    <string name="qibla_status_correct">Kamu menghadap kiblat</string>
+    <string name="qibla_status_incorrect">Sesuaikan posisimu</string>
+    <string name="qibla_title">Arah Kiblat</string>
+</resources>

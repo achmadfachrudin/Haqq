@@ -32,9 +32,11 @@ import core.ui.component.BaseTopAppBar
 import core.ui.component.ErrorState
 import core.ui.component.LoadingState
 import core.util.searchBy
-import feature.other.service.mapper.getString
-import feature.other.service.model.AppString
+import haqq.composeapp.generated.resources.Res
+import haqq.composeapp.generated.resources.dua_sunnah
+import haqq.composeapp.generated.resources.search_dua
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Serializable
@@ -51,7 +53,7 @@ fun DuaSunnahScreen(
     Scaffold(
         topBar = {
             BaseTopAppBar(
-                title = AppString.DUA_SUNNAH.getString(),
+                title = stringResource(Res.string.dua_sunnah),
                 onLeftButtonClick = {
                     onBackClick()
                 },
@@ -90,7 +92,7 @@ fun DuaSunnahScreen(
                                                 .trim()
                                                 .filter { it.isLetterOrDigit() }
                                     },
-                                    label = AppString.SEARCH_DUA.getString(),
+                                    label = stringResource(Res.string.search_dua),
                                     trailingClick = { valueSearch.value = "" },
                                     keyboardOptions =
                                         KeyboardOptions.Default.copy(

@@ -12,12 +12,11 @@ import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
 import androidx.appcompat.app.AppCompatActivity
+import com.haqq.muslim.R
 import com.haqq.muslim.databinding.ActivityQiblaBinding
 import com.haqq.muslim.showToast
 import feature.other.service.AppRepository
-import feature.other.service.mapper.getString
 import feature.other.service.model.AppSetting
-import feature.other.service.model.AppString
 import org.koin.android.ext.android.inject
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -78,7 +77,7 @@ class QiblaActivity :
 
             setupCompass()
         } else {
-            showToast(AppString.DEVICE_NOT_SUPPORTED.getString())
+            showToast(getString(R.string.device_not_supported))
         }
     }
 
@@ -145,7 +144,7 @@ class QiblaActivity :
     }
 
     private fun setupCompass() {
-        val title = "${AppString.QIBLA_DEGREE.getString()} $qiblaDegree°"
+        val title = "${getString(R.string.qibla_degree)} $qiblaDegree°"
         binding.toolbar.title = title
         binding.tvLocation.text = locationName
         binding.tvLatitude.text = "$locationLatitude"
@@ -153,7 +152,7 @@ class QiblaActivity :
 
         binding.tvDegree.text = "$qiblaDegree"
         binding.tvLocation.text = locationName
-        binding.tvNote.text = AppString.QIBLA_NOTE.getString()
+        binding.tvNote.text = getString(R.string.qibla_note)
     }
 
     override fun onSensorChanged(event: SensorEvent) {
@@ -184,9 +183,9 @@ class QiblaActivity :
                 binding.tvAzimuth.text = "${azimuth.toInt()}"
                 val status =
                     if (azimuth.toInt() in qiblaMinDegree..qiblaMaxDegree) {
-                        AppString.QIBLA_STATUS_CORRECT.getString()
+                        getString(R.string.qibla_status_correct)
                     } else {
-                        AppString.QIBLA_STATUS_INCORRECT.getString()
+                        getString(R.string.qibla_status_incorrect)
                     }
 
                 binding.tvStatus.text = status

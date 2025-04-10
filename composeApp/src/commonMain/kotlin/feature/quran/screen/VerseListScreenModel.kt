@@ -1,11 +1,10 @@
 package feature.quran.screen
 
+import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import core.data.DataState
 import core.util.orZero
-import feature.other.service.mapper.getString
-import feature.other.service.model.AppString
 import feature.quran.service.QuranRepository
 import feature.quran.service.model.Chapter
 import feature.quran.service.model.Juz
@@ -15,12 +14,17 @@ import feature.quran.service.model.QuranConstant.MAX_JUZ
 import feature.quran.service.model.QuranConstant.MAX_PAGE
 import feature.quran.service.model.ReadMode
 import feature.quran.service.model.Verse
+import haqq.composeapp.generated.resources.Res
+import haqq.composeapp.generated.resources.continue_read
+import haqq.composeapp.generated.resources.juz_title
+import haqq.composeapp.generated.resources.pages_title
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 
 class VerseListScreenModel(
     private val repository: QuranRepository,
@@ -225,17 +229,19 @@ class VerseListScreenModel(
             }
         }
 
+    @Composable
     fun getNextText(): String {
         val state = state.value
         val nextText =
             when (state.readMode) {
                 ReadMode.BY_CHAPTER -> state.nextChapter?.nameSimple.orEmpty()
-                ReadMode.BY_JUZ -> "Juz ${state.nextJuz?.juzNumber}"
+                ReadMode.BY_JUZ ->
+                    "${stringResource(Res.string.juz_title)} ${state.nextJuz?.juzNumber}"
                 ReadMode.BY_PAGE ->
-                    "${AppString.PAGE.getString()} ${state.nextPage?.pageNumber}"
+                    "${stringResource(Res.string.pages_title)} ${state.nextPage?.pageNumber}"
             }
 
-        return AppString.CONTINUE_READ.getString().replace("%1", nextText)
+        return stringResource(Res.string.continue_read).replace("%1", nextText)
     }
 
     fun getIndex(verse: Verse): Int =

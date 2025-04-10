@@ -1,5 +1,5 @@
 [versions]
-# Multiplatform Version
+# Multiplatform Versioning
 kotlin = "2.0.20"
 compose-plugin = "1.7.3"
 jetbrains-lifecycle = "2.8.4"
@@ -13,9 +13,10 @@ kotlinx-serialization = "1.7.3"
 kotlinx-datetime = "0.6.1"
 koin-bom = "4.0.1"
 realm = "3.0.0"
+room = "2.7.0-alpha01"
 webview = "1.9.40"
 napier = "2.7.1"
-# Android
+# Android Versioning
 android-compileSdk = "35"
 android-minSdk = "24"
 android-targetSdk = "35"
@@ -61,7 +62,7 @@ compose-webview = { module = "io.github.kevinnzou:compose-webview-multiplatform"
 napier-logging = { module = "io.github.aakira:napier", version.ref = "napier" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
-# Android
+# Android Lib Dependencies
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidx-core-ktx" }
 androidx-test-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-junit" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidx-espresso-core" }
@@ -82,7 +83,7 @@ jetbrains-kotlin-plugin-compose = { id = "org.jetbrains.kotlin.plugin.compose", 
 jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 realm-kotlin = { id = "io.realm.kotlin", version.ref = "realm" }
-# Android
+# Android Plugins
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services-plugin" }

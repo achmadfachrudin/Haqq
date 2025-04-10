@@ -46,23 +46,29 @@ import core.ui.theme.ExtraColor.ORANGE
 import core.ui.theme.ExtraColor.VIOLET
 import core.ui.theme.getHaqqTypography
 import feature.other.service.AppRepository
-import feature.other.service.mapper.getString
 import feature.other.service.model.AppSetting
-import feature.other.service.model.AppString
 import feature.prayertime.service.model.HaqqCalendar
 import feature.prayertime.service.model.HijriDay
 import feature.prayertime.service.model.HijriMonth
 import feature.prayertime.service.model.PrayerTime
 import haqq.composeapp.generated.resources.Res
 import haqq.composeapp.generated.resources.calendar
+import haqq.composeapp.generated.resources.calendar_ayyamulbidh
+import haqq.composeapp.generated.resources.calendar_dzulhijjah
+import haqq.composeapp.generated.resources.calendar_fasting
+import haqq.composeapp.generated.resources.calendar_haram
+import haqq.composeapp.generated.resources.calendar_muharram
+import haqq.composeapp.generated.resources.calendar_ramadhan
 import haqq.composeapp.generated.resources.chevron_left
 import haqq.composeapp.generated.resources.chevron_right
+import haqq.composeapp.generated.resources.prayer_enable_gps
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.mp.KoinPlatform
 
@@ -85,7 +91,7 @@ fun CalendarScreen(onBackClick: () -> Unit) {
     Scaffold(
         topBar = {
             BaseTopAppBar(
-                title = AppString.CALENDAR_FASTING.getString(),
+                title = stringResource(Res.string.calendar_fasting),
                 showRightButton = state.calendarState is CalendarScreenModel.CalendarState.Content,
                 rightButtonImage = painterResource(Res.drawable.calendar),
                 onLeftButtonClick = {
@@ -149,28 +155,34 @@ fun CalendarScreen(onBackClick: () -> Unit) {
 
                     LegendCard(
                         MaterialTheme.colorScheme.error,
-                        AppString.CALENDAR_HARAM.getString(),
+                        stringResource(Res.string.calendar_haram),
                     )
                     LegendCard(
                         ExtraColor.getPairColor(VIOLET).first,
-                        AppString.CALENDAR_DZULHIJJAH.getString(),
+                        stringResource(Res.string.calendar_dzulhijjah),
                     )
                     LegendCard(
                         ExtraColor.getPairColor(BLUE).first,
-                        AppString.CALENDAR_MUHARRAM.getString(),
+                        stringResource(Res.string.calendar_muharram),
                     )
                     LegendCard(
                         MaterialTheme.colorScheme.primary,
-                        AppString.CALENDAR_RAMADHAN.getString(),
+                        stringResource(Res.string.calendar_ramadhan),
                     )
                     LegendCard(
                         ExtraColor.getPairColor(ORANGE).first,
-                        AppString.CALENDAR_AYYAMULBIDH.getString(),
+                        stringResource(Res.string.calendar_ayyamulbidh),
                     )
                 }
 
                 is CalendarScreenModel.CalendarState.Error -> {
-                    ErrorState(display.message)
+                    val errorMessage =
+                        if (display.message == Res.string.prayer_enable_gps.key) {
+                            stringResource(Res.string.prayer_enable_gps)
+                        } else {
+                            display.message
+                        }
+                    ErrorState(errorMessage)
                 }
             }
         }

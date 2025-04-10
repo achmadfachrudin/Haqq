@@ -30,10 +30,11 @@ import core.ui.component.ErrorState
 import core.ui.component.LoadingState
 import core.ui.component.itemPadding
 import core.ui.theme.getHaqqTypography
-import feature.other.service.mapper.getString
-import feature.other.service.model.AppString
 import feature.web.screen.WebNav
+import haqq.composeapp.generated.resources.Res
+import haqq.composeapp.generated.resources.article_title
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Serializable
@@ -50,7 +51,7 @@ fun ArticleListScreen(
     Scaffold(
         topBar = {
             BaseTopAppBar(
-                title = AppString.ARTICLE_TITLE.getString(),
+                title = stringResource(Res.string.article_title),
                 onLeftButtonClick = { onBackClick() },
             )
         },

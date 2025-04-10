@@ -38,16 +38,25 @@ import core.ui.component.BaseSpacerVertical
 import core.ui.component.BaseTopAppBar
 import core.ui.component.ErrorState
 import core.ui.component.LoadingState
-import feature.other.service.mapper.getString
-import feature.other.service.model.AppString
 import feature.prayertime.service.model.GuidanceType
 import feature.web.screen.YoutubeNav
 import haqq.composeapp.generated.resources.Res
 import haqq.composeapp.generated.resources.alert_circle
+import haqq.composeapp.generated.resources.copied
 import haqq.composeapp.generated.resources.copy
+import haqq.composeapp.generated.resources.learn_fasting
+import haqq.composeapp.generated.resources.learn_hajj_umrah
+import haqq.composeapp.generated.resources.learn_salah
+import haqq.composeapp.generated.resources.learn_thaharah_junub
+import haqq.composeapp.generated.resources.learn_thaharah_tayammum
+import haqq.composeapp.generated.resources.learn_thaharah_wudhu
+import haqq.composeapp.generated.resources.learn_zakat_fitrah
+import haqq.composeapp.generated.resources.learn_zakat_mal
+import haqq.composeapp.generated.resources.report
 import haqq.composeapp.generated.resources.share
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Serializable
@@ -74,14 +83,14 @@ fun GuidanceScreen(
 
     val title =
         when (guidanceType) {
-            GuidanceType.WUDHU -> AppString.LEARN_THAHARAH_WUDHU.getString()
-            GuidanceType.TAYAMMUM -> AppString.LEARN_THAHARAH_TAYAMMUM.getString()
-            GuidanceType.JUNUB -> AppString.LEARN_THAHARAH_JUNUB.getString()
-            GuidanceType.SALAH -> AppString.LEARN_SALAH.getString()
-            GuidanceType.FASTING -> AppString.LEARN_FASTING.getString()
-            GuidanceType.ZAKAT_FITRAH -> AppString.LEARN_ZAKAT_FITRAH.getString()
-            GuidanceType.ZAKAT_MAL -> AppString.LEARN_ZAKAT_MAL.getString()
-            GuidanceType.HAJJ -> AppString.LEARN_HAJJ_UMRAH.getString()
+            GuidanceType.WUDHU -> stringResource(Res.string.learn_thaharah_wudhu)
+            GuidanceType.TAYAMMUM -> stringResource(Res.string.learn_thaharah_tayammum)
+            GuidanceType.JUNUB -> stringResource(Res.string.learn_thaharah_junub)
+            GuidanceType.SALAH -> stringResource(Res.string.learn_salah)
+            GuidanceType.FASTING -> stringResource(Res.string.learn_fasting)
+            GuidanceType.ZAKAT_FITRAH -> stringResource(Res.string.learn_zakat_fitrah)
+            GuidanceType.ZAKAT_MAL -> stringResource(Res.string.learn_zakat_mal)
+            GuidanceType.HAJJ -> stringResource(Res.string.learn_hajj_umrah)
         }
 
     Scaffold(
@@ -176,22 +185,21 @@ fun GuidanceScreen(
                                 shareContent.value = message
                                 openMail.value = true
                             },
-                            contentDescription = AppString.REPORT.getString(),
+                            contentDescription = stringResource(Res.string.report),
                         )
 
                         BaseSpacerHorizontal()
 
+                        val copiedText = stringResource(Res.string.copied)
                         BaseIconButton(
                             iconResource = Res.drawable.copy,
                             onClick = {
                                 clipboardManager.setText(AnnotatedString(message))
                                 scope.launch {
-                                    snackbarHostState.showSnackbar(
-                                        AppString.COPIED.getString(),
-                                    )
+                                    snackbarHostState.showSnackbar(copiedText)
                                 }
                             },
-                            contentDescription = AppString.COPIED.getString(),
+                            contentDescription = stringResource(Res.string.copied),
                         )
 
                         BaseSpacerHorizontal()
@@ -202,7 +210,7 @@ fun GuidanceScreen(
                                 shareContent.value = message
                                 openShare.value = true
                             },
-                            contentDescription = AppString.SHARE.getString(),
+                            contentDescription = stringResource(Res.string.share),
                         )
 
                         Spacer(Modifier.weight(1f))

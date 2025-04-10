@@ -31,14 +31,17 @@ import core.ui.component.ErrorState
 import core.ui.component.LoadingState
 import core.ui.theme.getHaqqTypography
 import feature.other.service.AppRepository
-import feature.other.service.mapper.getString
 import feature.other.service.model.AppSetting
-import feature.other.service.model.AppString
 import feature.prayertime.service.model.PrayerTime
 import haqq.composeapp.generated.resources.Res
 import haqq.composeapp.generated.resources.calendar
+import haqq.composeapp.generated.resources.prayer_note
+import haqq.composeapp.generated.resources.prayer_time_title
+import haqq.composeapp.generated.resources.today
+import haqq.composeapp.generated.resources.tomorrow
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.mp.KoinPlatform
 
@@ -60,7 +63,7 @@ fun PrayerTimeDailyScreen(onBackClick: () -> Unit) {
     Scaffold(
         topBar = {
             BaseTopAppBar(
-                title = AppString.PRAYER_TIME_TITLE.getString(),
+                title = stringResource(Res.string.prayer_time_title),
                 showRightButton =
                     state.todayTomorrowState is PrayerTimeDailyScreenModel.TodayTomorrowState.Content &&
                         state.calendarState is PrayerTimeDailyScreenModel.CalendarState.Content,
@@ -98,7 +101,7 @@ fun PrayerTimeDailyScreen(onBackClick: () -> Unit) {
             BaseSpacerVertical()
 
             BaseText(
-                text = AppString.PRAYER_NOTE.getString(),
+                text = stringResource(Res.string.prayer_note),
                 style = getHaqqTypography().labelMedium,
                 modifier = Modifier.padding(horizontal = 16.dp),
             )
@@ -132,8 +135,8 @@ private fun PrayerSuccessContent(times: List<PrayerTime>) {
 
     val tabTitles =
         listOf(
-            AppString.TODAY.getString(),
-            AppString.TOMORROW.getString(),
+            stringResource(Res.string.today),
+            stringResource(Res.string.tomorrow),
         )
     val pagerState = rememberPagerState(pageCount = { tabTitles.size })
 
@@ -173,7 +176,7 @@ private fun PrayerSuccessContent(times: List<PrayerTime>) {
 
             selected.mapStringTime.forEach {
                 BaseLabelValueCard(
-                    label = it.key.title.getString(),
+                    label = stringResource(it.key.titleRes),
                     value = it.value,
                     showHighlight = nextTime.first == it.key && shouldShowHighlight,
                 )

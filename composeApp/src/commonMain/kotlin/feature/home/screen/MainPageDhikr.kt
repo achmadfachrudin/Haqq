@@ -14,8 +14,19 @@ import core.ui.component.BaseDivider
 import core.ui.component.BaseMenuLargeCard
 import core.ui.component.BaseTitle
 import feature.dhikr.service.model.DhikrType
-import feature.other.service.mapper.getString
-import feature.other.service.model.AppString
+import haqq.composeapp.generated.resources.Res
+import haqq.composeapp.generated.resources.asmaul_husna_title
+import haqq.composeapp.generated.resources.dhikr_afternoon_title
+import haqq.composeapp.generated.resources.dhikr_morning_title
+import haqq.composeapp.generated.resources.dhikr_pray_title
+import haqq.composeapp.generated.resources.dhikr_ruqyah_title
+import haqq.composeapp.generated.resources.dhikr_sleep_title
+import haqq.composeapp.generated.resources.dhikr_title
+import haqq.composeapp.generated.resources.dua
+import haqq.composeapp.generated.resources.dua_quran
+import haqq.composeapp.generated.resources.dua_sunnah
+import haqq.composeapp.generated.resources.other_title
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun MainPageDhikr(
@@ -35,42 +46,42 @@ internal fun MainPageDhikr(
             span = { GridItemSpan(this.maxLineSpan) },
         ) {
             BaseTitle(
-                AppString.DHIKR_TITLE.getString(),
+                text = stringResource(Res.string.dhikr_title),
                 horizontalArrangement = Arrangement.Start,
             )
         }
 
         item {
             BaseMenuLargeCard(
-                title = AppString.DHIKR_MORNING_TITLE.getString(),
+                title = stringResource(Res.string.dhikr_morning_title),
                 onItemClick = { onDzikirClick(DhikrType.MORNING) },
             )
         }
 
         item {
             BaseMenuLargeCard(
-                title = AppString.DHIKR_AFTERNOON_TITLE.getString(),
+                title = stringResource(Res.string.dhikr_afternoon_title),
                 onItemClick = { onDzikirClick(DhikrType.AFTERNOON) },
             )
         }
 
         item {
             BaseMenuLargeCard(
-                title = AppString.DHIKR_PRAY_TITLE.getString(),
+                title = stringResource(Res.string.dhikr_pray_title),
                 onItemClick = { onDzikirClick(DhikrType.PRAY) },
             )
         }
 
         item {
             BaseMenuLargeCard(
-                title = AppString.DHIKR_SLEEP_TITLE.getString(),
+                title = stringResource(Res.string.dhikr_sleep_title),
                 onItemClick = { onDzikirClick(DhikrType.SLEEP) },
             )
         }
 
         item {
             BaseMenuLargeCard(
-                title = AppString.DHIKR_RUQYAH_TITLE.getString(),
+                title = stringResource(Res.string.dhikr_ruqyah_title),
                 onItemClick = { onDzikirClick(DhikrType.RUQYAH) },
             )
         }
@@ -81,21 +92,21 @@ internal fun MainPageDhikr(
             BaseDivider(0)
             BaseTitle(
                 modifier = Modifier.padding(top = 16.dp),
-                text = AppString.DUA.getString(),
+                text = stringResource(Res.string.dua),
                 horizontalArrangement = Arrangement.Start,
             )
         }
 
         item {
             BaseMenuLargeCard(
-                title = AppString.DUA_QURAN.getString(),
+                title = stringResource(Res.string.dua_quran),
                 onItemClick = { onDuaQuranClick() },
             )
         }
 
         item {
             BaseMenuLargeCard(
-                title = AppString.DUA_SUNNAH.getString(),
+                title = stringResource(Res.string.dua_sunnah),
                 onItemClick = { onDuaSunnahClick() },
             )
         }
@@ -106,14 +117,14 @@ internal fun MainPageDhikr(
             BaseDivider(0)
             BaseTitle(
                 modifier = Modifier.padding(top = 16.dp),
-                text = AppString.OTHER_TITLE.getString(),
+                text = stringResource(Res.string.other_title),
                 horizontalArrangement = Arrangement.Start,
             )
         }
 
         item {
             BaseMenuLargeCard(
-                title = AppString.ASMAUL_HUSNA_TITLE.getString(),
+                title = stringResource(Res.string.asmaul_husna_title),
                 onItemClick = { onAsmaClick() },
             )
         }

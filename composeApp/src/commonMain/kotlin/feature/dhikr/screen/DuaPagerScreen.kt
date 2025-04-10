@@ -33,14 +33,15 @@ import core.ui.component.BaseSpacerVertical
 import core.ui.component.BaseTopAppBar
 import core.ui.component.ErrorState
 import core.ui.component.LoadingState
-import feature.other.service.mapper.getString
-import feature.other.service.model.AppString
 import haqq.composeapp.generated.resources.Res
 import haqq.composeapp.generated.resources.alert_circle
+import haqq.composeapp.generated.resources.copied
 import haqq.composeapp.generated.resources.copy
+import haqq.composeapp.generated.resources.report
 import haqq.composeapp.generated.resources.share
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Serializable
@@ -141,22 +142,21 @@ fun DuaPagerScreen(
                                     shareContent.value = message
                                     openMail.value = true
                                 },
-                                contentDescription = AppString.REPORT.getString(),
+                                contentDescription = stringResource(Res.string.report),
                             )
 
                             BaseSpacerHorizontal()
 
+                            val copiedText = stringResource(Res.string.copied)
                             BaseIconButton(
                                 iconResource = Res.drawable.copy,
                                 onClick = {
                                     clipboardManager.setText(AnnotatedString(message))
                                     scope.launch {
-                                        snackbarHostState.showSnackbar(
-                                            AppString.COPIED.getString(),
-                                        )
+                                        snackbarHostState.showSnackbar(copiedText)
                                     }
                                 },
-                                contentDescription = AppString.COPIED.getString(),
+                                contentDescription = stringResource(Res.string.copied),
                             )
 
                             BaseSpacerHorizontal()
@@ -167,7 +167,7 @@ fun DuaPagerScreen(
                                     shareContent.value = message
                                     openShare.value = true
                                 },
-                                contentDescription = AppString.SHARE.getString(),
+                                contentDescription = stringResource(Res.string.share),
                             )
                         },
                     )

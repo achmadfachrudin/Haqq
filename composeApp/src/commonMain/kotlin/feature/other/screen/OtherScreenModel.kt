@@ -5,11 +5,19 @@ import androidx.lifecycle.viewModelScope
 import core.data.DataState
 import feature.other.service.AppRepository
 import feature.other.service.entity.SettingEntity
+import haqq.composeapp.generated.resources.Res
+import haqq.composeapp.generated.resources.clear_all_data
+import haqq.composeapp.generated.resources.dhikr
+import haqq.composeapp.generated.resources.dua
+import haqq.composeapp.generated.resources.prayer_time_title
+import haqq.composeapp.generated.resources.quran_title
+import haqq.composeapp.generated.resources.study_note_title
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.StringResource
 
 class OtherScreenModel(
     private val appRepository: AppRepository,
@@ -29,13 +37,15 @@ class OtherScreenModel(
         ) : State()
     }
 
-    enum class ClearType {
-        DHIKR,
-        DUA,
-        QURAN,
-        PRAYER_TIME,
-        STUDY_NOTE,
-        CLEAR_ALL,
+    enum class ClearType(
+        val label: StringResource,
+    ) {
+        DHIKR(Res.string.dhikr),
+        DUA(Res.string.dua),
+        QURAN(Res.string.quran_title),
+        PRAYER_TIME(Res.string.prayer_time_title),
+        STUDY_NOTE(Res.string.study_note_title),
+        CLEAR_ALL(Res.string.clear_all_data),
     }
 
     fun clearData(clearType: ClearType) {

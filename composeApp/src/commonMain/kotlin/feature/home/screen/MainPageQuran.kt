@@ -48,8 +48,6 @@ import core.ui.component.ErrorState
 import core.ui.component.LoadingState
 import core.ui.theme.getHaqqTypography
 import core.util.searchBy
-import feature.other.service.mapper.getString
-import feature.other.service.model.AppString
 import feature.quran.service.QuranRepository
 import feature.quran.service.model.Chapter
 import feature.quran.service.model.Juz
@@ -58,8 +56,29 @@ import feature.quran.service.model.Page
 import feature.quran.service.model.QuranConstant.MAX_CHAPTER
 import feature.quran.service.model.VerseFavorite
 import haqq.composeapp.generated.resources.Res
+import haqq.composeapp.generated.resources.ayahs
+import haqq.composeapp.generated.resources.cancel
+import haqq.composeapp.generated.resources.delete
+import haqq.composeapp.generated.resources.delete_confirmation_desc
+import haqq.composeapp.generated.resources.delete_confirmation_title
+import haqq.composeapp.generated.resources.download
+import haqq.composeapp.generated.resources.download_alert
+import haqq.composeapp.generated.resources.download_all_surahs
+import haqq.composeapp.generated.resources.download_in_progress
+import haqq.composeapp.generated.resources.from_surah_and_ayah
 import haqq.composeapp.generated.resources.hexagonal
+import haqq.composeapp.generated.resources.juz_title
+import haqq.composeapp.generated.resources.lastread_continue
+import haqq.composeapp.generated.resources.pages_title
+import haqq.composeapp.generated.resources.please_download_mushaf
+import haqq.composeapp.generated.resources.quran_favorite_title
+import haqq.composeapp.generated.resources.search_juz
+import haqq.composeapp.generated.resources.search_page
+import haqq.composeapp.generated.resources.search_surah
+import haqq.composeapp.generated.resources.surah_ayah
+import haqq.composeapp.generated.resources.surah_title
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.mp.KoinPlatform
 
 @Composable
@@ -81,10 +100,10 @@ internal fun MainPageQuran(
     ) {
         val tabTitles =
             listOf(
-                AppString.SURAH_TITLE.getString(),
-                AppString.JUZ_TITLE.getString(),
-                AppString.PAGES_TITLE.getString(),
-                AppString.QURAN_FAVORITE_TITLE.getString(),
+                stringResource(Res.string.surah_title),
+                stringResource(Res.string.juz_title),
+                stringResource(Res.string.pages_title),
+                stringResource(Res.string.quran_favorite_title),
             )
         val pagerState = rememberPagerState(pageCount = { tabTitles.size })
 
@@ -99,7 +118,7 @@ internal fun MainPageQuran(
             BaseButton(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 onClick = { openDownloadConfirmationDialog.value = true },
-                text = AppString.DOWNLOAD_ALL_SURAHS.getString(),
+                text = stringResource(Res.string.download_all_surahs),
             )
         }
 
@@ -130,7 +149,7 @@ internal fun MainPageQuran(
                             onJuzClick = onJuzClick,
                         )
                     } else {
-                        ErrorState(AppString.PLEASE_DOWNLOAD_MUSHAF.getString())
+                        ErrorState(stringResource(Res.string.please_download_mushaf))
                     }
                 }
 
@@ -142,7 +161,7 @@ internal fun MainPageQuran(
                             onPageClick = onPageClick,
                         )
                     } else {
-                        ErrorState(AppString.PLEASE_DOWNLOAD_MUSHAF.getString())
+                        ErrorState(stringResource(Res.string.please_download_mushaf))
                     }
                 }
 
@@ -160,10 +179,10 @@ internal fun MainPageQuran(
     if (openDownloadConfirmationDialog.value) {
         BaseDialog(
             onDismissRequest = { openDownloadConfirmationDialog.value = false },
-            title = AppString.DOWNLOAD_ALL_SURAHS.getString(),
-            desc = AppString.DOWNLOAD_ALERT.getString(),
-            negativeButtonText = AppString.CANCEL.getString(),
-            positiveButtonText = AppString.DOWNLOAD.getString(),
+            title = stringResource(Res.string.download_all_surahs),
+            desc = stringResource(Res.string.download_alert),
+            negativeButtonText = stringResource(Res.string.cancel),
+            positiveButtonText = stringResource(Res.string.download),
             onPositiveClicked = {
                 openDownloadConfirmationDialog.value = false
                 onDownloadClick()
@@ -176,7 +195,7 @@ internal fun MainPageQuran(
         val downloadPercent = state.verseDownloading.toFloat() / MAX_CHAPTER.toFloat()
 
         DownloadProgressDialog(
-            title = AppString.DOWNLOAD_ALL_SURAHS.getString(),
+            title = stringResource(Res.string.download_all_surahs),
             downloadMessage = downloadMessage,
             downloadProgress = downloadPercent,
         )
@@ -204,7 +223,7 @@ private fun DownloadProgressDialog(
                 )
                 BaseText(text = downloadMessage)
                 BaseSpacerVertical()
-                BaseText(text = AppString.DOWNLOAD_IN_PROGRESS.getString())
+                BaseText(text = stringResource(Res.string.download_in_progress))
             }
         }
     }
@@ -249,7 +268,7 @@ private fun ChapterContent(
                                             .trim()
                                             .filter { it.isLetterOrDigit() }
                                 },
-                                label = AppString.SEARCH_SURAH.getString(),
+                                label = stringResource(Res.string.search_surah),
                                 trailingClick = { valueSearch.value = "" },
                                 keyboardOptions =
                                     KeyboardOptions.Default.copy(
@@ -314,7 +333,7 @@ private fun JuzContent(
                                         .trim()
                                         .filter { it.isLetterOrDigit() }
                             },
-                            label = AppString.SEARCH_JUZ.getString(),
+                            label = stringResource(Res.string.search_juz),
                             trailingClick = { valueSearch.value = "" },
                             keyboardOptions =
                                 KeyboardOptions.Default.copy(
@@ -378,7 +397,7 @@ private fun PageContent(
                                         .trim()
                                         .filter { it.isLetterOrDigit() }
                             },
-                            label = AppString.SEARCH_PAGE.getString(),
+                            label = stringResource(Res.string.search_page),
                             trailingClick = { valueSearch.value = "" },
                             keyboardOptions =
                                 KeyboardOptions.Default.copy(
@@ -434,8 +453,7 @@ private fun FavoriteContent(
 
     if (openDeleteFavoriteDialog.value && selectedVerse.value != null) {
         val title =
-            AppString.SURAH_AYAH
-                .getString()
+            stringResource(Res.string.surah_ayah)
                 .replace("%1", selectedVerse.value!!.chapterNameSimple)
                 .replace("%2", "${selectedVerse.value!!.verseNumber}")
 
@@ -444,14 +462,14 @@ private fun FavoriteContent(
                 selectedVerse.value = null
                 openDeleteFavoriteDialog.value = false
             },
-            title = AppString.DELETE_CONFIRMATION_TITLE.getString(),
+            title = stringResource(Res.string.delete_confirmation_title),
             desc =
                 """
                 $title
-                ${AppString.DELETE_CONFIRMATION_DESC.getString()}
+                ${stringResource(Res.string.delete_confirmation_desc)}
                 """.trimIndent(),
-            negativeButtonText = AppString.CANCEL.getString(),
-            positiveButtonText = AppString.DELETE.getString(),
+            negativeButtonText = stringResource(Res.string.cancel),
+            positiveButtonText = stringResource(Res.string.delete),
             onPositiveClicked = {
                 onRemoveFavoriteClick(selectedVerse.value!!)
                 selectedVerse.value = null
@@ -466,10 +484,9 @@ private fun LastReadCard(
     lastRead: LastRead,
     onClick: () -> Unit,
 ) {
-    val title = AppString.LASTREAD_CONTINUE.getString()
+    val title = stringResource(Res.string.lastread_continue)
     val description =
-        AppString.SURAH_AYAH
-            .getString()
+        stringResource(Res.string.surah_ayah)
             .replace("%1", lastRead.chapterNameSimple)
             .replace("%2", lastRead.verseNumber.toString())
 
@@ -514,7 +531,7 @@ private fun ChapterCard(
     chapter: Chapter,
     onClick: (chapter: Chapter) -> Unit,
 ) {
-    val verses = "${chapter.versesCount} ${AppString.AYAHS.getString()}"
+    val verses = "${chapter.versesCount} ${stringResource(Res.string.ayahs)}"
     val chapterNumber = "${chapter.id}"
 
     if (chapter.isDownloaded) {
@@ -567,11 +584,10 @@ private fun JuzCard(
     val quranRepository = KoinPlatform.getKoin().get<QuranRepository>()
     val firstChapterName = quranRepository.getChapterById(juz.firstChapterNumber)
     val start =
-        AppString.FROM_SURAH_AND_AYAH
-            .getString()
+        stringResource(Res.string.from_surah_and_ayah)
             .replace("%1", firstChapterName.nameSimple)
             .replace("%2", juz.firstVerseNumber.toString())
-    val verses = "${juz.versesCount} ${AppString.AYAHS.getString()}"
+    val verses = "${juz.versesCount} ${stringResource(Res.string.ayahs)}"
     val juzNumber = "${juz.juzNumber}"
 
     Row(
@@ -611,11 +627,10 @@ private fun PageCard(
     val quranRepository = KoinPlatform.getKoin().get<QuranRepository>()
     val chapterName = quranRepository.getChapterNameSimple(page.firstChapterNumber)
     val start =
-        AppString.FROM_SURAH_AND_AYAH
-            .getString()
+        stringResource(Res.string.from_surah_and_ayah)
             .replace("%1", chapterName)
             .replace("%2", page.firstVerseNumber.toString())
-    val verses = "${page.versesCount} ${AppString.AYAHS.getString()}"
+    val verses = "${page.versesCount} ${stringResource(Res.string.ayahs)}"
     val pageNumber = "${page.pageNumber}"
 
     Row(
@@ -655,8 +670,7 @@ private fun FavoriteCard(
     onLongClick: () -> Unit,
 ) {
     val title =
-        AppString.SURAH_AYAH
-            .getString()
+        stringResource(Res.string.surah_ayah)
             .replace("%1", verse.chapterNameSimple)
             .replace("%2", "${verse.verseNumber}")
 

@@ -41,11 +41,20 @@ import core.util.DateUtil.formatDateTimeToLong
 import core.util.DateUtil.formatDateTimeToString
 import core.util.isNullOrZero
 import core.util.toLocalDateTime
-import feature.other.service.mapper.getString
-import feature.other.service.model.AppString
 import feature.study.service.model.Note
 import haqq.composeapp.generated.resources.Res
+import haqq.composeapp.generated.resources.cancel
+import haqq.composeapp.generated.resources.delete
+import haqq.composeapp.generated.resources.delete_confirmation_desc
+import haqq.composeapp.generated.resources.delete_confirmation_title
+import haqq.composeapp.generated.resources.note_date
+import haqq.composeapp.generated.resources.note_kitab
+import haqq.composeapp.generated.resources.note_speaker
+import haqq.composeapp.generated.resources.note_text
+import haqq.composeapp.generated.resources.note_title
+import haqq.composeapp.generated.resources.ok
 import haqq.composeapp.generated.resources.save
+import haqq.composeapp.generated.resources.study_note_new
 import haqq.composeapp.generated.resources.trash_2
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
@@ -53,6 +62,7 @@ import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Serializable
@@ -82,7 +92,7 @@ fun NoteDetailScreen(
     Scaffold(
         topBar = {
             BaseTopAppBar(
-                title = AppString.STUDY_NOTE_NEW.getString(),
+                title = stringResource(Res.string.study_note_new),
                 showOptionalButton = !state.note?.id.isNullOrZero(),
                 showRightButton = true,
                 optionalButtonImage = painterResource(Res.drawable.trash_2),
@@ -173,7 +183,7 @@ fun NoteDetailScreen(
                     onValueChange = { newText ->
                         valueTitle.value = newText.take(40)
                     },
-                    label = { BaseText(AppString.NOTE_TITLE.getString()) },
+                    label = { BaseText(stringResource(Res.string.note_title)) },
                     keyboardOptions =
                         KeyboardOptions.Default.copy(
                             imeAction = ImeAction.Next,
@@ -190,7 +200,7 @@ fun NoteDetailScreen(
                     onValueChange = { newText ->
                         valueKitab.value = newText.take(40)
                     },
-                    label = { BaseText(AppString.NOTE_KITAB.getString()) },
+                    label = { BaseText(stringResource(Res.string.note_kitab)) },
                     keyboardOptions =
                         KeyboardOptions.Default.copy(
                             imeAction = ImeAction.Next,
@@ -207,7 +217,7 @@ fun NoteDetailScreen(
                     onValueChange = { newText ->
                         valueSpeaker.value = newText.take(40)
                     },
-                    label = { BaseText(AppString.NOTE_SPEAKER.getString()) },
+                    label = { BaseText(stringResource(Res.string.note_speaker)) },
                     keyboardOptions =
                         KeyboardOptions.Default.copy(
                             imeAction = ImeAction.Next,
@@ -227,7 +237,7 @@ fun NoteDetailScreen(
                             .padding(TextFieldDefaults.contentPaddingWithLabel()),
                 ) {
                     BaseText(
-                        text = AppString.NOTE_DATE.getString(),
+                        text = stringResource(Res.string.note_date),
                         style = getHaqqTypography().bodySmall,
                         color = MaterialTheme.colorScheme.primary,
                     )
@@ -244,7 +254,7 @@ fun NoteDetailScreen(
                     onValueChange = { newText ->
                         valueText.value = newText
                     },
-                    label = { BaseText(AppString.NOTE_TEXT.getString()) },
+                    label = { BaseText(stringResource(Res.string.note_text)) },
                     singleLine = false,
                     colors = textFieldColor,
                 )
@@ -275,7 +285,7 @@ fun NoteDetailScreen(
                         },
                         enabled = confirmEnabled.value,
                     ) {
-                        Text(AppString.OK.getString())
+                        Text(stringResource(Res.string.ok))
                     }
                 },
                 dismissButton = {
@@ -284,7 +294,7 @@ fun NoteDetailScreen(
                             openDateDialog.value = false
                         },
                     ) {
-                        Text(AppString.CANCEL.getString())
+                        Text(stringResource(Res.string.cancel))
                     }
                 },
             ) {
@@ -295,10 +305,10 @@ fun NoteDetailScreen(
         if (openConfirmationDialog.value) {
             BaseDialog(
                 onDismissRequest = { openConfirmationDialog.value = false },
-                title = AppString.DELETE_CONFIRMATION_TITLE.getString(),
-                desc = AppString.DELETE_CONFIRMATION_DESC.getString(),
-                negativeButtonText = AppString.CANCEL.getString(),
-                positiveButtonText = AppString.DELETE.getString(),
+                title = stringResource(Res.string.delete_confirmation_title),
+                desc = stringResource(Res.string.delete_confirmation_desc),
+                negativeButtonText = stringResource(Res.string.cancel),
+                positiveButtonText = stringResource(Res.string.delete),
                 onPositiveClicked = {
                     vm.deleteNote(nav.noteId)
                     openConfirmationDialog.value = false

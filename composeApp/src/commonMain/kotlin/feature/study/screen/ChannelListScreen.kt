@@ -26,9 +26,11 @@ import core.ui.component.BaseTopAppBar
 import core.ui.component.ErrorState
 import core.ui.component.LoadingState
 import core.util.searchBy
-import feature.other.service.mapper.getString
-import feature.other.service.model.AppString
+import haqq.composeapp.generated.resources.Res
+import haqq.composeapp.generated.resources.search_channel
+import haqq.composeapp.generated.resources.study_title
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Serializable
@@ -46,7 +48,7 @@ fun ChannelListScreen(
     Scaffold(
         topBar = {
             BaseTopAppBar(
-                title = AppString.STUDY_TITLE.getString(),
+                title = stringResource(Res.string.study_title),
                 onLeftButtonClick = {
                     onBackClick()
                 },
@@ -79,7 +81,7 @@ fun ChannelListScreen(
                                                 .trim()
                                                 .filter { it.isLetterOrDigit() }
                                     },
-                                    label = AppString.SEARCH_CHANNEL.getString(),
+                                    label = stringResource(Res.string.search_channel),
                                     trailingClick = { valueSearch.value = "" },
                                     keyboardOptions =
                                         KeyboardOptions.Default.copy(

@@ -6,15 +6,19 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
 import core.ui.theme.getHaqqTypography
 import feature.home.screen.MainScreenModel
-import feature.other.service.mapper.getString
-import feature.other.service.model.AppString
 import haqq.composeapp.generated.resources.Res
+import haqq.composeapp.generated.resources.activity_title
 import haqq.composeapp.generated.resources.battery_charging
 import haqq.composeapp.generated.resources.book
 import haqq.composeapp.generated.resources.check_square
 import haqq.composeapp.generated.resources.clock
+import haqq.composeapp.generated.resources.dhikr_title
 import haqq.composeapp.generated.resources.home
+import haqq.composeapp.generated.resources.home_title
+import haqq.composeapp.generated.resources.prayer_title
+import haqq.composeapp.generated.resources.quran_title
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun RowScope.TabNavigationItem(
@@ -26,11 +30,11 @@ fun RowScope.TabNavigationItem(
 
     val title =
         when (pageState) {
-            MainScreenModel.PageState.HOME -> AppString.HOME_TITLE.getString()
-            MainScreenModel.PageState.DHIKR -> AppString.DHIKR_TITLE.getString()
-            MainScreenModel.PageState.QURAN -> AppString.QURAN_TITLE.getString()
-            MainScreenModel.PageState.PRAYER -> AppString.PRAYER_TITLE.getString()
-            MainScreenModel.PageState.ACTIVITY -> AppString.ACTIVITY_TITLE.getString()
+            MainScreenModel.PageState.HOME -> stringResource(Res.string.home_title)
+            MainScreenModel.PageState.DHIKR -> stringResource(Res.string.dhikr_title)
+            MainScreenModel.PageState.QURAN -> stringResource(Res.string.quran_title)
+            MainScreenModel.PageState.PRAYER -> stringResource(Res.string.prayer_title)
+            MainScreenModel.PageState.ACTIVITY -> stringResource(Res.string.activity_title)
         }
 
     val icon =

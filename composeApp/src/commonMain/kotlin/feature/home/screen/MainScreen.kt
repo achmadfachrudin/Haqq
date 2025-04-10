@@ -40,8 +40,6 @@ import feature.dhikr.screen.DuaSunnahNav
 import feature.other.screen.OtherNav
 import feature.other.screen.SettingNav
 import feature.other.service.AppRepository
-import feature.other.service.mapper.getString
-import feature.other.service.model.AppString
 import feature.prayertime.screen.CalendarNav
 import feature.prayertime.screen.GuidanceNav
 import feature.prayertime.screen.PrayerTimeDailyNav
@@ -54,8 +52,14 @@ import feature.web.screen.YoutubeNav
 import feature.zakat.screen.ZakatNav
 import getPlatform
 import haqq.composeapp.generated.resources.Res
+import haqq.composeapp.generated.resources.accept
+import haqq.composeapp.generated.resources.app_name
+import haqq.composeapp.generated.resources.dua_quran
+import haqq.composeapp.generated.resources.kids_activity_title
 import haqq.composeapp.generated.resources.more_horizontal
+import haqq.composeapp.generated.resources.privacy_policy
 import haqq.composeapp.generated.resources.settings
+import haqq.composeapp.generated.resources.support_title
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kottieComposition.KottieCompositionSpec
@@ -63,6 +67,7 @@ import kottieComposition.animateKottieCompositionAsState
 import kottieComposition.rememberKottieComposition
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.mp.KoinPlatform
 import utils.KottieConstants
@@ -119,8 +124,10 @@ fun MainScreen(
     } else {
         Scaffold(
             topBar = {
+                val supportTitle = stringResource(Res.string.support_title)
+
                 BaseTopAppBar(
-                    title = AppString.APP_NAME.getString(),
+                    title = stringResource(Res.string.app_name),
                     showLeftButton = true,
                     showRightButton = true,
                     showOptionalLottie = true,
@@ -140,7 +147,7 @@ fun MainScreen(
                         onWebClick(
                             WebNav(
                                 url = AppConstant.getSupportUrl(languageId),
-                                title = AppString.SUPPORT_TITLE.getString(),
+                                title = supportTitle,
                                 openExternalIOS = true,
                             ),
                         )
@@ -185,6 +192,7 @@ fun MainScreen(
                         }
 
                         MainScreenModel.PageState.DHIKR -> {
+                            val duaTitle = stringResource(Res.string.dua_quran)
                             MainPageDhikr(
                                 onDzikirClick = { dhikrType ->
                                     onDhikrListClick(DhikrPagerNav(dhikrTypeName = dhikrType.name))
@@ -192,7 +200,7 @@ fun MainScreen(
                                 onDuaQuranClick = {
                                     onDuaListClick(
                                         DuaListNav(
-                                            duaCategoryTitle = AppString.DUA_QURAN.getString(),
+                                            duaCategoryTitle = duaTitle,
                                             duaCategoryTag = "quran",
                                         ),
                                     )
@@ -290,6 +298,7 @@ fun MainScreen(
                         }
 
                         MainScreenModel.PageState.ACTIVITY -> {
+                            val kidsTitle = stringResource(Res.string.kids_activity_title)
                             MainPageActivity(
                                 onArticleClick = {
                                     onArticleListClick(ArticleListNav)
@@ -311,7 +320,7 @@ fun MainScreen(
                                     onWebClick(
                                         WebNav(
                                             url = AppConstant.URL_LYNK_KIDS_ACTIVITY,
-                                            title = AppString.KIDS_ACTIVITY_TITLE.getString(),
+                                            title = kidsTitle,
                                         ),
                                     )
                                 },
@@ -356,7 +365,7 @@ private fun DialogPrivacyPolicy() {
     Scaffold(
         topBar = {
             BaseTopAppBar(
-                title = AppString.PRIVACY_POLICY.getString(),
+                title = stringResource(Res.string.privacy_policy),
                 showLeftButton = false,
                 showRightButton = false,
             )
@@ -400,7 +409,7 @@ private fun DialogPrivacyPolicy() {
 
             BaseButton(
                 modifier = Modifier.padding(16.dp).fillMaxWidth().align(Alignment.BottomCenter),
-                text = AppString.ACCEPT.getString(),
+                text = stringResource(Res.string.accept),
                 onClick = { vm.acceptPrivacyPolicy() },
             )
         }

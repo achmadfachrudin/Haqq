@@ -37,16 +37,27 @@ import core.ui.component.BaseTopAppBar
 import core.ui.component.ErrorState
 import core.ui.component.LoadingState
 import feature.dhikr.service.model.DhikrType
-import feature.other.service.mapper.getString
-import feature.other.service.model.AppString
 import haqq.composeapp.generated.resources.Res
 import haqq.composeapp.generated.resources.alert_circle
+import haqq.composeapp.generated.resources.cancel
+import haqq.composeapp.generated.resources.copied
 import haqq.composeapp.generated.resources.copy
+import haqq.composeapp.generated.resources.dhikr
+import haqq.composeapp.generated.resources.dhikr_afternoon_title
+import haqq.composeapp.generated.resources.dhikr_morning_title
+import haqq.composeapp.generated.resources.dhikr_pray_title
+import haqq.composeapp.generated.resources.dhikr_ruqyah_title
+import haqq.composeapp.generated.resources.dhikr_sleep_title
 import haqq.composeapp.generated.resources.more_horizontal
+import haqq.composeapp.generated.resources.report
+import haqq.composeapp.generated.resources.reset
+import haqq.composeapp.generated.resources.reset_confirmation_title
+import haqq.composeapp.generated.resources.reset_dhikr_note
 import haqq.composeapp.generated.resources.share
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Serializable
@@ -74,11 +85,11 @@ fun DhikrPagerScreen(
 
     val title =
         when (dhikrType) {
-            DhikrType.MORNING -> AppString.DHIKR_MORNING_TITLE.getString()
-            DhikrType.AFTERNOON -> AppString.DHIKR_AFTERNOON_TITLE.getString()
-            DhikrType.PRAY -> AppString.DHIKR_PRAY_TITLE.getString()
-            DhikrType.SLEEP -> AppString.DHIKR_SLEEP_TITLE.getString()
-            DhikrType.RUQYAH -> AppString.DHIKR_RUQYAH_TITLE.getString()
+            DhikrType.MORNING -> stringResource(Res.string.dhikr_morning_title)
+            DhikrType.AFTERNOON -> stringResource(Res.string.dhikr_afternoon_title)
+            DhikrType.PRAY -> stringResource(Res.string.dhikr_pray_title)
+            DhikrType.SLEEP -> stringResource(Res.string.dhikr_sleep_title)
+            DhikrType.RUQYAH -> stringResource(Res.string.dhikr_ruqyah_title)
         }
 
     Scaffold(
@@ -161,20 +172,19 @@ fun DhikrPagerScreen(
                                     shareContent.value = message
                                     openMail.value = true
                                 },
-                                contentDescription = AppString.REPORT.getString(),
+                                contentDescription = stringResource(Res.string.report),
                             )
 
+                            val copiedText = stringResource(Res.string.copied)
                             BaseIconButton(
                                 iconResource = Res.drawable.copy,
                                 onClick = {
                                     clipboardManager.setText(AnnotatedString(message))
                                     scope.launch {
-                                        snackbarHostState.showSnackbar(
-                                            AppString.COPIED.getString(),
-                                        )
+                                        snackbarHostState.showSnackbar(copiedText)
                                     }
                                 },
-                                contentDescription = AppString.COPIED.getString(),
+                                contentDescription = stringResource(Res.string.copied),
                             )
 
                             BaseIconButton(
@@ -183,7 +193,7 @@ fun DhikrPagerScreen(
                                     shareContent.value = message
                                     openShare.value = true
                                 },
-                                contentDescription = AppString.SHARE.getString(),
+                                contentDescription = stringResource(Res.string.share),
                             )
                         },
                         floatingActionButton = {
@@ -216,10 +226,10 @@ fun DhikrPagerScreen(
             if (openResetDialog.value) {
                 BaseDialog(
                     onDismissRequest = { openResetDialog.value = false },
-                    title = AppString.RESET_CONFIRMATION_TITLE.getString(),
-                    desc = AppString.RESET_DHIKR_NOTE.getString(),
-                    negativeButtonText = AppString.CANCEL.getString(),
-                    positiveButtonText = AppString.RESET.getString(),
+                    title = stringResource(Res.string.reset_confirmation_title),
+                    desc = stringResource(Res.string.reset_dhikr_note),
+                    negativeButtonText = stringResource(Res.string.cancel),
+                    positiveButtonText = stringResource(Res.string.reset),
                     onPositiveClicked = {
                         vm.resetDhikrCount()
                         openResetDialog.value = false

@@ -18,11 +18,11 @@ import androidx.compose.ui.unit.dp
 import core.ui.component.BaseIconButton
 import core.ui.component.BaseImage
 import core.ui.component.BaseTopAppBar
-import feature.other.service.mapper.getString
-import feature.other.service.model.AppString
 import haqq.composeapp.generated.resources.Res
+import haqq.composeapp.generated.resources.charity_title
 import haqq.composeapp.generated.resources.share
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.stringResource
 
 @Serializable
 data class CharityDetailNav(
@@ -39,7 +39,7 @@ fun CharityDetailScreen(
     Scaffold(
         topBar = {
             BaseTopAppBar(
-                title = AppString.CHARITY_TITLE.getString(),
+                title = stringResource(Res.string.charity_title),
                 onLeftButtonClick = {
                     onBackClick()
                 },
@@ -62,7 +62,7 @@ fun CharityDetailScreen(
                     onClick = {
                         openShare.value = true
                     },
-                    contentDescription = AppString.SHARE.getString(),
+                    contentDescription = stringResource(Res.string.share),
                 )
             }
         }
