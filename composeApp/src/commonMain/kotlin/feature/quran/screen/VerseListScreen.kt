@@ -53,25 +53,40 @@ import core.ui.component.ErrorState
 import core.ui.component.LoadingState
 import core.ui.theme.getHaqqTypography
 import core.util.searchBy
-import feature.other.service.mapper.getString
-import feature.other.service.model.AppString
 import feature.quran.service.model.Chapter
 import feature.quran.service.model.ReadMode
 import feature.quran.service.model.Verse
 import haqq.composeapp.generated.resources.Res
+import haqq.composeapp.generated.resources.add_to_favorite
 import haqq.composeapp.generated.resources.alert_circle
 import haqq.composeapp.generated.resources.bg_frame_surah
 import haqq.composeapp.generated.resources.bookmark
+import haqq.composeapp.generated.resources.cancel
+import haqq.composeapp.generated.resources.clear_search
 import haqq.composeapp.generated.resources.copy
 import haqq.composeapp.generated.resources.corner_left_down
 import haqq.composeapp.generated.resources.heart
 import haqq.composeapp.generated.resources.heart_filled
+import haqq.composeapp.generated.resources.jump_to_ayah
+import haqq.composeapp.generated.resources.page
+import haqq.composeapp.generated.resources.remove_from_favorite
+import haqq.composeapp.generated.resources.report
+import haqq.composeapp.generated.resources.reset
+import haqq.composeapp.generated.resources.reset_confirmation_title
+import haqq.composeapp.generated.resources.reset_verse_note
+import haqq.composeapp.generated.resources.save_as_lastread
 import haqq.composeapp.generated.resources.search
+import haqq.composeapp.generated.resources.search_ayah
+import haqq.composeapp.generated.resources.search_ayah_hint
+import haqq.composeapp.generated.resources.search_content
 import haqq.composeapp.generated.resources.share
+import haqq.composeapp.generated.resources.surah_ayah
+import haqq.composeapp.generated.resources.surah_desc
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Serializable
@@ -108,7 +123,7 @@ fun VerseListScreen(
         when (readMode) {
             ReadMode.BY_CHAPTER -> state.chapter?.nameSimple.orEmpty()
             ReadMode.BY_JUZ -> "Juz ${state.juz?.juzNumber}"
-            ReadMode.BY_PAGE -> "${AppString.PAGE.getString()} ${state.page?.pageNumber}"
+            ReadMode.BY_PAGE -> "${stringResource(Res.string.page)} ${state.page?.pageNumber}"
         }
 
     Scaffold(
@@ -145,13 +160,13 @@ fun VerseListScreen(
                                 ) {
                                     BaseText(
                                         color = MaterialTheme.colorScheme.tertiary,
-                                        text = "${AppString.SEARCH_CONTENT.getString()} ${state.query}",
+                                        text = "${stringResource(Res.string.search_content)} ${state.query}",
                                     )
 
                                     TextButton(onClick = {
                                         vm.updateQuery("")
                                     }) {
-                                        Text(AppString.CLEAR_SEARCH.getString())
+                                        Text(stringResource(Res.string.clear_search))
                                     }
                                 }
                             }
@@ -267,10 +282,10 @@ fun VerseListScreen(
     if (openResetDialog.value) {
         BaseDialog(
             onDismissRequest = { openResetDialog.value = false },
-            title = AppString.RESET_CONFIRMATION_TITLE.getString(),
-            desc = AppString.RESET_VERSE_NOTE.getString(),
-            negativeButtonText = AppString.CANCEL.getString(),
-            positiveButtonText = AppString.RESET.getString(),
+            title = stringResource(Res.string.reset_confirmation_title),
+            desc = stringResource(Res.string.reset_verse_note),
+            negativeButtonText = stringResource(Res.string.cancel),
+            positiveButtonText = stringResource(Res.string.reset),
             onPositiveClicked = {
                 vm.resetVerses(nav.id)
                 openResetDialog.value = false
@@ -281,7 +296,7 @@ fun VerseListScreen(
     if (openJumpVerseDialog.value) {
         BaseDialog(
             onDismissRequest = { openJumpVerseDialog.value = false },
-            title = AppString.JUMP_TO_AYAH.getString(),
+            title = stringResource(Res.string.jump_to_ayah),
             shouldCustomContent = true,
             content = {
                 val valueSearch = remember { mutableStateOf("") }
@@ -294,7 +309,7 @@ fun VerseListScreen(
                                 .trim()
                                 .filter { it.isDigit() }
                     },
-                    label = AppString.SEARCH_AYAH.getString(),
+                    label = stringResource(Res.string.search_ayah),
                     trailingClick = { valueSearch.value = "" },
                     keyboardOptions =
                         KeyboardOptions.Default.copy(
@@ -342,8 +357,7 @@ fun VerseListScreen(
             val isFavorite = vm.isFavorite(verse.id)
 
             val shareTitle =
-                AppString.SURAH_AYAH
-                    .getString()
+                stringResource(Res.string.surah_ayah)
                     .replace("%1", chapterNameSimple)
                     .replace("%2", "${verse.verseNumber}")
 
@@ -364,7 +378,7 @@ fun VerseListScreen(
                         when (verseAction) {
                             VerseListScreenModel.VerseAction.SAVE_AS_LASTREAD -> {
                                 BaseItemCard(
-                                    title = AppString.SAVE_AS_LASTREAD.getString(),
+                                    title = stringResource(Res.string.save_as_lastread),
                                     iconResource = Res.drawable.bookmark,
                                     onClick = {
                                         vm.updateLastRead(verse.id)
@@ -377,9 +391,9 @@ fun VerseListScreen(
                             VerseListScreenModel.VerseAction.ADD_OR_REMOVE_FAVORITE -> {
                                 val itemTitle =
                                     if (isFavorite) {
-                                        AppString.REMOVE_FROM_FAVORITE.getString()
+                                        stringResource(Res.string.remove_from_favorite)
                                     } else {
-                                        AppString.ADD_TO_FAVORITE.getString()
+                                        stringResource(Res.string.add_to_favorite)
                                     }
 
                                 val itemIcon =
@@ -403,7 +417,7 @@ fun VerseListScreen(
 
                             VerseListScreenModel.VerseAction.SHARE -> {
                                 BaseItemCard(
-                                    title = AppString.SHARE.getString(),
+                                    title = stringResource(Res.string.share),
                                     iconResource = Res.drawable.share,
                                     onClick = {
                                         shareContent.value = shareMessage
@@ -416,7 +430,7 @@ fun VerseListScreen(
 
                             VerseListScreenModel.VerseAction.COPY -> {
                                 BaseItemCard(
-                                    title = AppString.COPY.getString(),
+                                    title = stringResource(Res.string.copy),
                                     iconResource = Res.drawable.copy,
                                     onClick = {
                                         clipboardManager.setText(AnnotatedString(shareMessage))
@@ -428,7 +442,7 @@ fun VerseListScreen(
 
                             VerseListScreenModel.VerseAction.REPORT -> {
                                 BaseItemCard(
-                                    title = AppString.REPORT.getString(),
+                                    title = stringResource(Res.string.report),
                                     iconResource = Res.drawable.alert_circle,
                                     onClick = {
                                         shareContent.value = shareMessage
@@ -500,8 +514,7 @@ private fun HeaderChapter(chapter: Chapter) {
             BaseText(
                 modifier = Modifier.fillMaxWidth(),
                 text =
-                    AppString.SURAH_DESC
-                        .getString()
+                    stringResource(Res.string.surah_desc)
                         .replace("%1", chapter.nameTranslation)
                         .replace(
                             "%2",
@@ -536,11 +549,11 @@ private fun SearchDialog(
                                 .trim()
                                 .filter { it.isLetterOrDigit() }
                     },
-                    label = AppString.SEARCH_AYAH.getString(),
+                    label = stringResource(Res.string.search_ayah),
                     trailingClick = { valueSearch.value = "" },
                     supportingText = {
                         BaseText(
-                            text = AppString.SEARCH_AYAH_HINT.getString(),
+                            text = stringResource(Res.string.search_ayah_hint),
                             style = getHaqqTypography().labelSmall,
                         )
                     },
@@ -555,7 +568,7 @@ private fun SearchDialog(
 
                 BaseButton(
                     modifier = Modifier.fillMaxWidth(),
-                    text = AppString.SEARCH.getString(),
+                    text = stringResource(Res.string.search),
                     onClick = { onSearchClicked(valueSearch.value) },
                 )
             }

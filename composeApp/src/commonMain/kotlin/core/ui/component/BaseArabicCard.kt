@@ -19,9 +19,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import core.ui.theme.getHaqqTypography
 import feature.other.service.AppRepository
-import feature.other.service.mapper.getString
 import feature.other.service.model.AppSetting
-import feature.other.service.model.AppString
+import haqq.composeapp.generated.resources.Res
+import haqq.composeapp.generated.resources.repeat
+import org.jetbrains.compose.resources.stringResource
 import org.koin.mp.KoinPlatform
 
 @Composable
@@ -105,7 +106,7 @@ fun ArabicCard(
                 verticalArrangement = Arrangement.Center,
             ) {
                 BaseText(
-                    text = "${AppString.REPEAT.getString()} ${maxCount}x",
+                    text = "${stringResource(Res.string.repeat)} ${maxCount}x",
                     style = MaterialTheme.typography.labelLarge,
                 )
             }

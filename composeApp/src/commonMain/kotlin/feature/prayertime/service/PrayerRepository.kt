@@ -3,8 +3,6 @@ package feature.prayertime.service
 import core.data.ApiResponse
 import core.data.DataState
 import feature.other.service.AppRepository
-import feature.other.service.mapper.getString
-import feature.other.service.model.AppString
 import feature.prayertime.service.entity.GuidanceRealm
 import feature.prayertime.service.entity.PrayerTimeRealm
 import feature.prayertime.service.mapper.mapToGuidanceRealm
@@ -14,6 +12,8 @@ import feature.prayertime.service.mapper.mapToModel
 import feature.prayertime.service.mapper.mapToPrayerTimeRealm
 import feature.prayertime.service.model.GuidanceType
 import feature.prayertime.service.source.remote.PrayerRemote
+import haqq.composeapp.generated.resources.Res
+import haqq.composeapp.generated.resources.prayer_enable_gps
 import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
 import kotlinx.coroutines.Dispatchers
@@ -178,11 +178,7 @@ class PrayerRepository(
                 )
         ) {
             is ApiResponse.Error -> {
-                if (setting.isLocationValid) {
-                    emit(DataState.Error(result.message))
-                } else {
-                    emit(DataState.Error(AppString.PRAYER_ENABLE_GPS.getString()))
-                }
+                emit(DataState.Error(result.message))
             }
 
             is ApiResponse.Success -> {
@@ -220,7 +216,7 @@ class PrayerRepository(
                 if (setting.isLocationValid) {
                     emit(DataState.Error(result.message))
                 } else {
-                    emit(DataState.Error(AppString.PRAYER_ENABLE_GPS.getString()))
+                    emit(DataState.Error(Res.string.prayer_enable_gps.key))
                 }
             }
 

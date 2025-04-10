@@ -34,10 +34,27 @@ import core.ui.component.BaseTopAppBar
 import core.util.CurrencyTransformation
 import core.util.CurrencyTransformation.Companion.MAX_DIGITS
 import core.util.formatAsCurrency
-import feature.other.service.mapper.getString
-import feature.other.service.model.AppString
 import feature.prayertime.service.model.PrayerTime
+import haqq.composeapp.generated.resources.Res
+import haqq.composeapp.generated.resources.close
+import haqq.composeapp.generated.resources.copy
+import haqq.composeapp.generated.resources.zakat_calculate
+import haqq.composeapp.generated.resources.zakat_calculation_result
+import haqq.composeapp.generated.resources.zakat_calculator
+import haqq.composeapp.generated.resources.zakat_fitrah
+import haqq.composeapp.generated.resources.zakat_fitrah_gold_price_label
+import haqq.composeapp.generated.resources.zakat_fitrah_result
+import haqq.composeapp.generated.resources.zakat_fitrah_rice_price_label
+import haqq.composeapp.generated.resources.zakat_fitrah_total_debt_label
+import haqq.composeapp.generated.resources.zakat_fitrah_total_gold_label
+import haqq.composeapp.generated.resources.zakat_fitrah_total_people_label
+import haqq.composeapp.generated.resources.zakat_fitrah_total_saving_label
+import haqq.composeapp.generated.resources.zakat_mal
+import haqq.composeapp.generated.resources.zakat_mal_haul
+import haqq.composeapp.generated.resources.zakat_mal_result_not_possible
+import haqq.composeapp.generated.resources.zakat_mal_result_possible
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Serializable
@@ -52,7 +69,7 @@ fun ZakatScreen(onBackClick: () -> Unit) {
     Scaffold(
         topBar = {
             BaseTopAppBar(
-                title = AppString.ZAKAT_CALCULATOR.getString(),
+                title = stringResource(Res.string.zakat_calculator),
                 onLeftButtonClick = {
                     onBackClick()
                 },
@@ -67,8 +84,8 @@ fun ZakatScreen(onBackClick: () -> Unit) {
         ) {
             val tabTitles =
                 listOf(
-                    AppString.ZAKAT_FITRAH.getString(),
-                    AppString.ZAKAT_MAL.getString(),
+                    stringResource(Res.string.zakat_fitrah),
+                    stringResource(Res.string.zakat_mal),
                 )
             val pagerState = rememberPagerState(pageCount = { tabTitles.size })
 
@@ -115,10 +132,10 @@ fun ZakatScreen(onBackClick: () -> Unit) {
 
             BaseDialog(
                 onDismissRequest = { vm.hideDialog() },
-                title = AppString.ZAKAT_CALCULATION_RESULT.getString(),
-                desc = getResultMessage(state.zakatResultState),
-                negativeButtonText = AppString.CLOSE.getString(),
-                positiveButtonText = AppString.COPY.getString(),
+                title = stringResource(Res.string.zakat_calculation_result),
+                desc = resultMessage,
+                negativeButtonText = stringResource(Res.string.close),
+                positiveButtonText = stringResource(Res.string.copy),
                 onPositiveClicked = {
                     clipboardManager.setText(AnnotatedString(resultMessage))
                     vm.hideDialog()
@@ -145,7 +162,7 @@ private fun ZakatFitrahContent(onCalculateClick: (valuePeople: String, valueRice
                 valuePeople.value = newText.filter { it.isDigit() }.take(3)
             },
             visualTransformation = CurrencyTransformation(),
-            label = AppString.ZAKAT_FITRAH_TOTAL_PEOPLE_LABEL.getString(),
+            label = stringResource(Res.string.zakat_fitrah_total_people_label),
             trailingClick = { valuePeople.value = "" },
             keyboardOptions =
                 KeyboardOptions.Default.copy(
@@ -164,7 +181,7 @@ private fun ZakatFitrahContent(onCalculateClick: (valuePeople: String, valueRice
             },
             visualTransformation = CurrencyTransformation(),
             prefix = "Rp",
-            label = AppString.ZAKAT_FITRAH_RICE_PRICE_LABEL.getString(),
+            label = stringResource(Res.string.zakat_fitrah_rice_price_label),
             trailingClick = { valueRicePrice.value = "" },
             keyboardOptions =
                 KeyboardOptions.Default.copy(
@@ -177,7 +194,7 @@ private fun ZakatFitrahContent(onCalculateClick: (valuePeople: String, valueRice
 
         BaseButton(
             modifier = Modifier.fillMaxWidth(),
-            text = AppString.ZAKAT_CALCULATE.getString(),
+            text = stringResource(Res.string.zakat_calculate),
             onClick = {
                 onCalculateClick(
                     valuePeople.value,
@@ -206,8 +223,7 @@ private fun ZakatMalContent(
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         if (lastYearTime != null) {
             BaseText(
-                AppString.ZAKAT_MAL_HAUL
-                    .getString()
+                stringResource(Res.string.zakat_mal_haul)
                     .replace(
                         "%1",
                         "${lastYearTime.hijri.fullDate} / ${lastYearTime.gregorian.fullDate}",
@@ -224,7 +240,7 @@ private fun ZakatMalContent(
             },
             visualTransformation = CurrencyTransformation(),
             prefix = "Rp",
-            label = AppString.ZAKAT_FITRAH_TOTAL_DEBT_LABEL.getString(),
+            label = stringResource(Res.string.zakat_fitrah_total_debt_label),
             trailingClick = { valueDebt.value = "" },
             keyboardOptions =
                 KeyboardOptions.Default.copy(
@@ -243,7 +259,7 @@ private fun ZakatMalContent(
             },
             visualTransformation = CurrencyTransformation(),
             prefix = "Rp",
-            label = AppString.ZAKAT_FITRAH_TOTAL_SAVING_LABEL.getString(),
+            label = stringResource(Res.string.zakat_fitrah_total_saving_label),
             trailingClick = { valueSaving.value = "" },
             keyboardOptions =
                 KeyboardOptions.Default.copy(
@@ -261,7 +277,7 @@ private fun ZakatMalContent(
                 valueTotalGoldInGram.value = newText.filter { it.isDigit() }.take(4)
             },
             visualTransformation = CurrencyTransformation(),
-            label = AppString.ZAKAT_FITRAH_TOTAL_GOLD_LABEL.getString(),
+            label = stringResource(Res.string.zakat_fitrah_total_gold_label),
             trailingClick = { valueTotalGoldInGram.value = "" },
             keyboardOptions =
                 KeyboardOptions.Default.copy(
@@ -280,7 +296,7 @@ private fun ZakatMalContent(
             },
             visualTransformation = CurrencyTransformation(),
             prefix = "Rp",
-            label = AppString.ZAKAT_FITRAH_GOLD_PRICE_LABEL.getString(),
+            label = stringResource(Res.string.zakat_fitrah_gold_price_label),
             trailingClick = { valueGoldPrice.value = "" },
             keyboardOptions =
                 KeyboardOptions.Default.copy(
@@ -293,7 +309,7 @@ private fun ZakatMalContent(
 
         BaseButton(
             modifier = Modifier.fillMaxWidth(),
-            text = AppString.ZAKAT_CALCULATE.getString(),
+            text = stringResource(Res.string.zakat_calculate),
             onClick = {
                 onCalculateClick(
                     valueDebt.value,
@@ -306,6 +322,7 @@ private fun ZakatMalContent(
     }
 }
 
+@Composable
 private fun getResultMessage(dialogState: ZakatScreenModel.State.ZakatDialogState): String =
     when (dialogState) {
         ZakatScreenModel.State.ZakatDialogState.Hide -> ""
@@ -315,8 +332,7 @@ private fun getResultMessage(dialogState: ZakatScreenModel.State.ZakatDialogStat
             val totalZakatInLiter = dialogState.totalZakatInLiter
             val totalZakatInMoney = dialogState.totalZakatInMoney.toInt().formatAsCurrency()
 
-            AppString.ZAKAT_FITRAH_RESULT
-                .getString()
+            stringResource(Res.string.zakat_fitrah_result)
                 .replace("%1", "$totalPeople")
                 .replace("%2", ricePrice)
                 .replace("%3", "$totalZakatInLiter")
@@ -332,15 +348,14 @@ private fun getResultMessage(dialogState: ZakatScreenModel.State.ZakatDialogStat
             val totalZakat = dialogState.totalZakat.toInt().formatAsCurrency()
             val isPossibleZakat = dialogState.isPossibleZakat
 
-            val appString =
+            val resultString =
                 if (isPossibleZakat) {
-                    AppString.ZAKAT_MAL_RESULT_POSSIBLE
+                    stringResource(Res.string.zakat_mal_result_possible)
                 } else {
-                    AppString.ZAKAT_MAL_RESULT_NOT_POSSIBLE
+                    stringResource(Res.string.zakat_mal_result_not_possible)
                 }
 
-            appString
-                .getString()
+            resultString
                 .replace("%1", totalDebt)
                 .replace("%2", totalSaving)
                 .replace("%3", totalGoldInGram)

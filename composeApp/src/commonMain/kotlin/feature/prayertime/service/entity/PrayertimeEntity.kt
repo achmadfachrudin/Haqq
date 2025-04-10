@@ -20,6 +20,7 @@ data class PrayertimeEntity(
             val Asr: String?,
             val Maghrib: String?,
             val Isha: String?,
+            val Lastthird: String?,
         )
 
         @Serializable

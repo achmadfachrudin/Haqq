@@ -36,13 +36,15 @@ import core.ui.theme.getHaqqTypography
 import core.util.DateUtil
 import core.util.searchBy
 import core.util.toLocalDateTime
-import feature.other.service.mapper.getString
-import feature.other.service.model.AppString
 import feature.study.service.model.Note
 import haqq.composeapp.generated.resources.Res
 import haqq.composeapp.generated.resources.plus
+import haqq.composeapp.generated.resources.search_study_note
+import haqq.composeapp.generated.resources.study_note_empty
+import haqq.composeapp.generated.resources.study_note_title
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Serializable
@@ -60,7 +62,7 @@ fun NoteListScreen(
     Scaffold(
         topBar = {
             BaseTopAppBar(
-                title = AppString.STUDY_NOTE_TITLE.getString(),
+                title = stringResource(Res.string.study_note_title),
                 onLeftButtonClick = {
                     onBackClick()
                 },
@@ -98,7 +100,7 @@ fun NoteListScreen(
                             .trim()
                             .filter { it.isLetterOrDigit() }
                 },
-                label = AppString.SEARCH_STUDY_NOTE.getString(),
+                label = stringResource(Res.string.search_study_note),
                 trailingClick = { valueSearch.value = "" },
                 keyboardOptions =
                     KeyboardOptions.Default.copy(
@@ -108,7 +110,7 @@ fun NoteListScreen(
             )
 
             if (channelFiltered.isEmpty()) {
-                ErrorState(AppString.STUDY_NOTE_EMPTY.getString())
+                ErrorState(stringResource(Res.string.study_note_empty))
             } else {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(16.dp),

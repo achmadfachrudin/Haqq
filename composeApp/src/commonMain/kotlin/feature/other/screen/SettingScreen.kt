@@ -39,15 +39,25 @@ import core.ui.component.BaseSpacerHorizontal
 import core.ui.component.BaseText
 import core.ui.component.BaseTopAppBar
 import core.ui.component.itemPadding
-import feature.other.service.mapper.getString
 import feature.other.service.model.AppSetting
-import feature.other.service.model.AppString
 import haqq.composeapp.generated.resources.Res
+import haqq.composeapp.generated.resources.arabic_style
+import haqq.composeapp.generated.resources.arabic_text_size
+import haqq.composeapp.generated.resources.color
 import haqq.composeapp.generated.resources.eye
+import haqq.composeapp.generated.resources.language
+import haqq.composeapp.generated.resources.restart_please
+import haqq.composeapp.generated.resources.settings
+import haqq.composeapp.generated.resources.theme
+import haqq.composeapp.generated.resources.translation
+import haqq.composeapp.generated.resources.translation_text_size
+import haqq.composeapp.generated.resources.transliteration
+import haqq.composeapp.generated.resources.transliteration_text_size
 import haqq.composeapp.generated.resources.type
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Serializable
@@ -65,10 +75,12 @@ fun SettingScreen(onBackClick: () -> Unit) {
     val openThemeColorDialog = remember { mutableStateOf(false) }
     val openLanguageDialog = remember { mutableStateOf(false) }
 
+    val restartText = stringResource(Res.string.restart_please)
+
     Scaffold(
         topBar = {
             BaseTopAppBar(
-                title = AppString.SETTINGS.getString(),
+                title = stringResource(Res.string.settings),
                 onLeftButtonClick = { onBackClick() },
             )
         },
@@ -86,7 +98,7 @@ fun SettingScreen(onBackClick: () -> Unit) {
         ) {
             state.appSetting?.let {
                 SettingStyleCard(
-                    title = AppString.THEME.getString(),
+                    title = stringResource(Res.string.theme),
                     style = it.theme.display,
                 ) {
                     openThemeDialog.value = true
@@ -95,7 +107,7 @@ fun SettingScreen(onBackClick: () -> Unit) {
                 BaseDivider()
 
                 SettingStyleCard(
-                    title = AppString.COLOR.getString(),
+                    title = stringResource(Res.string.color),
                     style = it.themeColor.display,
                 ) {
                     openThemeColorDialog.value = true
@@ -104,7 +116,7 @@ fun SettingScreen(onBackClick: () -> Unit) {
                 BaseDivider()
 
                 SettingStyleCard(
-                    title = AppString.LANGUAGE.getString(),
+                    title = stringResource(Res.string.language),
                     style = it.language.display,
                 ) {
                     openLanguageDialog.value = true
@@ -113,7 +125,7 @@ fun SettingScreen(onBackClick: () -> Unit) {
                 BaseDivider()
 
                 SettingStyleCard(
-                    title = AppString.ARABIC_STYLE.getString(),
+                    title = stringResource(Res.string.arabic_style),
                     style = it.arabicStyle.display,
                 ) {
                     openArabicStyleDialog.value = true
@@ -122,21 +134,21 @@ fun SettingScreen(onBackClick: () -> Unit) {
                 BaseDivider()
 
                 SettingVisibilityCard(
-                    title = AppString.TRANSLITERATION.getString(),
+                    title = stringResource(Res.string.transliteration),
                     shouldShow = it.transliterationVisibility,
                 ) { shouldShow -> vm.updateTransliterationVisibility(shouldShow) }
 
                 BaseDivider()
 
                 SettingVisibilityCard(
-                    title = AppString.TRANSLATION.getString(),
+                    title = stringResource(Res.string.translation),
                     shouldShow = it.translationVisibility,
                 ) { shouldShow -> vm.updateTranslationVisibility(shouldShow) }
 
                 BaseDivider()
 
                 SettingFontSizeCard(
-                    title = AppString.ARABIC_TEXT_SIZE.getString(),
+                    title = stringResource(Res.string.arabic_text_size),
                     fontSize = it.arabicFontSize,
                 ) { fontSize ->
                     vm.updateArabicFontSize(fontSize)
@@ -145,7 +157,7 @@ fun SettingScreen(onBackClick: () -> Unit) {
                 BaseDivider()
 
                 SettingFontSizeCard(
-                    title = AppString.TRANSLITERATION_TEXT_SIZE.getString(),
+                    title = stringResource(Res.string.transliteration_text_size),
                     fontSize = it.transliterationFontSize,
                 ) { fontSize ->
                     vm.updateTransliterationFontSize(fontSize)
@@ -154,7 +166,7 @@ fun SettingScreen(onBackClick: () -> Unit) {
                 BaseDivider()
 
                 SettingFontSizeCard(
-                    title = AppString.TRANSLATION_TEXT_SIZE.getString(),
+                    title = stringResource(Res.string.translation_text_size),
                     fontSize = it.translationFontSize,
                 ) { fontSize ->
                     vm.updateTranslationFontSize(fontSize)
@@ -176,7 +188,7 @@ fun SettingScreen(onBackClick: () -> Unit) {
     if (openThemeDialog.value) {
         BaseDialog(
             onDismissRequest = { openThemeDialog.value = false },
-            title = AppString.THEME.getString(),
+            title = stringResource(Res.string.theme),
             shouldCustomContent = true,
             content = {
                 AppSetting.Theme.entries.forEach { theme ->
@@ -187,9 +199,7 @@ fun SettingScreen(onBackClick: () -> Unit) {
                             vm.updateTheme(theme)
                             openThemeDialog.value = false
                             scope.launch {
-                                snackbarHostState.showSnackbar(
-                                    AppString.RESTART_PLEASE.getString(),
-                                )
+                                snackbarHostState.showSnackbar(restartText)
                             }
                         },
                     )
@@ -201,7 +211,7 @@ fun SettingScreen(onBackClick: () -> Unit) {
     if (openThemeColorDialog.value) {
         BaseDialog(
             onDismissRequest = { openThemeColorDialog.value = false },
-            title = AppString.COLOR.getString(),
+            title = stringResource(Res.string.color),
             shouldCustomContent = true,
             content = {
                 AppSetting.ThemeColor.entries.forEach { themeColor ->
@@ -212,9 +222,7 @@ fun SettingScreen(onBackClick: () -> Unit) {
                             vm.updateThemeColor(themeColor)
                             openThemeColorDialog.value = false
                             scope.launch {
-                                snackbarHostState.showSnackbar(
-                                    AppString.RESTART_PLEASE.getString(),
-                                )
+                                snackbarHostState.showSnackbar(restartText)
                             }
                         },
                     )
@@ -226,7 +234,7 @@ fun SettingScreen(onBackClick: () -> Unit) {
     if (openLanguageDialog.value) {
         BaseDialog(
             onDismissRequest = { openLanguageDialog.value = false },
-            title = AppString.LANGUAGE.getString(),
+            title = stringResource(Res.string.language),
             shouldCustomContent = true,
             content = {
                 AppSetting.Language.entries.forEach { language ->
@@ -236,9 +244,7 @@ fun SettingScreen(onBackClick: () -> Unit) {
                         onClick = {
                             openLanguageDialog.value = false
                             scope.launch {
-                                snackbarHostState.showSnackbar(
-                                    AppString.RESTART_PLEASE.getString(),
-                                )
+                                snackbarHostState.showSnackbar(restartText)
                             }
                             vm.updateLanguage(language)
                         },
@@ -251,7 +257,7 @@ fun SettingScreen(onBackClick: () -> Unit) {
     if (openArabicStyleDialog.value) {
         BaseDialog(
             onDismissRequest = { openArabicStyleDialog.value = false },
-            title = AppString.ARABIC_STYLE.getString(),
+            title = stringResource(Res.string.arabic_style),
             shouldCustomContent = true,
             content = {
                 AppSetting.ArabicStyle.entries.dropLast(1).forEach { arabicStyle ->
@@ -262,9 +268,7 @@ fun SettingScreen(onBackClick: () -> Unit) {
                             vm.updateArabicStyle(arabicStyle)
                             openArabicStyleDialog.value = false
                             scope.launch {
-                                snackbarHostState.showSnackbar(
-                                    AppString.RESTART_PLEASE.getString(),
-                                )
+                                snackbarHostState.showSnackbar(restartText)
                             }
                         },
                     )

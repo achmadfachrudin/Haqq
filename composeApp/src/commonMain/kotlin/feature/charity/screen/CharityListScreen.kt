@@ -26,10 +26,12 @@ import core.ui.component.LoadingState
 import core.ui.theme.ExtraColor
 import core.ui.theme.ExtraColor.PINK
 import feature.other.service.AppRepository
-import feature.other.service.mapper.getString
-import feature.other.service.model.AppString
 import feature.web.screen.WebNav
+import haqq.composeapp.generated.resources.Res
+import haqq.composeapp.generated.resources.charity_title
+import haqq.composeapp.generated.resources.support_title
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.mp.KoinPlatform
 
@@ -50,7 +52,7 @@ fun CharityListScreen(
     Scaffold(
         topBar = {
             BaseTopAppBar(
-                title = AppString.CHARITY_TITLE.getString(),
+                title = stringResource(Res.string.charity_title),
                 onLeftButtonClick = {
                     onBackClick()
                 },
@@ -81,6 +83,7 @@ fun CharityListScreen(
                         }
                     }
 
+                    val supportTitle = stringResource(Res.string.support_title)
                     BaseButton(
                         modifier = Modifier.padding(16.dp).fillMaxWidth(),
                         colors =
@@ -88,12 +91,12 @@ fun CharityListScreen(
                                 containerColor = ExtraColor.getPairColor(PINK).first,
                                 contentColor = ExtraColor.getPairColor(PINK).second,
                             ),
-                        text = AppString.SUPPORT_TITLE.getString(),
+                        text = supportTitle,
                         onClick = {
                             onSupportClick(
                                 WebNav(
                                     url = AppConstant.getSupportUrl(languageId),
-                                    title = AppString.SUPPORT_TITLE.getString(),
+                                    title = supportTitle,
                                     openExternalIOS = true,
                                 ),
                             )

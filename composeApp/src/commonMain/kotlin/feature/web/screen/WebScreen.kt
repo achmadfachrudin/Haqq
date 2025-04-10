@@ -18,15 +18,16 @@ import com.multiplatform.webview.web.LoadingState
 import com.multiplatform.webview.web.WebView
 import com.multiplatform.webview.web.rememberWebViewState
 import core.ui.component.BaseTopAppBar
-import feature.other.service.mapper.getString
-import feature.other.service.model.AppString
 import getPlatform
 import haqq.composeapp.generated.resources.Res
+import haqq.composeapp.generated.resources.app_name
 import haqq.composeapp.generated.resources.copy
+import haqq.composeapp.generated.resources.url_copied
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import openExternalLink
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @Serializable
 data class WebNav(
@@ -58,17 +59,16 @@ fun WebScreen(
 
     Scaffold(
         topBar = {
+            val urlCopiedText = stringResource(Res.string.url_copied)
             BaseTopAppBar(
-                title = webNav.title.ifEmpty { AppString.APP_NAME.getString() },
+                title = webNav.title.ifEmpty { stringResource(Res.string.app_name) },
                 showRightButton = true,
                 rightButtonImage = painterResource(Res.drawable.copy),
                 onLeftButtonClick = { onBackClick() },
                 onRightButtonClick = {
                     clipboardManager.setText(AnnotatedString(webNav.url))
                     scope.launch {
-                        snackbarHostState.showSnackbar(
-                            AppString.URL_COPIED.getString(),
-                        )
+                        snackbarHostState.showSnackbar(urlCopiedText)
                     }
                 },
             )

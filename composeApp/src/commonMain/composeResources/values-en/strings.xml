@@ -88,6 +88,7 @@
     <string name="prayer_fajr">Fajr</string>
     <string name="prayer_imsak">Imsak</string>
     <string name="prayer_isha">Isha</string>
+    <string name="prayer_lastthird">Last third of night</string>
     <string name="prayer_maghrib">Maghrib</string>
     <string name="prayer_note">Data provided by https://aladhan.com\nMake sure you activate GPS before opening the application to get accurate data</string>
     <string name="prayer_sunrise">Sunrise</string>

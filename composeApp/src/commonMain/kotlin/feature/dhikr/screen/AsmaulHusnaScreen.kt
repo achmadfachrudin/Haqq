@@ -32,10 +32,13 @@ import core.ui.component.BaseTopAppBar
 import core.ui.component.ErrorState
 import core.ui.component.LoadingState
 import core.util.searchBy
-import feature.other.service.mapper.getString
-import feature.other.service.model.AppString
+import haqq.composeapp.generated.resources.Res
+import haqq.composeapp.generated.resources.asmaul_husna_title
+import haqq.composeapp.generated.resources.copied
+import haqq.composeapp.generated.resources.search_asmaul_husna
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Serializable
@@ -53,7 +56,7 @@ fun AsmaulHusnaScreen(onBackClick: () -> Unit) {
     Scaffold(
         topBar = {
             BaseTopAppBar(
-                title = AppString.ASMAUL_HUSNA_TITLE.getString(),
+                title = stringResource(Res.string.asmaul_husna_title),
                 onLeftButtonClick = {
                     onBackClick()
                 },
@@ -92,7 +95,7 @@ fun AsmaulHusnaScreen(onBackClick: () -> Unit) {
                                                 .trim()
                                                 .filter { it.isLetterOrDigit() }
                                     },
-                                    label = AppString.SEARCH_ASMAUL_HUSNA.getString(),
+                                    label = stringResource(Res.string.search_asmaul_husna),
                                     trailingClick = { valueSearch.value = "" },
                                     keyboardOptions =
                                         KeyboardOptions.Default.copy(
@@ -104,6 +107,7 @@ fun AsmaulHusnaScreen(onBackClick: () -> Unit) {
                         }
 
                         items(namesFiltered) { asma ->
+                            val copiedText = stringResource(Res.string.copied)
                             ArabicCard(
                                 modifier = Modifier.fillMaxWidth(),
                                 textArabic = asma.textArabic,
@@ -120,9 +124,7 @@ fun AsmaulHusnaScreen(onBackClick: () -> Unit) {
                                         ),
                                     )
                                     scope.launch {
-                                        snackbarHostState.showSnackbar(
-                                            AppString.COPIED.getString(),
-                                        )
+                                        snackbarHostState.showSnackbar(copiedText)
                                     }
                                 },
                             )

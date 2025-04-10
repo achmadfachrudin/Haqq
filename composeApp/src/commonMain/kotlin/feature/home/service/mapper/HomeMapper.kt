@@ -7,13 +7,13 @@ import feature.home.service.entity.HomeTemplateRealm
 import feature.home.service.model.HomeTemplate
 import feature.home.service.model.TemplateType
 import feature.other.service.AppRepository
-import feature.other.service.mapper.getString
 import feature.other.service.model.AppSetting
-import feature.other.service.model.AppString
 import feature.prayertime.service.PrayerRepository
 import feature.prayertime.service.model.Salah
 import feature.quran.service.QuranRepository
 import feature.quran.service.model.Verse
+import haqq.composeapp.generated.resources.Res
+import haqq.composeapp.generated.resources.prayer_enable_gps
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.collectLatest
@@ -72,14 +72,12 @@ internal suspend fun List<HomeTemplateRealm>.mapToModel(): List<HomeTemplate> =
                             .collectLatest { times ->
                                 if (times.data.isEmpty()) {
                                     templates.add(
-                                        HomeTemplate.PrayerTime(
+                                        HomeTemplate.Message(
                                             position = position,
                                             type = type,
                                             label = label,
-                                            date = AppString.PRAYER_ENABLE_GPS.getString(),
-                                            locationName = "",
-                                            nextPrayerName = "",
-                                            nextPrayerTime = "",
+                                            textString = text,
+                                            textResource = Res.string.prayer_enable_gps,
                                         ),
                                     )
                                 } else {
@@ -101,7 +99,7 @@ internal suspend fun List<HomeTemplateRealm>.mapToModel(): List<HomeTemplate> =
                                             label = label,
                                             date = "$dayName, ${today.hijri.fullDate} / ${today.gregorian.fullDate}",
                                             locationName = today.locationName,
-                                            nextPrayerName = nextTime.first.title.getString(),
+                                            nextPrayerName = nextTime.first.titleRes,
                                             nextPrayerTime = nextTime.second,
                                         ),
                                     )
@@ -126,6 +124,10 @@ internal suspend fun List<HomeTemplateRealm>.mapToModel(): List<HomeTemplate> =
                                         Salah.ISYA,
                                         -> {
                                             dhikrType = DhikrType.AFTERNOON
+                                        }
+
+                                        Salah.LASTTHIRD -> {
+                                            dhikrType = DhikrType.SLEEP
                                         }
                                     }
                                 }
@@ -193,7 +195,7 @@ internal suspend fun List<HomeTemplateRealm>.mapToModel(): List<HomeTemplate> =
                                     position = position,
                                     type = type,
                                     label = label,
-                                    text = text,
+                                    textString = text,
                                 ),
                             )
                         }

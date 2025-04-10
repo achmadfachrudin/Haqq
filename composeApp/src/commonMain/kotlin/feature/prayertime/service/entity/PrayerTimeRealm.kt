@@ -28,4 +28,5 @@ class PrayerTimeRealm : RealmObject {
     var timeAshar = ""
     var timeMaghrib = ""
     var timeIsya = ""
+    var timeLastThird = ""
 }

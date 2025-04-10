@@ -31,9 +31,20 @@ import core.ui.component.LoadingState
 import core.ui.theme.getHaqqTypography
 import feature.dhikr.service.model.DhikrType
 import feature.home.service.model.HomeTemplate
-import feature.other.service.mapper.getString
-import feature.other.service.model.AppString
 import feature.quran.service.QuranRepository
+import haqq.composeapp.generated.resources.Res
+import haqq.composeapp.generated.resources.dhikr_afternoon_title
+import haqq.composeapp.generated.resources.dhikr_morning_title
+import haqq.composeapp.generated.resources.dhikr_pray_title
+import haqq.composeapp.generated.resources.dhikr_ruqyah_title
+import haqq.composeapp.generated.resources.dhikr_sleep_title
+import haqq.composeapp.generated.resources.lastread_continue
+import haqq.composeapp.generated.resources.next_prayer_time
+import haqq.composeapp.generated.resources.prayer_note
+import haqq.composeapp.generated.resources.read_dhikr
+import haqq.composeapp.generated.resources.see_all
+import haqq.composeapp.generated.resources.surah_ayah
+import org.jetbrains.compose.resources.stringResource
 import org.koin.mp.KoinPlatform
 
 @Composable
@@ -169,10 +180,10 @@ private fun PrayerTime(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 BaseText(
-                    text = AppString.NEXT_PRAYER_TIME.getString(),
+                    text = stringResource(Res.string.next_prayer_time),
                 )
                 BaseText(
-                    text = template.nextPrayerName,
+                    text = stringResource(template.nextPrayerName),
                     style = getHaqqTypography().bodyMedium,
                 )
             }
@@ -185,7 +196,7 @@ private fun PrayerTime(
                 TextButton(
                     onClick = { onItemClick() },
                 ) {
-                    Text(AppString.SEE_ALL.getString())
+                    Text(stringResource(Res.string.see_all))
                 }
                 BaseText(
                     text = template.nextPrayerTime,
@@ -195,7 +206,7 @@ private fun PrayerTime(
         }
 
         BaseText(
-            text = AppString.PRAYER_NOTE.getString(),
+            text = stringResource(Res.string.prayer_note),
             style = getHaqqTypography().labelMedium,
         )
     }
@@ -208,19 +219,19 @@ private fun DhikrCard(
 ) {
     val dhikrName =
         when (template.dhikrType) {
-            DhikrType.MORNING -> AppString.DHIKR_MORNING_TITLE
-            DhikrType.AFTERNOON -> AppString.DHIKR_AFTERNOON_TITLE
-            DhikrType.PRAY -> AppString.DHIKR_PRAY_TITLE
-            DhikrType.SLEEP -> AppString.DHIKR_SLEEP_TITLE
-            DhikrType.RUQYAH -> AppString.DHIKR_RUQYAH_TITLE
-        }.getString()
+            DhikrType.MORNING -> stringResource(Res.string.dhikr_morning_title)
+            DhikrType.AFTERNOON -> stringResource(Res.string.dhikr_afternoon_title)
+            DhikrType.PRAY -> stringResource(Res.string.dhikr_pray_title)
+            DhikrType.SLEEP -> stringResource(Res.string.dhikr_sleep_title)
+            DhikrType.RUQYAH -> stringResource(Res.string.dhikr_ruqyah_title)
+        }
 
     Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
         if (template.label.isNotEmpty()) {
             BaseTitle(template.label)
         }
         BaseMessageCard(
-            textMessage = AppString.READ_DHIKR.getString().replace("%1", dhikrName),
+            textMessage = stringResource(Res.string.read_dhikr).replace("%1", dhikrName),
             onItemClick = onItemClick,
         )
     }
@@ -240,12 +251,11 @@ private fun LastReadCard(
         BaseMessageCard(
             textArabic = template.arabic,
             textCaption =
-                AppString.SURAH_AYAH
-                    .getString()
+                stringResource(Res.string.surah_ayah)
                     .replace("%1", chapterNameSimple)
                     .replace("%2", "${template.verseNumber}"),
             verseNumber = template.verseNumber,
-            buttonText = AppString.LASTREAD_CONTINUE.getString(),
+            buttonText = stringResource(Res.string.lastread_continue),
             onItemClick = onItemClick,
         )
     }
@@ -259,8 +269,7 @@ private fun QuranVerseCard(
     val quranRepository = KoinPlatform.getKoin().get<QuranRepository>()
     val chapterNameSimple = quranRepository.getChapterNameSimple(template.chapterNumber)
     val desc =
-        AppString.SURAH_AYAH
-            .getString()
+        stringResource(Res.string.surah_ayah)
             .replace("%1", chapterNameSimple)
             .replace("%2", "${template.verseNumber}")
     Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
@@ -270,7 +279,7 @@ private fun QuranVerseCard(
         BaseMessageCard(
             textTranslation = template.translation,
             textCaption = desc,
-            buttonText = AppString.SEE_ALL.getString(),
+            buttonText = stringResource(Res.string.see_all),
             onItemClick = onItemClick,
         )
     }
@@ -286,7 +295,12 @@ private fun MessageCard(
             BaseTitle(template.label)
         }
         BaseMessageCard(
-            textMessage = template.text,
+            textMessage =
+                if (template.textResource != null) {
+                    stringResource(template.textResource)
+                } else {
+                    template.textString
+                },
             onItemClick = onItemClick,
         )
     }

@@ -81,6 +81,7 @@ internal fun PrayertimeEntity.Data.mapToPrayerTimeRealm(locationName: String): P
         timeAshar = timings.Asr ?: DEFAULT_TIME
         timeMaghrib = timings.Maghrib ?: DEFAULT_TIME
         timeIsya = timings.Isha ?: DEFAULT_TIME
+        timeLastThird = timings.Lastthird ?: DEFAULT_TIME
     }
 }
 
@@ -92,6 +93,7 @@ internal fun PrayertimeEntity.Data.mapToPrayerTime(): PrayerTime {
     val timeAshar = timings.Asr ?: DEFAULT_TIME
     val timeMaghrib = timings.Maghrib ?: DEFAULT_TIME
     val timeIsya = timings.Isha ?: DEFAULT_TIME
+    val timeLastThird = timings.Lastthird ?: DEFAULT_TIME
 
     return PrayerTime(
         mapStringTime =
@@ -103,6 +105,7 @@ internal fun PrayertimeEntity.Data.mapToPrayerTime(): PrayerTime {
                 Salah.ASHAR to timeAshar,
                 Salah.MAGHRIB to timeMaghrib,
                 Salah.ISYA to timeIsya,
+                Salah.LASTTHIRD to timeLastThird,
             ),
         mapLocalTime =
             mapOf(
@@ -113,6 +116,7 @@ internal fun PrayertimeEntity.Data.mapToPrayerTime(): PrayerTime {
                 Salah.ASHAR to mapHourToLocalTime(timeAshar),
                 Salah.MAGHRIB to mapHourToLocalTime(timeMaghrib),
                 Salah.ISYA to mapHourToLocalTime(timeIsya),
+                Salah.LASTTHIRD to mapHourToLocalTime(timeLastThird),
             ),
         gregorian =
             PrayerTime.Gregorian(
@@ -153,6 +157,7 @@ internal fun PrayerTimeRealm.mapToModel(): PrayerTime {
     val timeAshar = timeAshar
     val timeMaghrib = timeMaghrib
     val timeIsya = timeIsya
+    val timeLastThird = timeLastThird
 
     return PrayerTime(
         mapStringTime =
@@ -164,6 +169,7 @@ internal fun PrayerTimeRealm.mapToModel(): PrayerTime {
                 Salah.ASHAR to timeAshar,
                 Salah.MAGHRIB to timeMaghrib,
                 Salah.ISYA to timeIsya,
+                Salah.LASTTHIRD to timeLastThird,
             ),
         mapLocalTime =
             mapOf(
@@ -174,6 +180,7 @@ internal fun PrayerTimeRealm.mapToModel(): PrayerTime {
                 Salah.ASHAR to mapHourToLocalTime(timeAshar),
                 Salah.MAGHRIB to mapHourToLocalTime(timeMaghrib),
                 Salah.ISYA to mapHourToLocalTime(timeIsya),
+                Salah.LASTTHIRD to mapHourToLocalTime(timeLastThird),
             ),
         gregorian =
             PrayerTime.Gregorian(

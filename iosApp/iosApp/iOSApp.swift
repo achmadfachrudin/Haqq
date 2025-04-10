@@ -15,7 +15,7 @@ struct iOSApp: App {
       @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
 
     init() {
-       KoinKt.doInitKoin()
+       InitializeKoinKt.doInitKoin()
     }
 
     var body: some Scene {

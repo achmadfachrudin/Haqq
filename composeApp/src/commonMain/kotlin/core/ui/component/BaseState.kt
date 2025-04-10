@@ -9,8 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import feature.other.service.mapper.getString
-import feature.other.service.model.AppString
+import haqq.composeapp.generated.resources.Res
+import haqq.composeapp.generated.resources.try_again
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun LoadingState() {
@@ -40,7 +41,7 @@ fun ErrorState(
             BaseSpacerVertical()
 
             BaseButton(
-                text = AppString.TRY_AGAIN.getString(),
+                text = stringResource(Res.string.try_again),
                 onClick = onRetryButtonClick,
             )
         }

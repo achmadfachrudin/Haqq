@@ -13,8 +13,16 @@ import androidx.compose.ui.unit.dp
 import core.ui.component.BaseDivider
 import core.ui.component.BaseMenuLargeCard
 import core.ui.component.BaseTitle
-import feature.other.service.mapper.getString
-import feature.other.service.model.AppString
+import haqq.composeapp.generated.resources.Res
+import haqq.composeapp.generated.resources.article_title
+import haqq.composeapp.generated.resources.charity_title
+import haqq.composeapp.generated.resources.conversation_title
+import haqq.composeapp.generated.resources.kids_activity_title
+import haqq.composeapp.generated.resources.learn
+import haqq.composeapp.generated.resources.social
+import haqq.composeapp.generated.resources.study_note_title
+import haqq.composeapp.generated.resources.study_title
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun MainPageActivity(
@@ -38,35 +46,35 @@ internal fun MainPageActivity(
             span = { GridItemSpan(this.maxLineSpan) },
         ) {
             BaseTitle(
-                AppString.LEARN.getString(),
+                stringResource(Res.string.learn),
                 horizontalArrangement = Arrangement.Start,
             )
         }
 
         item {
             BaseMenuLargeCard(
-                title = AppString.ARTICLE_TITLE.getString(),
+                title = stringResource(Res.string.article_title),
                 onItemClick = { onArticleClick() },
             )
         }
 
         item {
             BaseMenuLargeCard(
-                title = AppString.STUDY_TITLE.getString(),
+                title = stringResource(Res.string.study_title),
                 onItemClick = { onStudyVideoClick() },
             )
         }
 
         item {
             BaseMenuLargeCard(
-                title = AppString.STUDY_NOTE_TITLE.getString(),
+                title = stringResource(Res.string.study_note_title),
                 onItemClick = { onStudyNoteClick() },
             )
         }
 
         item {
             BaseMenuLargeCard(
-                title = AppString.KIDS_ACTIVITY_TITLE.getString(),
+                title = stringResource(Res.string.kids_activity_title),
                 onItemClick = { onKidsActivityClick() },
             )
         }
@@ -78,21 +86,21 @@ internal fun MainPageActivity(
             BaseDivider(0)
             BaseTitle(
                 modifier = Modifier.padding(top = 16.dp),
-                text = AppString.SOCIAL.getString(),
+                text = stringResource(Res.string.social),
                 horizontalArrangement = Arrangement.Start,
             )
         }
 
         item {
             BaseMenuLargeCard(
-                title = AppString.CONVERSATION_TITLE.getString(),
+                title = stringResource(Res.string.conversation_title),
                 onItemClick = { onConversationClick() },
             )
         }
 
         item {
             BaseMenuLargeCard(
-                title = AppString.CHARITY_TITLE.getString(),
+                title = stringResource(Res.string.charity_title),
                 onItemClick = { onCharityClick() },
             )
         }

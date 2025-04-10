@@ -88,6 +88,7 @@
     <string name="prayer_fajr">Subuh</string>
     <string name="prayer_imsak">Imsak</string>
     <string name="prayer_isha">Isya</string>
+    <string name="prayer_lastthird">Sepertiga malam terakhir</string>
     <string name="prayer_maghrib">Maghrib</string>
     <string name="prayer_note">Data disediakan dari https://aladhan.com\nPastikan kamu mengaktifkan GPS sebelum membuka aplikasi untuk mendapatkan data yang akurat</string>
     <string name="prayer_sunrise">Syuruq</string>

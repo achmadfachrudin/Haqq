@@ -1,6 +1,7 @@
 package feature.home.service.model
 
 import feature.dhikr.service.model.DhikrType
+import org.jetbrains.compose.resources.StringResource
 
 sealed class HomeTemplate {
     abstract val position: Int
@@ -13,7 +14,7 @@ sealed class HomeTemplate {
         override val label: String,
         val date: String,
         val locationName: String,
-        val nextPrayerName: String,
+        val nextPrayerName: StringResource,
         val nextPrayerTime: String,
     ) : HomeTemplate()
 
@@ -51,7 +52,8 @@ sealed class HomeTemplate {
         override val position: Int,
         override val type: TemplateType = TemplateType.MESSAGE,
         override val label: String,
-        val text: String,
+        val textString: String,
+        val textResource: StringResource? = null,
     ) : HomeTemplate()
 
     data class LastRead(

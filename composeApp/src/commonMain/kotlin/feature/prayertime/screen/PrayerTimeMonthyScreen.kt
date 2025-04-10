@@ -20,11 +20,18 @@ import core.ui.component.BaseText
 import core.ui.component.BaseTitle
 import core.ui.theme.getHaqqTypography
 import feature.other.service.AppRepository
-import feature.other.service.mapper.getString
-import feature.other.service.model.AppString
 import feature.prayertime.service.model.HaqqCalendar
 import feature.prayertime.service.model.PrayerTime
 import feature.prayertime.service.model.Salah
+import haqq.composeapp.generated.resources.Res
+import haqq.composeapp.generated.resources.prayer_asr
+import haqq.composeapp.generated.resources.prayer_dhuhr
+import haqq.composeapp.generated.resources.prayer_fajr
+import haqq.composeapp.generated.resources.prayer_imsak
+import haqq.composeapp.generated.resources.prayer_isha
+import haqq.composeapp.generated.resources.prayer_maghrib
+import haqq.composeapp.generated.resources.prayer_sunrise
+import org.jetbrains.compose.resources.stringResource
 import org.koin.mp.KoinPlatform
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -79,49 +86,49 @@ private fun LabelCard() {
         )
         BaseText(
             modifier = Modifier.weight(1f),
-            text = AppString.PRAYER_IMSAK.getString(),
+            text = stringResource(Res.string.prayer_imsak),
             horizontalArrangement = Arrangement.Center,
             color = contentColor,
             style = textStyle,
         )
         BaseText(
             modifier = Modifier.weight(1f),
-            text = AppString.PRAYER_FAJR.getString(),
+            text = stringResource(Res.string.prayer_fajr),
             horizontalArrangement = Arrangement.Center,
             color = contentColor,
             style = textStyle,
         )
         BaseText(
             modifier = Modifier.weight(1f),
-            text = AppString.PRAYER_SUNRISE.getString(),
+            text = stringResource(Res.string.prayer_sunrise),
             horizontalArrangement = Arrangement.Center,
             color = contentColor,
             style = textStyle,
         )
         BaseText(
             modifier = Modifier.weight(1f),
-            text = AppString.PRAYER_DHUHR.getString(),
+            text = stringResource(Res.string.prayer_dhuhr),
             horizontalArrangement = Arrangement.Center,
             color = contentColor,
             style = textStyle,
         )
         BaseText(
             modifier = Modifier.weight(1f),
-            text = AppString.PRAYER_ASR.getString(),
+            text = stringResource(Res.string.prayer_asr),
             horizontalArrangement = Arrangement.Center,
             color = contentColor,
             style = textStyle,
         )
         BaseText(
             modifier = Modifier.weight(1.1f),
-            text = AppString.PRAYER_MAGHRIB.getString(),
+            text = stringResource(Res.string.prayer_maghrib),
             horizontalArrangement = Arrangement.Center,
             color = contentColor,
             style = textStyle,
         )
         BaseText(
             modifier = Modifier.weight(1f),
-            text = AppString.PRAYER_ISHA.getString(),
+            text = stringResource(Res.string.prayer_isha),
             horizontalArrangement = Arrangement.Center,
             color = contentColor,
             style = textStyle,

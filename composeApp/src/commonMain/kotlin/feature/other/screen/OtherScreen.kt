@@ -31,15 +31,28 @@ import core.ui.component.BaseItemCard
 import core.ui.component.BaseLabelValueCard
 import core.ui.component.BaseTopAppBar
 import feature.other.service.AppRepository
-import feature.other.service.mapper.getString
-import feature.other.service.model.AppString
 import feature.web.screen.WebNav
 import getPlatform
 import haqq.composeapp.generated.resources.Res
+import haqq.composeapp.generated.resources.about
+import haqq.composeapp.generated.resources.app_name
+import haqq.composeapp.generated.resources.clear_data
+import haqq.composeapp.generated.resources.clear_data_note
+import haqq.composeapp.generated.resources.copied
+import haqq.composeapp.generated.resources.current_version
+import haqq.composeapp.generated.resources.delete_confirmation_title
+import haqq.composeapp.generated.resources.feedback
 import haqq.composeapp.generated.resources.file_text
+import haqq.composeapp.generated.resources.follow
 import haqq.composeapp.generated.resources.instagram
+import haqq.composeapp.generated.resources.latest_version
+import haqq.composeapp.generated.resources.licenses
 import haqq.composeapp.generated.resources.mail
+import haqq.composeapp.generated.resources.other_title
+import haqq.composeapp.generated.resources.privacy_policy
+import haqq.composeapp.generated.resources.restart_please
 import haqq.composeapp.generated.resources.shield
+import haqq.composeapp.generated.resources.support_title
 import haqq.composeapp.generated.resources.trash_2
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
@@ -47,6 +60,7 @@ import kottieComposition.KottieCompositionSpec
 import kottieComposition.animateKottieCompositionAsState
 import kottieComposition.rememberKottieComposition
 import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.mp.KoinPlatform
 import utils.KottieConstants
@@ -87,7 +101,7 @@ fun OtherScreen(
     Scaffold(
         topBar = {
             BaseTopAppBar(
-                title = AppString.OTHER_TITLE.getString(),
+                title = stringResource(Res.string.other_title),
                 onLeftButtonClick = { onBackClick() },
             )
         },
@@ -97,7 +111,7 @@ fun OtherScreen(
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
             BaseItemCard(
-                title = AppString.CLEAR_DATA.getString(),
+                title = stringResource(Res.string.clear_data),
                 iconResource = Res.drawable.trash_2,
             ) {
                 openClearDialog.value = true
@@ -105,22 +119,22 @@ fun OtherScreen(
 
             BaseDivider()
 
+            val copiedText = stringResource(Res.string.copied)
             BaseItemCard(
-                title = AppString.FOLLOW.getString(),
+                title = stringResource(Res.string.follow),
                 iconResource = Res.drawable.instagram,
             ) {
                 clipboardManager.setText(AnnotatedString(USERNAME_INSTAGRAM))
                 scope.launch {
-                    snackbarHostState.showSnackbar(
-                        AppString.COPIED.getString(),
-                    )
+                    snackbarHostState.showSnackbar(copiedText)
                 }
             }
 
             BaseDivider()
 
+            val supportTitle = stringResource(Res.string.support_title)
             BaseItemCard(
-                title = AppString.SUPPORT_TITLE.getString(),
+                title = supportTitle,
                 iconLottie = {
                     KottieAnimation(
                         modifier = Modifier.size(24.dp),
@@ -132,7 +146,7 @@ fun OtherScreen(
                 onWebClick(
                     WebNav(
                         url = AppConstant.getSupportUrl(languageId),
-                        title = AppString.SUPPORT_TITLE.getString(),
+                        title = supportTitle,
                         openExternalIOS = true,
                     ),
                 )
@@ -141,7 +155,7 @@ fun OtherScreen(
             BaseDivider()
 
             BaseItemCard(
-                title = AppString.FEEDBACK.getString(),
+                title = stringResource(Res.string.feedback),
                 iconResource = Res.drawable.mail,
             ) {
                 openMail.value = true
@@ -149,42 +163,45 @@ fun OtherScreen(
 
             BaseDivider()
 
+            val privacyTitle = stringResource(Res.string.privacy_policy)
             BaseItemCard(
-                title = AppString.PRIVACY_POLICY.getString(),
+                title = privacyTitle,
                 iconResource = Res.drawable.shield,
             ) {
                 onWebClick(
                     WebNav(
                         url = AppConstant.getPrivacyPolicyUrl(languageId),
-                        title = AppString.PRIVACY_POLICY.getString(),
+                        title = privacyTitle,
                     ),
                 )
             }
 
             BaseDivider()
 
+            val licensesTitle = stringResource(Res.string.licenses)
             BaseItemCard(
                 iconResource = Res.drawable.file_text,
-                title = AppString.LICENSES.getString(),
+                title = licensesTitle,
             ) {
                 onWebClick(
                     WebNav(
                         url = AppConstant.getLicensesUrl(languageId),
-                        title = AppString.LICENSES.getString(),
+                        title = licensesTitle,
                     ),
                 )
             }
 
             BaseDivider()
 
+            val aboutTitle = stringResource(Res.string.about)
             BaseItemCard(
                 iconResource = Res.drawable.file_text,
-                title = AppString.ABOUT.getString(),
+                title = aboutTitle,
             ) {
                 onWebClick(
                     WebNav(
                         url = AppConstant.getAboutUrl(languageId),
-                        title = AppString.ABOUT.getString(),
+                        title = aboutTitle,
                     ),
                 )
             }
@@ -192,7 +209,7 @@ fun OtherScreen(
             BaseDivider()
 
             BaseLabelValueCard(
-                label = AppString.CURRENT_VERSION.getString(),
+                label = stringResource(Res.string.current_version),
                 value = getPlatform().appVersionName,
             )
 
@@ -203,15 +220,16 @@ fun OtherScreen(
                 if (shouldUpdate) {
                     BaseDivider()
 
+                    val urlTitle = "${stringResource(Res.string.app_name)} v${setting.versionName}"
                     BaseLabelValueCard(
-                        label = AppString.LATEST_VERSION.getString(),
+                        label = stringResource(Res.string.latest_version),
                         value = setting.versionName,
                         showHighlight = true,
                     ) {
                         onWebClick(
                             WebNav(
                                 url = setting.urlUpdate,
-                                title = "${AppString.APP_NAME.getString()} v${setting.versionName}",
+                                title = urlTitle,
                             ),
                         )
                     }
@@ -222,21 +240,20 @@ fun OtherScreen(
         if (openClearDialog.value) {
             BaseDialog(
                 onDismissRequest = { openClearDialog.value = false },
-                title = AppString.DELETE_CONFIRMATION_TITLE.getString(),
-                desc = AppString.CLEAR_DATA_NOTE.getString(),
+                title = stringResource(Res.string.delete_confirmation_title),
+                desc = stringResource(Res.string.clear_data_note),
                 shouldCustomContent = true,
                 content = {
                     OtherScreenModel.ClearType.entries.forEach { clearType ->
+                        val restartText = stringResource(Res.string.restart_please)
                         BaseItemCard(
-                            title = getClearLabel(clearType),
+                            title = stringResource(clearType.label),
                             titleColor = MaterialTheme.colorScheme.error,
                             onClick = {
                                 vm.clearData(clearType)
                                 openClearDialog.value = false
                                 scope.launch {
-                                    snackbarHostState.showSnackbar(
-                                        AppString.RESTART_PLEASE.getString(),
-                                    )
+                                    snackbarHostState.showSnackbar(restartText)
                                 }
                             },
                         )
@@ -257,13 +274,3 @@ fun OtherScreen(
         vm.fetchSetting()
     }
 }
-
-private fun getClearLabel(clearType: OtherScreenModel.ClearType): String =
-    when (clearType) {
-        OtherScreenModel.ClearType.DHIKR -> AppString.DHIKR.getString()
-        OtherScreenModel.ClearType.DUA -> AppString.DUA.getString()
-        OtherScreenModel.ClearType.QURAN -> AppString.QURAN_TITLE.getString()
-        OtherScreenModel.ClearType.PRAYER_TIME -> AppString.PRAYER_TIME_TITLE.getString()
-        OtherScreenModel.ClearType.STUDY_NOTE -> AppString.STUDY_NOTE_TITLE.getString()
-        OtherScreenModel.ClearType.CLEAR_ALL -> AppString.CLEAR_ALL_DATA.getString()
-    }
