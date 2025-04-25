@@ -16,7 +16,7 @@ internal fun DhikrEntity.mapToRealm(dhikrType: DhikrType): DhikrRealm {
     val today: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
 
     return DhikrRealm().apply {
-        key = "$dhikrTypeName-$dhikrId"
+        pkey = "$dhikrTypeName-$dhikrId"
         id = dhikrId
         type = dhikrTypeName
         textIndopak = this@mapToRealm.textIndopak.orEmpty()

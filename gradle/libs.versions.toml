@@ -1,6 +1,7 @@
 [versions]
 # Multiplatform Versioning
-kotlin = "2.0.20"
+ksp = "2.1.20-1.0.32"
+kotlin = "2.1.20"
 compose-plugin = "1.7.3"
 jetbrains-lifecycle = "2.8.4"
 jetbrains-navigation = "2.8.0-alpha11"
@@ -12,8 +13,8 @@ kottie = "2.0.1"
 kotlinx-serialization = "1.7.3"
 kotlinx-datetime = "0.6.1"
 koin-bom = "4.0.1"
-realm = "3.0.0"
-room = "2.7.0-alpha01"
+room = "2.7.1"
+sqlite = "2.5.0"
 webview = "1.9.40"
 napier = "2.7.1"
 # Android Versioning
@@ -57,7 +58,9 @@ koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin-bom" }
 koin-core = { module = "io.insert-koin:koin-core" }
 koin-android-compose = { module = "io.insert-koin:koin-androidx-compose-navigation" }
 koin-kmp-compose = { module = "io.insert-koin:koin-compose-viewmodel-navigation" }
-realm-core = { module = "io.realm.kotlin:library-base", version.ref = "realm" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 compose-webview = { module = "io.github.kevinnzou:compose-webview-multiplatform", version.ref = "webview" }
 napier-logging = { module = "io.github.aakira:napier", version.ref = "napier" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -82,7 +85,8 @@ jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "compose-plugi
 jetbrains-kotlin-plugin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 jetbrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-realm-kotlin = { id = "io.realm.kotlin", version.ref = "realm" }
+room = { id = "androidx.room", version.ref = "room" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 # Android Plugins
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }

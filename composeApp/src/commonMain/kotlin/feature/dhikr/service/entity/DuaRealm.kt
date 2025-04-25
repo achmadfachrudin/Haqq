@@ -1,19 +1,20 @@
 package feature.dhikr.service.entity
 
-import io.realm.kotlin.types.RealmObject
-import io.realm.kotlin.types.annotations.PrimaryKey
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-class DuaRealm : RealmObject {
+@Entity
+data class DuaRealm(
     @PrimaryKey
-    var id = 0
-    var titleId = ""
-    var titleEn = ""
-    var textIndopak = ""
-    var textUthmani = ""
-    var textTransliteration = ""
-    var textTranslationId = ""
-    var textTranslationEn = ""
-    var hadithId = ""
-    var hadithEn = ""
-    var tag = ""
-}
+    var id: Int = 0,
+    var titleId: String = "",
+    var titleEn: String = "",
+    var textIndopak: String = "",
+    var textUthmani: String = "",
+    var textTransliteration: String = "",
+    var textTranslationId: String = "",
+    var textTranslationEn: String = "",
+    var hadithId: String = "",
+    var hadithEn: String = "",
+    var tag: String = "",
+)

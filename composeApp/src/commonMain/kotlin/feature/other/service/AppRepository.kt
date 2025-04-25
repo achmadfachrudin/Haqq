@@ -2,217 +2,276 @@ package feature.other.service
 
 import core.data.ApiResponse
 import core.data.DataState
-import feature.conversation.service.entity.ConversationRealm
-import feature.dhikr.service.entity.AsmaulHusnaRealm
-import feature.dhikr.service.entity.DhikrRealm
-import feature.dhikr.service.entity.DuaCategoryRealm
-import feature.dhikr.service.entity.DuaRealm
+import data.AppDatabase
 import feature.other.service.entity.AppSettingRealm
 import feature.other.service.model.AppSetting
 import feature.other.service.source.remote.SettingRemote
-import feature.prayertime.service.entity.PrayerTimeRealm
-import feature.quran.service.entity.ChapterRealm
-import feature.quran.service.entity.JuzRealm
-import feature.quran.service.entity.LastReadRealm
-import feature.quran.service.entity.VerseFavoriteRealm
-import feature.quran.service.entity.VerseRealm
-import feature.study.service.entity.NoteRealm
-import io.realm.kotlin.Realm
-import io.realm.kotlin.ext.query
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.LocalDate
 
 class AppRepository(
     private val remote: SettingRemote,
-    private val realm: Realm,
+    private val database: AppDatabase,
 ) {
     fun getSetting(): AppSetting {
-        if (realm.query<AppSettingRealm>().find().isEmpty()) {
-            realm.writeBlocking {
-                copyToRealm(AppSettingRealm())
+        return runBlocking {
+            withContext(Dispatchers.IO) {
+                val appSettingRoom =
+                    database.appSettingDao().getAll().firstOrNull()
+
+                if (appSettingRoom == null) {
+                    database.appSettingDao().insert(AppSettingRealm())
+                }
+
+                val latestSetting = database.appSettingDao().getAll().first()
+
+                return@withContext AppSetting(
+                    language = AppSetting.Language.valueOf(latestSetting.languageName),
+                    theme = AppSetting.Theme.valueOf(latestSetting.theme),
+                    themeColor = AppSetting.ThemeColor.valueOf(latestSetting.themeColor),
+                    arabicStyle = AppSetting.ArabicStyle.valueOf(latestSetting.arabicStyleName),
+                    arabicFontSize = latestSetting.arabicFontSize,
+                    transliterationVisibility = latestSetting.transliterationVisibility,
+                    transliterationFontSize = latestSetting.transliterationFontSize,
+                    translationVisibility = latestSetting.translationVisibility,
+                    translationFontSize = latestSetting.translationFontSize,
+                    location =
+                        AppSetting.Location(
+                            latitude = latestSetting.locationLatitude,
+                            longitude = latestSetting.locationLongitude,
+                            name = latestSetting.locationName,
+                        ),
+                    acceptPrivacyPolicy = latestSetting.acceptPrivacyPolicy,
+                    lastUpdate = LocalDate.parse(latestSetting.lastUpdate),
+                )
             }
         }
-
-        val setting = realm.query<AppSettingRealm>().find().first()
-
-        return AppSetting(
-            language = AppSetting.Language.valueOf(setting.languageName),
-            theme = AppSetting.Theme.valueOf(setting.theme),
-            themeColor = AppSetting.ThemeColor.valueOf(setting.themeColor),
-            arabicStyle = AppSetting.ArabicStyle.valueOf(setting.arabicStyleName),
-            arabicFontSize = setting.arabicFontSize,
-            transliterationVisibility = setting.transliterationVisibility,
-            transliterationFontSize = setting.transliterationFontSize,
-            translationVisibility = setting.translationVisibility,
-            translationFontSize = setting.translationFontSize,
-            location =
-                AppSetting.Location(
-                    latitude = setting.locationLatitude,
-                    longitude = setting.locationLongitude,
-                    name = setting.locationName,
-                ),
-            acceptPrivacyPolicy = setting.acceptPrivacyPolicy,
-            lastUpdate = LocalDate.parse(setting.lastUpdate),
-        )
     }
 
     fun updateLanguage(language: AppSetting.Language) {
-        realm.writeBlocking {
-            val setting = this.query<AppSettingRealm>().find().first()
+        CoroutineScope(Dispatchers.IO).launch {
+            val current = database.appSettingDao().getAll().first()
+            val updated =
+                current.copy(
+                    languageName = language.name,
+                )
 
-            setting.languageName = language.name
+            database.appSettingDao().update(updated)
         }
     }
 
     fun updateTheme(theme: AppSetting.Theme) {
-        realm.writeBlocking {
-            val setting = this.query<AppSettingRealm>().find().first()
+        CoroutineScope(Dispatchers.IO).launch {
+            val current = database.appSettingDao().getAll().first()
+            val updated =
+                current.copy(
+                    theme = theme.name,
+                )
 
-            setting.theme = theme.name
+            database.appSettingDao().update(updated)
         }
     }
 
     fun updateThemeColor(themeColor: AppSetting.ThemeColor) {
-        realm.writeBlocking {
-            val setting = this.query<AppSettingRealm>().find().first()
+        CoroutineScope(Dispatchers.IO).launch {
+            val current = database.appSettingDao().getAll().first()
+            val updated =
+                current.copy(
+                    themeColor = themeColor.name,
+                )
 
-            setting.themeColor = themeColor.name
+            database.appSettingDao().update(updated)
         }
     }
 
     fun updateArabicStyle(arabicStyle: AppSetting.ArabicStyle) {
-        realm.writeBlocking {
-            val setting = this.query<AppSettingRealm>().find().first()
+        CoroutineScope(Dispatchers.IO).launch {
+            val current = database.appSettingDao().getAll().first()
+            val updated =
+                current.copy(
+                    arabicStyleName = arabicStyle.name,
+                )
 
-            setting.arabicStyleName = arabicStyle.name
+            database.appSettingDao().update(updated)
         }
     }
 
     fun updateArabicFontSize(fontSize: Int) {
-        realm.writeBlocking {
-            val setting = this.query<AppSettingRealm>().find().first()
+        CoroutineScope(Dispatchers.IO).launch {
+            val current = database.appSettingDao().getAll().first()
+            val updated =
+                current.copy(
+                    arabicFontSize = fontSize,
+                )
 
-            setting.arabicFontSize = fontSize
+            database.appSettingDao().update(updated)
         }
     }
 
     fun updateTranslationFontSize(fontSize: Int) {
-        realm.writeBlocking {
-            val setting = this.query<AppSettingRealm>().find().first()
+        CoroutineScope(Dispatchers.IO).launch {
+            val current = database.appSettingDao().getAll().first()
+            val updated =
+                current.copy(
+                    translationFontSize = fontSize,
+                )
 
-            setting.translationFontSize = fontSize
+            database.appSettingDao().update(updated)
         }
     }
 
     fun updateTranslationVisibility(show: Boolean) {
-        realm.writeBlocking {
-            val setting = this.query<AppSettingRealm>().find().first()
+        CoroutineScope(Dispatchers.IO).launch {
+            val current = database.appSettingDao().getAll().first()
+            val updated =
+                current.copy(
+                    translationVisibility = show,
+                )
 
-            setting.translationVisibility = show
+            database.appSettingDao().update(updated)
         }
     }
 
     fun updateTransliterationFontSize(fontSize: Int) {
-        realm.writeBlocking {
-            val setting = this.query<AppSettingRealm>().find().first()
+        CoroutineScope(Dispatchers.IO).launch {
+            val current = database.appSettingDao().getAll().first()
+            val updated =
+                current.copy(
+                    transliterationFontSize = fontSize,
+                )
 
-            setting.transliterationFontSize = fontSize
+            database.appSettingDao().update(updated)
         }
     }
 
     fun updateTransliterationVisibility(show: Boolean) {
-        realm.writeBlocking {
-            val setting = this.query<AppSettingRealm>().find().first()
+        CoroutineScope(Dispatchers.IO).launch {
+            val current = database.appSettingDao().getAll().first()
+            val updated =
+                current.copy(
+                    transliterationVisibility = show,
+                )
 
-            setting.transliterationVisibility = show
+            database.appSettingDao().update(updated)
         }
     }
 
     fun updateLocation(location: AppSetting.Location) {
-        if (location.latitude != 0.0 &&
-            location.longitude != 0.0 &&
-            location.name.isNotEmpty()
-        ) {
-            realm.writeBlocking {
-                val setting = this.query<AppSettingRealm>().find().first()
+        CoroutineScope(Dispatchers.IO).launch {
+            if (location.latitude != 0.0 &&
+                location.longitude != 0.0 &&
+                location.name.isNotEmpty()
+            ) {
+                val current = database.appSettingDao().getAll().first()
+                val updated =
+                    current.copy(
+                        locationLatitude = location.latitude,
+                        locationLongitude = location.longitude,
+                        locationName = location.name,
+                    )
 
-                setting.locationLatitude = location.latitude
-                setting.locationLongitude = location.longitude
-                setting.locationName = location.name
+                database.appSettingDao().update(updated)
             }
         }
     }
 
     fun updateAcceptPrivacyPolicy() {
-        realm.writeBlocking {
-            val setting = this.query<AppSettingRealm>().find().first()
+        CoroutineScope(Dispatchers.IO).launch {
+            val current = database.appSettingDao().getAll().first()
+            val updated =
+                current.copy(
+                    acceptPrivacyPolicy = true,
+                )
 
-            setting.acceptPrivacyPolicy = true
+            database.appSettingDao().update(updated)
         }
     }
 
     fun updateLastUpdate(lastUpdate: LocalDate) {
-        realm.writeBlocking {
-            val setting = this.query<AppSettingRealm>().find().first()
-            setting.lastUpdate = lastUpdate.toString()
+        CoroutineScope(Dispatchers.IO).launch {
+            val current = database.appSettingDao().getAll().first()
+            val updated =
+                current.copy(
+                    lastUpdate = lastUpdate.toString(),
+                )
+            database.appSettingDao().update(updated)
         }
     }
 
     fun clearDhikrData() {
-        realm.writeBlocking {
-            delete(DhikrRealm::class)
+        CoroutineScope(Dispatchers.IO).launch {
+            database.dhikrDao().deleteAll()
         }
     }
 
     fun clearDuaData() {
-        realm.writeBlocking {
-            delete(DuaCategoryRealm::class)
-            delete(DuaRealm::class)
+        CoroutineScope(Dispatchers.IO).launch {
+            database.duaCategoryDao().deleteAll()
+            database.duaDao().deleteAll()
         }
     }
 
     fun clearAsmaulHusnaData() {
-        realm.writeBlocking {
-            delete(AsmaulHusnaRealm::class)
+        CoroutineScope(Dispatchers.IO).launch {
+            database.asmaulHusnaDao().deleteAll()
         }
     }
 
     fun clearQuranData() {
-        realm.writeBlocking {
-            delete(ChapterRealm::class)
-            delete(VerseRealm::class)
-            delete(VerseFavoriteRealm::class)
-            delete(LastReadRealm::class)
-            delete(JuzRealm::class)
+        CoroutineScope(Dispatchers.IO).launch {
+            database.chapterDao().deleteAll()
+            database.verseDao().deleteAll()
+            database.verseFavoriteDao().deleteAll()
+            database.juzDao().deleteAll()
+            database.lastReadDao().deleteAll()
         }
     }
 
     fun clearPrayerTimeData() {
-        realm.writeBlocking {
-            delete(PrayerTimeRealm::class)
+        CoroutineScope(Dispatchers.IO).launch {
+            database.prayerTimeDao().deleteAll()
         }
     }
 
     fun clearConversationData() {
-        realm.writeBlocking {
-            delete(ConversationRealm::class)
+        CoroutineScope(Dispatchers.IO).launch {
+            database.conversationDao().deleteAll()
         }
     }
 
     fun clearNoteData() {
-        realm.writeBlocking {
-            delete(NoteRealm::class)
+        CoroutineScope(Dispatchers.IO).launch {
+            database.noteDao().deleteAll()
         }
     }
 
     fun clearAllData() {
-        realm.writeBlocking {
-            deleteAll()
+        CoroutineScope(Dispatchers.IO).launch {
+            database.appSettingDao().deleteAll()
+            database.asmaulHusnaDao().deleteAll()
+            database.chapterDao().deleteAll()
+            database.conversationDao().deleteAll()
+            database.dhikrDao().deleteAll()
+            database.duaDao().deleteAll()
+            database.duaCategoryDao().deleteAll()
+            database.guidanceDao().deleteAll()
+            database.homeTemplateDao().deleteAll()
+            database.juzDao().deleteAll()
+            database.lastReadDao().deleteAll()
+            database.noteDao().deleteAll()
+            database.pageDao().deleteAll()
+            database.prayerTimeDao().deleteAll()
+            database.verseDao().deleteAll()
+            database.verseFavoriteDao().deleteAll()
         }
     }
 

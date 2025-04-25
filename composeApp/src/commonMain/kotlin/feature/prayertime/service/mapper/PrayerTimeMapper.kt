@@ -58,7 +58,7 @@ internal fun ConvertDateEntity.mapToHijri(): Triple<Int, Int, Int> {
     return Triple(date, month, year)
 }
 
-internal fun PrayertimeEntity.Data.mapToPrayerTimeRealm(locationName: String): PrayerTimeRealm {
+internal fun PrayertimeEntity.Data.mapToRealm(locationName: String): PrayerTimeRealm {
     val gYear = date.gregorian.year?.toInt()
     val gMonth = date.gregorian.month?.number
     val gDate = date.gregorian.day?.toInt()

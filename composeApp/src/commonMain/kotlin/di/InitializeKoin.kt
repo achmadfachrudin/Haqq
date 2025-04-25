@@ -1,4 +1,3 @@
-import di.localModule
 import di.networkModule
 import feature.article.di.articleFeatureModule
 import feature.charity.di.charityFeatureModule
@@ -17,8 +16,7 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
     startKoin {
         appDeclaration()
         modules(
-            targetModule,
-            localModule,
+            platformModule,
             networkModule,
             articleFeatureModule,
             charityFeatureModule,

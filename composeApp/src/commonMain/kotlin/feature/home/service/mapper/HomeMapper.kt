@@ -20,18 +20,18 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.withContext
 import org.koin.mp.KoinPlatform
 
-internal fun HomeTemplateEntity.mapToHomeTemplateRealm(): HomeTemplateRealm {
-    val itemType = this@mapToHomeTemplateRealm.type.orEmpty()
-    val itemPosition = this@mapToHomeTemplateRealm.position.orZero()
+internal fun HomeTemplateEntity.mapToRealm(): HomeTemplateRealm {
+    val itemType = this@mapToRealm.type.orEmpty()
+    val itemPosition = this@mapToRealm.position.orZero()
     return HomeTemplateRealm().apply {
         position = itemPosition
         type = itemType
-        labelId = this@mapToHomeTemplateRealm.label?.id.orEmpty()
-        labelEn = this@mapToHomeTemplateRealm.label?.en.orEmpty()
-        textId = this@mapToHomeTemplateRealm.text?.id.orEmpty()
-        textEn = this@mapToHomeTemplateRealm.text?.en.orEmpty()
-        images = this@mapToHomeTemplateRealm.images.orEmpty()
-        links = this@mapToHomeTemplateRealm.links.orEmpty()
+        labelId = this@mapToRealm.label?.id.orEmpty()
+        labelEn = this@mapToRealm.label?.en.orEmpty()
+        textId = this@mapToRealm.text?.id.orEmpty()
+        textEn = this@mapToRealm.text?.en.orEmpty()
+        images = this@mapToRealm.images.orEmpty()
+        links = this@mapToRealm.links.orEmpty()
     }
 }
 

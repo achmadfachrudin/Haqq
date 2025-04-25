@@ -1,16 +1,17 @@
 package feature.home.service.entity
 
-import io.realm.kotlin.types.RealmObject
-import io.realm.kotlin.types.annotations.PrimaryKey
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-class HomeTemplateRealm : RealmObject {
+@Entity
+data class HomeTemplateRealm(
     @PrimaryKey
-    var position = 0
-    var type = ""
-    var labelId = ""
-    var labelEn = ""
-    var textId = ""
-    var textEn = ""
-    var images = ""
-    var links = ""
-}
+    var position: Int = 0,
+    var type: String = "",
+    var labelId: String = "",
+    var labelEn: String = "",
+    var textId: String = "",
+    var textEn: String = "",
+    var images: String = "",
+    var links: String = "",
+)

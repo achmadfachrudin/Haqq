@@ -9,25 +9,25 @@ import feature.prayertime.service.model.Guidance
 import feature.prayertime.service.model.GuidanceType
 import org.koin.mp.KoinPlatform
 
-internal fun GuidanceEntity.mapToGuidanceRealm(): GuidanceRealm {
-    val itemType = this@mapToGuidanceRealm.type.orEmpty()
-    val itemPosition = this@mapToGuidanceRealm.position.orZero()
+internal fun GuidanceEntity.mapToRealm(): GuidanceRealm {
+    val itemType = this@mapToRealm.type.orEmpty()
+    val itemPosition = this@mapToRealm.position.orZero()
     return GuidanceRealm().apply {
-        id = "$itemType-$itemPosition"
+        pkey = "$itemType-$itemPosition"
         position = itemPosition
         type = itemType
-        image = this@mapToGuidanceRealm.image.orEmpty()
-        titleId = this@mapToGuidanceRealm.titleId.orEmpty()
-        titleEn = this@mapToGuidanceRealm.titleEn.orEmpty()
-        descId = this@mapToGuidanceRealm.descId.orEmpty()
-        descEn = this@mapToGuidanceRealm.descEn.orEmpty()
-        textIndopak = this@mapToGuidanceRealm.textIndopak.orEmpty()
-        textUthmani = this@mapToGuidanceRealm.textUthmani.orEmpty()
-        textTransliteration = this@mapToGuidanceRealm.textTransliteration.orEmpty()
-        textTranslationId = this@mapToGuidanceRealm.textTranslationId.orEmpty()
-        textTranslationEn = this@mapToGuidanceRealm.textTranslationEn.orEmpty()
-        hadithId = this@mapToGuidanceRealm.hadithId.orEmpty()
-        hadithEn = this@mapToGuidanceRealm.hadithEn.orEmpty()
+        image = this@mapToRealm.image.orEmpty()
+        titleId = this@mapToRealm.titleId.orEmpty()
+        titleEn = this@mapToRealm.titleEn.orEmpty()
+        descId = this@mapToRealm.descId.orEmpty()
+        descEn = this@mapToRealm.descEn.orEmpty()
+        textIndopak = this@mapToRealm.textIndopak.orEmpty()
+        textUthmani = this@mapToRealm.textUthmani.orEmpty()
+        textTransliteration = this@mapToRealm.textTransliteration.orEmpty()
+        textTranslationId = this@mapToRealm.textTranslationId.orEmpty()
+        textTranslationEn = this@mapToRealm.textTranslationEn.orEmpty()
+        hadithId = this@mapToRealm.hadithId.orEmpty()
+        hadithEn = this@mapToRealm.hadithEn.orEmpty()
     }
 }
 

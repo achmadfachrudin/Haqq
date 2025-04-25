@@ -2,13 +2,11 @@ package feature.conversation.service
 
 import core.data.ApiResponse
 import core.data.DataState
-import feature.conversation.service.entity.ConversationRealm
+import data.AppDatabase
 import feature.conversation.service.mapper.mapToModel
 import feature.conversation.service.mapper.mapToRealm
 import feature.conversation.service.source.remote.ConversationRemote
 import feature.other.service.AppRepository
-import io.realm.kotlin.Realm
-import io.realm.kotlin.ext.query
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.catch
@@ -19,12 +17,12 @@ import kotlinx.coroutines.flow.onStart
 class ConversationRepository(
     private val appRepository: AppRepository,
     private val remote: ConversationRemote,
-    private val realm: Realm,
+    private val database: AppDatabase,
 ) {
     fun fetchConversations() =
         flow {
             val setting = appRepository.getSetting()
-            val localConversations = realm.query<ConversationRealm>().find()
+            val localConversations = database.conversationDao().getAll()
 
             if (localConversations.isEmpty()) {
                 when (val result = remote.fetchConversations()) {
@@ -32,18 +30,12 @@ class ConversationRepository(
                     is ApiResponse.Success -> {
                         val remoteResult = result.body
 
-                        realm.writeBlocking {
-                            remoteResult.forEach { conversation ->
-                                copyToRealm(
-                                    conversation.mapToRealm(),
-                                )
-                            }
-                        }
+                        database.conversationDao().insert(remoteResult.map { it.mapToRealm() })
 
                         val latestConversations =
-                            realm
-                                .query<ConversationRealm>()
-                                .find()
+                            database
+                                .conversationDao()
+                                .getAll()
                                 .map { it.mapToModel(setting) }
                                 .sortedBy { it.id }
 
@@ -52,9 +44,9 @@ class ConversationRepository(
                 }
             } else {
                 val latestConversations =
-                    realm
-                        .query<ConversationRealm>()
-                        .find()
+                    database
+                        .conversationDao()
+                        .getAll()
                         .map { it.mapToModel(setting) }
                         .sortedBy { it.id }
 

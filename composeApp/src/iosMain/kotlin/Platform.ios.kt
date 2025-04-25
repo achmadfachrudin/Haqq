@@ -1,3 +1,4 @@
+import data.AppDatabase
 import org.koin.dsl.module
 import platform.UIKit.UIDevice
 
@@ -32,7 +33,8 @@ class IOSPlatform : Platform {
 
 actual fun getPlatform(): Platform = IOSPlatform()
 
-actual val targetModule =
+actual val platformModule =
     module {
         single<Localization> { Localization() }
+        single<AppDatabase> { createRoomDatabase() }
     }

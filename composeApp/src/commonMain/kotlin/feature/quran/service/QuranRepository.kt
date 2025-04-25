@@ -3,16 +3,13 @@ package feature.quran.service
 import core.data.ApiResponse
 import core.data.DataState
 import core.util.orZero
+import data.AppDatabase
 import feature.other.service.AppRepository
 import feature.other.service.model.AppSetting.Language
-import feature.quran.service.entity.ChapterRealm
 import feature.quran.service.entity.ChaptersEntity
-import feature.quran.service.entity.JuzRealm
 import feature.quran.service.entity.LastReadRealm
 import feature.quran.service.entity.PageEntity
-import feature.quran.service.entity.PageRealm
 import feature.quran.service.entity.VerseFavoriteRealm
-import feature.quran.service.entity.VerseRealm
 import feature.quran.service.mapper.mapToListString
 import feature.quran.service.mapper.mapToModel
 import feature.quran.service.mapper.mapToRealm
@@ -28,9 +25,7 @@ import feature.quran.service.model.VerseFavorite
 import feature.quran.service.source.local.QuranArchiveSource
 import feature.quran.service.source.remote.QuranRemote
 import io.github.aakira.napier.Napier
-import io.realm.kotlin.Realm
-import io.realm.kotlin.ext.query
-import io.realm.kotlin.query.RealmResults
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.catch
@@ -39,28 +34,34 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 class QuranRepository(
     private val appRepository: AppRepository,
     private val remote: QuranRemote,
-    private val realm: Realm,
+    private val database: AppDatabase,
 ) {
-    fun checkIsAllDownloaded(): Boolean {
-        val latestChapters = realm.query<ChapterRealm>().find().map { it.mapToModel() }
+    fun checkIsAllDownloaded(): Boolean =
+        runBlocking {
+            withContext(Dispatchers.IO) {
+                val latestChapters =
+                    database
+                        .chapterDao()
+                        .getAll()
+                        .map { it.mapToModel() }
 
-        val isAllDownloaded = latestChapters.all { chapter -> chapter.isDownloaded }
-
-        return isAllDownloaded
-    }
+                latestChapters.all { chapter -> chapter.isDownloaded }
+            }
+        }
 
     fun fetchChapters() =
         flow {
-            val localChapters = realm.query<ChapterRealm>().find()
+            val localChapters = database.chapterDao().getAll()
 
             if (localChapters.size < MAX_CHAPTER) {
-                realm.writeBlocking {
-                    delete(ChapterRealm::class)
-                }
+                database.chapterDao().deleteAll()
 
                 val languages = Language.entries.toTypedArray()
                 val chapters = mutableListOf<ChaptersEntity.ChapterEntity>()
@@ -95,18 +96,14 @@ class QuranRepository(
                         translationEn = translationEn,
                     )
 
-                realm.writeBlocking {
-                    finalChapters.forEach {
-                        copyToRealm(it)
-                    }
-                }
+                database.chapterDao().insert(finalChapters)
 
                 downloadVerses(1).collect()
 
-                val latestChapters = realm.query<ChapterRealm>().find().map { it.mapToModel() }
+                val latestChapters = database.chapterDao().getAll().map { it.mapToModel() }
                 emit(DataState.Success(latestChapters))
             } else {
-                val latestChapters = realm.query<ChapterRealm>().find().map { it.mapToModel() }
+                val latestChapters = database.chapterDao().getAll().map { it.mapToModel() }
 
                 emit(DataState.Success(latestChapters))
             }
@@ -116,12 +113,10 @@ class QuranRepository(
 
     fun fetchJuzs() =
         flow {
-            val localJuzs = realm.query<JuzRealm>().find()
+            val localJuzs = database.juzDao().getAll()
 
             if (localJuzs.size < MAX_JUZ) {
-                realm.writeBlocking {
-                    delete(JuzRealm::class)
-                }
+                database.juzDao().deleteAll()
 
                 when (val result = remote.fetchJuzs()) {
                     is ApiResponse.Error -> emit(DataState.Error(result.message))
@@ -133,25 +128,15 @@ class QuranRepository(
                                 .distinctBy { it.juzNumber }
                                 .mapToRealm()
 
-                        realm.writeBlocking {
-                            remoteResult.forEach {
-                                copyToRealm(it)
-                            }
-                        }
+                        database.juzDao().insert(remoteResult)
 
-                        val latestJuzs =
-                            realm.query<JuzRealm>().find().map {
-                                it.mapToModel()
-                            }
+                        val latestJuzs = database.juzDao().getAll().map { it.mapToModel() }
 
                         emit(DataState.Success(latestJuzs))
                     }
                 }
             } else {
-                val latestJuzs =
-                    realm.query<JuzRealm>().find().map {
-                        it.mapToModel()
-                    }
+                val latestJuzs = database.juzDao().getAll().map { it.mapToModel() }
 
                 emit(DataState.Success(latestJuzs))
             }
@@ -161,17 +146,19 @@ class QuranRepository(
 
     fun addPages() =
         flow {
-            realm.writeBlocking {
-                delete(PageRealm::class)
-            }
+            database.pageDao().deleteAll()
 
             val pageEntities = mutableListOf<PageEntity>()
             for (i in 1..MAX_PAGE) {
                 try {
                     val verses =
-                        realm
-                            .query<VerseRealm>("pageNumber == $0", i)
-                            .find()
+                        database
+                            .verseDao()
+                            .getAll()
+                            .filter { it.pageNumber == i }
+//                        realm
+//                            .query<VerseRealm>("pageNumber == $0", i)
+//                            .find()
 
                     val firstVerse = verses.minBy { it.id }
 
@@ -195,127 +182,144 @@ class QuranRepository(
                 }
             }
 
-            realm.writeBlocking {
-                pageEntities.forEach { entity ->
-                    copyToRealm(entity.mapToRealm())
-                }
-            }
+            database.pageDao().insert(pageEntities.map { it.mapToRealm() })
             emit(true)
         }.flowOn(Dispatchers.IO)
 
     fun fetchPages() =
         flow {
-            val latestPages =
-                realm.query<PageRealm>().find().map {
-                    it.mapToModel()
-                }
+            val latestPages = database.pageDao().getAll().map { it.mapToModel() }
 
             emit(latestPages)
         }.flowOn(Dispatchers.IO)
 
-    fun getChapterById(chapterId: Int): Chapter {
-        try {
-            return realm
-                .query<ChapterRealm>("id == $0", chapterId)
-                .find()
-                .first()
-                .mapToModel()
-        } catch (e: Exception) {
-            Napier.e { "Error retrieving getChapterById chapterId $chapterId" }
-            throw e
+    fun getChapterById(chapterId: Int): Chapter =
+        runBlocking {
+            withContext(Dispatchers.IO) {
+                try {
+                    database
+                        .chapterDao()
+                        .loadAllById(listOf(chapterId))
+                        .first()
+                        .mapToModel()
+                } catch (e: Exception) {
+                    Napier.e { "Error retrieving getChapterById chapterId $chapterId" }
+                    throw e
+                }
+            }
         }
-    }
 
-    fun getJuzById(juzId: Int): Juz {
-        try {
-            return realm
-                .query<JuzRealm>("id == $0", juzId)
-                .find()
-                .first()
-                .mapToModel()
-        } catch (e: Exception) {
-            Napier.e { "Error retrieving getJuzById juzId $juzId" }
-            throw e
+    fun getJuzById(juzId: Int): Juz =
+        runBlocking {
+            withContext(Dispatchers.IO) {
+                try {
+                    database
+                        .juzDao()
+                        .loadAllById(listOf(juzId))
+                        .first()
+                        .mapToModel()
+                } catch (e: Exception) {
+                    Napier.e { "Error retrieving getJuzById juzId $juzId" }
+                    throw e
+                }
+            }
         }
-    }
 
-    fun getPageById(pageId: Int): Page {
-        try {
-            return realm
-                .query<PageRealm>("id == $0", pageId)
-                .find()
-                .first()
-                .mapToModel()
-        } catch (e: Exception) {
-            Napier.e { "Error retrieving getPageById pageId $pageId" }
-            throw e
+    fun getPageById(pageId: Int): Page =
+        runBlocking {
+            withContext(Dispatchers.IO) {
+                try {
+                    database
+                        .pageDao()
+                        .loadAllById(listOf(pageId))
+                        .first()
+                        .mapToModel()
+                } catch (e: Exception) {
+                    Napier.e { "Error retrieving getPageById pageId $pageId" }
+                    throw e
+                }
+            }
         }
-    }
 
-    fun getVerseById(verseId: Int): Verse {
-        try {
-            val setting = appRepository.getSetting()
+    fun getVerseById(verseId: Int): Verse =
+        runBlocking {
+            withContext(Dispatchers.IO) {
+                try {
+                    val setting = appRepository.getSetting()
 
-            return realm
-                .query<VerseRealm>("id == $0", verseId)
-                .find()
-                .first()
-                .mapToModel(setting)
-        } catch (e: Exception) {
-            Napier.e { "Error retrieving getVerseById verseId $verseId" }
-            throw e
+                    database
+                        .verseDao()
+                        .loadAllById(listOf(verseId))
+                        .first()
+                        .mapToModel(setting)
+                } catch (e: Exception) {
+                    Napier.e { "Error retrieving getVerseById verseId $verseId" }
+                    throw e
+                }
+            }
         }
-    }
 
-    fun getChapterNameSimple(chapterId: Int): String {
-        try {
-            return realm
-                .query<ChapterRealm>("id == $0", chapterId)
-                .find()
-                .first()
-                .nameSimple
-        } catch (e: Exception) {
-            Napier.e { "Error retrieving getChapterName chapterId $chapterId" }
-            throw e
+    fun getChapterNameSimple(chapterId: Int): String =
+        runBlocking {
+            withContext(Dispatchers.IO) {
+                try {
+                    database
+                        .chapterDao()
+                        .loadAllById(listOf(chapterId))
+                        .first()
+                        .nameSimple
+                } catch (e: Exception) {
+                    Napier.e { "Error retrieving getChapterName chapterId $chapterId" }
+                    throw e
+                }
+            }
         }
-    }
 
-    fun getRandomVerse(): Verse {
-        try {
-            val setting = appRepository.getSetting()
+    fun getRandomVerse(): Verse =
+        runBlocking {
+            withContext(Dispatchers.IO) {
+                try {
+                    val setting = appRepository.getSetting()
 
-            return realm
-                .query<VerseRealm>()
-                .find()
-                .random()
-                .mapToModel(setting)
-        } catch (e: Exception) {
-            Napier.e { "Error retrieving getRandomVerse" }
-            throw e
+                    database
+                        .verseDao()
+                        .getAll()
+                        .random()
+                        .mapToModel(setting)
+                } catch (e: Exception) {
+                    Napier.e { "Error retrieving getRandomVerse" }
+                    throw e
+                }
+            }
         }
-    }
 
     private fun updateChapterIsDownloaded(chapterNumber: Int) {
-        realm.writeBlocking {
-            val chapter = this.query<ChapterRealm>("id == $0", chapterNumber).find().first()
+        CoroutineScope(Dispatchers.IO).launch {
+            val current = database.chapterDao().loadAllById(listOf(chapterNumber)).first()
+            val updated =
+                current.copy(
+                    isDownloaded = true,
+                )
 
-            chapter.isDownloaded = true
+            database.chapterDao().update(updated)
         }
     }
 
-    fun isVerseDownloaded(verseId: Int): Boolean {
-        return try {
-            return realm.query<VerseRealm>("id == $0", verseId).find().isNotEmpty()
-        } catch (e: Exception) {
-            Napier.e { "Error retrieving isVerseDownloaded verseId $verseId" }
-            false
+    fun isVerseDownloaded(verseId: Int): Boolean =
+        runBlocking {
+            withContext(Dispatchers.IO) {
+                try {
+                    database.verseDao().loadAllById(listOf(verseId)).isNotEmpty()
+                } catch (e: Exception) {
+                    Napier.e { "Error retrieving isVerseDownloaded verseId $verseId" }
+                    false
+                }
+            }
         }
-    }
 
     fun downloadVerses(chapterNumber: Int) =
         flow {
-            val localVerses =
-                realm.query<VerseRealm>().find().filter { it.chapterId == chapterNumber }
+            val localVerses = database.verseDao().getAll().filter { it.chapterId == chapterNumber }
             val translations = Language.entries.map { it.translationId }.joinToString(",")
 
             if (localVerses.isEmpty()) {
@@ -341,19 +345,15 @@ class QuranRepository(
                             emit(DataState.Error("empty"))
                             return@flow
                         } else {
-                            realm.writeBlocking {
-                                val remoteVerses =
-                                    result.body.mapToRealm(
-                                        indopak = indopak,
-                                        uthmani = uthmani,
-                                        uthmaniTajweed = uthmaniTajweed,
-                                        transliteration = transliteration,
-                                    )
+                            val remoteVerses =
+                                result.body.mapToRealm(
+                                    indopak = indopak,
+                                    uthmani = uthmani,
+                                    uthmaniTajweed = uthmaniTajweed,
+                                    transliteration = transliteration,
+                                )
 
-                                remoteVerses.forEach {
-                                    copyToRealm(it)
-                                }
-                            }
+                            database.verseDao().insert(remoteVerses)
 
                             updateChapterIsDownloaded(chapterNumber)
 
@@ -366,8 +366,7 @@ class QuranRepository(
 
     fun fetchVersesByChapter(chapterNumber: Int) =
         flow {
-            val localVerses =
-                realm.query<VerseRealm>().find().filter { it.chapterId == chapterNumber }
+            val localVerses = database.verseDao().getAll().filter { it.chapterId == chapterNumber }
             val setting = appRepository.getSetting()
             val translations = Language.entries.map { it.translationId }.joinToString(",")
 
@@ -394,18 +393,14 @@ class QuranRepository(
                                 transliteration = transliteration,
                             )
 
-                        realm.writeBlocking {
-                            remoteVerses.forEach {
-                                copyToRealm(it)
-                            }
-                        }
+                        database.verseDao().insert(remoteVerses)
 
                         updateChapterIsDownloaded(chapterNumber)
 
                         val latestVerses =
-                            realm
-                                .query<VerseRealm>()
-                                .find()
+                            database
+                                .verseDao()
+                                .getAll()
                                 .filter { it.chapterId == chapterNumber }
                                 .map { it.mapToModel(setting) }
                                 .sortedBy { it.verseNumber }
@@ -415,9 +410,9 @@ class QuranRepository(
                 }
             } else {
                 val latestVerses =
-                    realm
-                        .query<VerseRealm>()
-                        .find()
+                    database
+                        .verseDao()
+                        .getAll()
                         .filter { it.chapterId == chapterNumber }
                         .map { it.mapToModel(setting) }
                         .sortedBy { it.verseNumber }
@@ -440,9 +435,9 @@ class QuranRepository(
             val setting = appRepository.getSetting()
 
             val latestVerses =
-                realm
-                    .query<VerseRealm>()
-                    .find()
+                database
+                    .verseDao()
+                    .getAll()
                     .filter { it.juzNumber == juzNumber }
                     .map { it.mapToModel(setting) }
                     .sortedBy { it.verseNumber }
@@ -472,9 +467,9 @@ class QuranRepository(
             val setting = appRepository.getSetting()
 
             val latestVerses =
-                realm
-                    .query<VerseRealm>()
-                    .find()
+                database
+                    .verseDao()
+                    .getAll()
                     .filter { it.pageNumber == pageNumber }
                     .map { it.mapToModel(setting) }
                     .sortedBy { it.verseNumber }
@@ -493,29 +488,38 @@ class QuranRepository(
             .flowOn(Dispatchers.IO)
 
     fun resetVersesByChapter(chapterNumber: Int) {
-        realm.writeBlocking {
-            val verseToDelete: RealmResults<VerseRealm> =
-                query<VerseRealm>("chapterId == $0", chapterNumber).find()
-
-            delete(verseToDelete)
+        CoroutineScope(Dispatchers.IO).launch {
+            database
+                .verseDao()
+                .getAll()
+                .filter { it.chapterId == chapterNumber }
+                .let { verses ->
+                    database.verseDao().delete(verses)
+                }
         }
     }
 
     fun resetVersesByJuz(juzNumber: Int) {
-        realm.writeBlocking {
-            val verseToDelete: RealmResults<VerseRealm> =
-                query<VerseRealm>("juzNumber == $0", juzNumber).find()
-
-            delete(verseToDelete)
+        CoroutineScope(Dispatchers.IO).launch {
+            database
+                .verseDao()
+                .getAll()
+                .filter { it.juzNumber == juzNumber }
+                .let { verses ->
+                    database.verseDao().delete(verses)
+                }
         }
     }
 
     fun resetVersesByPage(pageNumber: Int) {
-        realm.writeBlocking {
-            val verseToDelete: RealmResults<VerseRealm> =
-                query<VerseRealm>("pageNumber == $0", pageNumber).find()
-
-            delete(verseToDelete)
+        CoroutineScope(Dispatchers.IO).launch {
+            database
+                .verseDao()
+                .getAll()
+                .filter { it.pageNumber == pageNumber }
+                .let { verses ->
+                    database.verseDao().delete(verses)
+                }
         }
     }
 
@@ -567,28 +571,29 @@ class QuranRepository(
         }
     }.flowOn(Dispatchers.IO)
 
-    fun getLastRead(): LastRead {
-        if (realm.query<LastReadRealm>().find().isEmpty()) {
-            realm.writeBlocking {
-                copyToRealm(LastReadRealm())
+    fun getLastRead(): LastRead =
+        runBlocking {
+            withContext(Dispatchers.IO) {
+                if (database.lastReadDao().getAll().isEmpty()) {
+                    database.lastReadDao().insert(LastReadRealm())
+                }
+
+                val lastRead = database.lastReadDao().getAll().first()
+
+                LastRead(
+                    chapterId = lastRead.chapterId,
+                    chapterNameSimple = lastRead.chapterNameSimple,
+                    verseId = lastRead.verseId,
+                    verseNumber = lastRead.verseNumber,
+                    progressFloat = lastRead.progressFloat,
+                    progressInt = lastRead.progressInt,
+                )
             }
         }
 
-        val lastRead = realm.query<LastReadRealm>().find().first()
-
-        return LastRead(
-            chapterId = lastRead.chapterId,
-            chapterNameSimple = lastRead.chapterNameSimple,
-            verseId = lastRead.verseId,
-            verseNumber = lastRead.verseNumber,
-            progressFloat = lastRead.progressFloat,
-            progressInt = lastRead.progressInt,
-        )
-    }
-
     fun updateLastRead(verseId: Int) {
-        realm.writeBlocking {
-            val lastRead = this.query<LastReadRealm>().find().first()
+        CoroutineScope(Dispatchers.IO).launch {
+            val lastRead = database.lastReadDao().getAll().first()
             val verse = getVerseById(verseId)
             val chapter = getChapterById(verse.chapterId)
             val progressFloat = verse.verseNumber.toFloat() / chapter.versesCount.toFloat()
@@ -603,34 +608,42 @@ class QuranRepository(
         }
     }
 
-    fun getVerseFavorites(): List<VerseFavorite> {
-        val favorites = realm.query<VerseFavoriteRealm>().find()
+    fun getVerseFavorites(): List<VerseFavorite> =
+        runBlocking {
+            withContext(Dispatchers.IO) {
+                val favorites = database.verseFavoriteDao().getAll()
 
-        return favorites
-            .map {
-                VerseFavorite(
-                    verseId = it.verseId,
-                    verseNumber = it.verseNumber,
-                    chapterId = it.chapterId,
-                    chapterNameSimple = it.chapterNameSimple,
-                )
-            }.sortedBy { it.verseId }
-    }
+                favorites
+                    .map {
+                        VerseFavorite(
+                            verseId = it.verseId,
+                            verseNumber = it.verseNumber,
+                            chapterId = it.chapterId,
+                            chapterNameSimple = it.chapterNameSimple,
+                        )
+                    }.sortedBy { it.verseId }
+            }
+        }
 
-    fun isFavorite(verseId: Int): Boolean = realm.query<VerseFavoriteRealm>("verseId == $0", verseId).find().isNotEmpty()
+    fun isFavorite(verseId: Int): Boolean =
+        runBlocking {
+            withContext(Dispatchers.IO) {
+                database.verseFavoriteDao().getAll().any { it.verseId == verseId }
+            }
+        }
 
     fun addOrRemoveVerseFavorites(verse: Verse) {
-        val verseFavorites =
-            realm
-                .query<VerseFavoriteRealm>("verseId == $0", verse.id)
-                .find()
-                .firstOrNull()
+        CoroutineScope(Dispatchers.IO).launch {
+            val verseFavorites =
+                database
+                    .verseFavoriteDao()
+                    .getAll()
+                    .firstOrNull { it.verseId == verse.id }
 
-        val chapter = getChapterById(verse.chapterId)
+            val chapter = getChapterById(verse.chapterId)
 
-        realm.writeBlocking {
             if (verseFavorites == null) {
-                copyToRealm(
+                database.verseFavoriteDao().insert(
                     VerseFavoriteRealm().apply {
                         verseId = verse.id
                         verseNumber = verse.verseNumber
@@ -639,26 +652,30 @@ class QuranRepository(
                     },
                 )
             } else {
-                findLatest(verseFavorites)?.also { delete(it) }
+                database.verseFavoriteDao().delete(verseFavorites)
             }
         }
     }
 
     fun addOrRemoveVerseFavorites(verseFavorite: VerseFavorite) {
-        val verseFavorites =
-            realm
-                .query<VerseFavoriteRealm>("verseId == $0", verseFavorite.verseId)
-                .find()
-                .firstOrNull()
+        CoroutineScope(Dispatchers.IO).launch {
+            val verseFavorites =
+                database
+                    .verseFavoriteDao()
+                    .getAll()
+                    .firstOrNull { it.verseId == verseFavorite.verseId }
 
-        realm.writeBlocking {
             if (verseFavorites == null) {
-                copyToRealm(
+                database.verseFavoriteDao().insert(
                     VerseFavoriteRealm().apply {
+                        verseId = verseFavorite.verseId
+                        verseNumber = verseFavorite.verseNumber
+                        chapterId = verseFavorite.chapterId
+                        chapterNameSimple = verseFavorite.chapterNameSimple
                     },
                 )
             } else {
-                findLatest(verseFavorites)?.also { delete(it) }
+                database.verseFavoriteDao().delete(verseFavorites)
             }
         }
     }

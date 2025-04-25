@@ -1,14 +1,15 @@
 package feature.conversation.service.entity
 
-import io.realm.kotlin.types.RealmObject
-import io.realm.kotlin.types.annotations.PrimaryKey
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-class ConversationRealm : RealmObject {
+@Entity
+data class ConversationRealm(
     @PrimaryKey
-    var id = 0
-    var textIndopak = ""
-    var textUthmani = ""
-    var textTransliteration = ""
-    var textTranslationId = ""
-    var textTranslationEn = ""
-}
+    var id: Int = 0,
+    var textIndopak: String = "",
+    var textUthmani: String = "",
+    var textTransliteration: String = "",
+    var textTranslationId: String = "",
+    var textTranslationEn: String = "",
+)

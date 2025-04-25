@@ -2,20 +2,16 @@ package feature.prayertime.service
 
 import core.data.ApiResponse
 import core.data.DataState
+import data.AppDatabase
 import feature.other.service.AppRepository
-import feature.prayertime.service.entity.GuidanceRealm
-import feature.prayertime.service.entity.PrayerTimeRealm
-import feature.prayertime.service.mapper.mapToGuidanceRealm
 import feature.prayertime.service.mapper.mapToHaqqCalendar
 import feature.prayertime.service.mapper.mapToHijri
 import feature.prayertime.service.mapper.mapToModel
-import feature.prayertime.service.mapper.mapToPrayerTimeRealm
+import feature.prayertime.service.mapper.mapToRealm
 import feature.prayertime.service.model.GuidanceType
 import feature.prayertime.service.source.remote.PrayerRemote
 import haqq.composeapp.generated.resources.Res
 import haqq.composeapp.generated.resources.prayer_enable_gps
-import io.realm.kotlin.Realm
-import io.realm.kotlin.ext.query
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.catch
@@ -31,17 +27,13 @@ import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
 
 class PrayerRepository(
-    private val realm: Realm,
     private val appRepository: AppRepository,
     private val remote: PrayerRemote,
+    private val database: AppDatabase,
 ) {
     fun fetchGuidance(guidanceType: GuidanceType) =
         flow {
-            val localGuidances =
-                realm
-                    .query<GuidanceRealm>()
-                    .find()
-                    .filter { it.type == guidanceType.name }
+            val localGuidances = database.guidanceDao().loadAllByType(listOf(guidanceType.name))
 
             if (localGuidances.isEmpty()) {
                 when (val result = remote.fetchGuidance(guidanceType.table)) {
@@ -49,17 +41,12 @@ class PrayerRepository(
                     is ApiResponse.Success -> {
                         val remoteResult = result.body
 
-                        realm.writeBlocking {
-                            remoteResult.forEach { guidance ->
-                                copyToRealm(guidance.mapToGuidanceRealm())
-                            }
-                        }
+                        database.guidanceDao().insert(remoteResult.map { it.mapToRealm() })
 
                         val latestGuidances =
-                            realm
-                                .query<GuidanceRealm>()
-                                .find()
-                                .filter { it.type == guidanceType.name }
+                            database
+                                .guidanceDao()
+                                .loadAllByType(listOf(guidanceType.name))
                                 .sortedBy { it.position }
                                 .map { it.mapToModel() }
 
@@ -68,10 +55,9 @@ class PrayerRepository(
                 }
             } else {
                 val latestGuidances =
-                    realm
-                        .query<GuidanceRealm>()
-                        .find()
-                        .filter { it.type == guidanceType.name }
+                    database
+                        .guidanceDao()
+                        .loadAllByType(listOf(guidanceType.name))
                         .sortedBy { it.position }
                         .map { it.mapToModel() }
 
@@ -107,9 +93,9 @@ class PrayerRepository(
             val setting = appRepository.getSetting()
 
             val localPrayerTimes =
-                realm
-                    .query<PrayerTimeRealm>()
-                    .find()
+                database
+                    .prayerTimeDao()
+                    .getAll()
                     .filter {
                         val date = LocalDate(it.gregorianYear, it.gregorianMonth, it.gregorianDate)
 
@@ -121,9 +107,7 @@ class PrayerRepository(
             if (localPrayerTimes.size == 2) {
                 emit(DataState.Success(localPrayerTimes))
             } else {
-                realm.writeBlocking {
-                    delete(PrayerTimeRealm::class)
-                }
+                database.prayerTimeDao().deleteAll()
 
                 if (today.month != tomorrow.month) {
                     // get this month
@@ -146,9 +130,9 @@ class PrayerRepository(
                 }
 
                 val latestPrayerTimes =
-                    realm
-                        .query<PrayerTimeRealm>()
-                        .find()
+                    database
+                        .prayerTimeDao()
+                        .getAll()
                         .filter {
                             val date =
                                 LocalDate(it.gregorianYear, it.gregorianMonth, it.gregorianDate)
@@ -182,12 +166,12 @@ class PrayerRepository(
             }
 
             is ApiResponse.Success -> {
-                realm.writeBlocking {
-                    result.body.data?.forEach { day ->
-                        copyToRealm(
-                            day.mapToPrayerTimeRealm(setting.location.name),
-                        )
-                    }
+                val remoteResult = result.body
+
+                remoteResult.data?.let { calendar ->
+                    database
+                        .prayerTimeDao()
+                        .insert(calendar.map { it.mapToRealm(setting.location.name) })
                 }
 
                 emit(DataState.Success(result.body.mapToHaqqCalendar()))

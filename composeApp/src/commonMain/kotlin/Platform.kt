@@ -13,4 +13,4 @@ interface Platform {
 
 expect fun getPlatform(): Platform
 
-expect val targetModule: Module
+expect val platformModule: Module

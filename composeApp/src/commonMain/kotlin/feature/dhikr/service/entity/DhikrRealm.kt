@@ -1,23 +1,24 @@
 package feature.dhikr.service.entity
 
-import io.realm.kotlin.types.RealmObject
-import io.realm.kotlin.types.annotations.PrimaryKey
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-class DhikrRealm : RealmObject {
+@Entity
+data class DhikrRealm(
     @PrimaryKey
-    var key = ""
-    var id = 0
-    var type = ""
-    var titleId = ""
-    var titleEn = ""
-    var textIndopak = ""
-    var textUthmani = ""
-    var textTransliteration = ""
-    var textTranslationId = ""
-    var textTranslationEn = ""
-    var hadithId = ""
-    var hadithEn = ""
-    var maxCount = 0
-    var count = 0
-    var latestUpdate = ""
-}
+    var pkey: String = "",
+    var id: Int = 0,
+    var type: String = "",
+    var titleId: String = "",
+    var titleEn: String = "",
+    var textIndopak: String = "",
+    var textUthmani: String = "",
+    var textTransliteration: String = "",
+    var textTranslationId: String = "",
+    var textTranslationEn: String = "",
+    var hadithId: String = "",
+    var hadithEn: String = "",
+    var maxCount: Int = 0,
+    var count: Int = 0,
+    var latestUpdate: String = "",
+)

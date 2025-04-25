@@ -1,23 +1,24 @@
 package feature.prayertime.service.entity
 
-import io.realm.kotlin.types.RealmObject
-import io.realm.kotlin.types.annotations.PrimaryKey
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-class GuidanceRealm : RealmObject {
+@Entity
+data class GuidanceRealm(
     @PrimaryKey
-    var id = ""
-    var position = 0
-    var type = ""
-    var image = ""
-    var titleId = ""
-    var titleEn = ""
-    var descId = ""
-    var descEn = ""
-    var textIndopak = ""
-    var textUthmani = ""
-    var textTransliteration = ""
-    var textTranslationId = ""
-    var textTranslationEn = ""
-    var hadithId = ""
-    var hadithEn = ""
-}
+    var pkey: String = "",
+    var position: Int = 0,
+    var type: String = "",
+    var image: String = "",
+    var titleId: String = "",
+    var titleEn: String = "",
+    var descId: String = "",
+    var descEn: String = "",
+    var textIndopak: String = "",
+    var textUthmani: String = "",
+    var textTransliteration: String = "",
+    var textTranslationId: String = "",
+    var textTranslationEn: String = "",
+    var hadithId: String = "",
+    var hadithEn: String = "",
+)

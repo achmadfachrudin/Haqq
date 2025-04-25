@@ -1,11 +1,12 @@
 package feature.dhikr.service.entity
 
-import io.realm.kotlin.types.RealmObject
-import io.realm.kotlin.types.annotations.PrimaryKey
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-class DuaCategoryRealm : RealmObject {
+@Entity
+data class DuaCategoryRealm(
     @PrimaryKey
-    var tag = ""
-    var titleId = ""
-    var titleEn = ""
-}
+    var tag: String = "",
+    var titleId: String = "",
+    var titleEn: String = "",
+)

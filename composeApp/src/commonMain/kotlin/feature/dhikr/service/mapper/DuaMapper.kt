@@ -8,19 +8,19 @@ import feature.dhikr.service.model.Dua
 import feature.dhikr.service.model.DuaCategory
 import feature.other.service.model.AppSetting
 
-internal fun DuaEntity.mapToDuaRealm(): DuaRealm =
+internal fun DuaEntity.mapToRealm(): DuaRealm =
     DuaRealm().apply {
-        id = this@mapToDuaRealm.id ?: 0
-        textIndopak = this@mapToDuaRealm.textIndopak.orEmpty()
-        textUthmani = this@mapToDuaRealm.textUthmani.orEmpty()
-        titleId = this@mapToDuaRealm.titleId.orEmpty()
-        titleEn = this@mapToDuaRealm.titleEn.orEmpty()
-        textTransliteration = this@mapToDuaRealm.textTransliteration.orEmpty()
-        textTranslationId = this@mapToDuaRealm.textTranslationId.orEmpty()
-        textTranslationEn = this@mapToDuaRealm.textTranslationEn.orEmpty()
-        hadithId = this@mapToDuaRealm.hadithId.orEmpty()
-        hadithEn = this@mapToDuaRealm.hadithEn.orEmpty()
-        tag = this@mapToDuaRealm.tag.orEmpty()
+        id = this@mapToRealm.id ?: 0
+        textIndopak = this@mapToRealm.textIndopak.orEmpty()
+        textUthmani = this@mapToRealm.textUthmani.orEmpty()
+        titleId = this@mapToRealm.titleId.orEmpty()
+        titleEn = this@mapToRealm.titleEn.orEmpty()
+        textTransliteration = this@mapToRealm.textTransliteration.orEmpty()
+        textTranslationId = this@mapToRealm.textTranslationId.orEmpty()
+        textTranslationEn = this@mapToRealm.textTranslationEn.orEmpty()
+        hadithId = this@mapToRealm.hadithId.orEmpty()
+        hadithEn = this@mapToRealm.hadithEn.orEmpty()
+        tag = this@mapToRealm.tag.orEmpty()
     }
 
 internal fun DuaRealm.mapToModel(setting: AppSetting): Dua {
