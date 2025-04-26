@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -167,7 +166,7 @@ internal fun MainPageQuran(
 
                 else -> {
                     FavoriteContent(
-                        favorites = state.favorites,
+                        favorites = state.verseFavorites,
                         onFavoriteClick = onFavoriteClick,
                         onRemoveFavoriteClick = onRemoveFavoriteClick,
                     )
@@ -491,14 +490,13 @@ private fun LastReadCard(
             .replace("%2", lastRead.verseNumber.toString())
 
     Card(
-        modifier = Modifier.fillMaxWidth().padding(16.dp),
+        modifier = Modifier.fillMaxWidth().padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 8.dp),
         onClick = { onClick() },
     ) {
         Row(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .height(80.dp)
                     .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -511,7 +509,7 @@ private fun LastReadCard(
             }
             Box(contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(
-                    modifier = Modifier.size(50.dp),
+                    modifier = Modifier.size(42.dp),
                     progress = { lastRead.progressFloat },
                     strokeWidth = 5.dp,
                     trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
@@ -519,7 +517,7 @@ private fun LastReadCard(
 
                 BaseText(
                     text = "${lastRead.progressInt}%",
-                    style = getHaqqTypography().bodySmall,
+                    style = getHaqqTypography().labelSmall,
                 )
             }
         }
@@ -539,9 +537,8 @@ private fun ChapterCard(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .clickable {
-                        onClick(chapter)
-                    }.padding(16.dp),
+                    .clickable { onClick(chapter) }
+                    .padding(vertical = 4.dp, horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {

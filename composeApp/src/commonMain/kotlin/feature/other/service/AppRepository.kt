@@ -3,7 +3,7 @@ package feature.other.service
 import core.data.ApiResponse
 import core.data.DataState
 import data.AppDatabase
-import feature.other.service.entity.AppSettingRealm
+import feature.other.service.entity.AppSettingRoom
 import feature.other.service.model.AppSetting
 import feature.other.service.source.remote.SettingRemote
 import kotlinx.coroutines.CoroutineScope
@@ -29,7 +29,7 @@ class AppRepository(
                     database.appSettingDao().getAll().firstOrNull()
 
                 if (appSettingRoom == null) {
-                    database.appSettingDao().insert(AppSettingRealm())
+                    database.appSettingDao().insert(AppSettingRoom())
                 }
 
                 val latestSetting = database.appSettingDao().getAll().first()

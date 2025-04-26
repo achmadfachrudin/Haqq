@@ -4,7 +4,7 @@ import core.data.ApiResponse
 import core.data.DataState
 import data.AppDatabase
 import feature.home.service.mapper.mapToModel
-import feature.home.service.mapper.mapToRealm
+import feature.home.service.mapper.mapToRoom
 import feature.home.service.resource.remote.HomeRemote
 import feature.other.service.AppRepository
 import kotlinx.coroutines.Dispatchers
@@ -43,7 +43,7 @@ class HomeRepository(
                     is ApiResponse.Success -> {
                         val remoteResult = result.body
 
-                        database.homeTemplateDao().insert(remoteResult.map { it.mapToRealm() })
+                        database.homeTemplateDao().insert(remoteResult.map { it.mapToRoom() })
 
                         appRepository.updateLastUpdate(today)
 

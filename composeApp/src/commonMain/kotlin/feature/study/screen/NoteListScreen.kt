@@ -134,7 +134,6 @@ fun NoteListScreen(
         if (vm.shouldRefresh) {
             trackScreen("NoteListScreen")
             vm.getNotes()
-            vm.shouldRefresh = false
         }
     }
 }

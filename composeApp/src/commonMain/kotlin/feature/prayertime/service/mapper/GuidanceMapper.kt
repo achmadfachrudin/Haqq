@@ -4,34 +4,34 @@ import core.util.orZero
 import feature.other.service.AppRepository
 import feature.other.service.model.AppSetting
 import feature.prayertime.service.entity.GuidanceEntity
-import feature.prayertime.service.entity.GuidanceRealm
+import feature.prayertime.service.entity.GuidanceRoom
 import feature.prayertime.service.model.Guidance
 import feature.prayertime.service.model.GuidanceType
 import org.koin.mp.KoinPlatform
 
-internal fun GuidanceEntity.mapToRealm(): GuidanceRealm {
-    val itemType = this@mapToRealm.type.orEmpty()
-    val itemPosition = this@mapToRealm.position.orZero()
-    return GuidanceRealm().apply {
-        pkey = "$itemType-$itemPosition"
-        position = itemPosition
-        type = itemType
-        image = this@mapToRealm.image.orEmpty()
-        titleId = this@mapToRealm.titleId.orEmpty()
-        titleEn = this@mapToRealm.titleEn.orEmpty()
-        descId = this@mapToRealm.descId.orEmpty()
-        descEn = this@mapToRealm.descEn.orEmpty()
-        textIndopak = this@mapToRealm.textIndopak.orEmpty()
-        textUthmani = this@mapToRealm.textUthmani.orEmpty()
-        textTransliteration = this@mapToRealm.textTransliteration.orEmpty()
-        textTranslationId = this@mapToRealm.textTranslationId.orEmpty()
-        textTranslationEn = this@mapToRealm.textTranslationEn.orEmpty()
-        hadithId = this@mapToRealm.hadithId.orEmpty()
-        hadithEn = this@mapToRealm.hadithEn.orEmpty()
-    }
+internal fun GuidanceEntity.mapToRoom(): GuidanceRoom {
+    val itemType = type.orEmpty()
+    val itemPosition = position.orZero()
+    return GuidanceRoom(
+        pkey = "$itemType-$itemPosition",
+        position = itemPosition,
+        type = itemType,
+        image = image.orEmpty(),
+        titleId = titleId.orEmpty(),
+        titleEn = titleEn.orEmpty(),
+        descId = descId.orEmpty(),
+        descEn = descEn.orEmpty(),
+        textIndopak = textIndopak.orEmpty(),
+        textUthmani = textUthmani.orEmpty(),
+        textTransliteration = textTransliteration.orEmpty(),
+        textTranslationId = textTranslationId.orEmpty(),
+        textTranslationEn = textTranslationEn.orEmpty(),
+        hadithId = hadithId.orEmpty(),
+        hadithEn = hadithEn.orEmpty(),
+    )
 }
 
-internal fun GuidanceRealm.mapToModel(): Guidance {
+internal fun GuidanceRoom.mapToModel(): Guidance {
     val appRepository = KoinPlatform.getKoin().get<AppRepository>()
     val setting = appRepository.getSetting()
 

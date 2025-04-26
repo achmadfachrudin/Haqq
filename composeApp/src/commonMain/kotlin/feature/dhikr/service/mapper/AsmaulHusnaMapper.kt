@@ -2,21 +2,21 @@ package feature.dhikr.service.mapper
 
 import core.util.orZero
 import feature.dhikr.service.entity.AsmaulHusnaEntity
-import feature.dhikr.service.entity.AsmaulHusnaRealm
+import feature.dhikr.service.entity.AsmaulHusnaRoom
 import feature.dhikr.service.model.AsmaulHusna
 import feature.other.service.model.AppSetting
 
-internal fun AsmaulHusnaEntity.mapToRealm(): AsmaulHusnaRealm =
-    AsmaulHusnaRealm().apply {
-        id = this@mapToRealm.id.orZero()
-        textIndopak = this@mapToRealm.textIndopak.orEmpty()
-        textUthmani = this@mapToRealm.textUthmani.orEmpty()
-        textTransliteration = this@mapToRealm.textTransliteration.orEmpty()
-        textTranslationId = this@mapToRealm.textTranslationId.orEmpty()
-        textTranslationEn = this@mapToRealm.textTranslationEn.orEmpty()
-    }
+internal fun AsmaulHusnaEntity.mapToRoom(): AsmaulHusnaRoom =
+    AsmaulHusnaRoom(
+        id = id.orZero(),
+        textIndopak = textIndopak.orEmpty(),
+        textUthmani = textUthmani.orEmpty(),
+        textTransliteration = textTransliteration.orEmpty(),
+        textTranslationId = textTranslationId.orEmpty(),
+        textTranslationEn = textTranslationEn.orEmpty(),
+    )
 
-internal fun AsmaulHusnaRealm.mapToModel(setting: AppSetting): AsmaulHusna {
+internal fun AsmaulHusnaRoom.mapToModel(setting: AppSetting): AsmaulHusna {
     val textArabic =
         when {
             textIndopak.isNotEmpty() && textUthmani.isEmpty() -> textIndopak

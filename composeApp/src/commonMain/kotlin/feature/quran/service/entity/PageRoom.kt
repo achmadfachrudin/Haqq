@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class PageRealm(
+data class PageRoom(
     @PrimaryKey
     var id: Int = 0,
     var pageNumber: Int = 0,

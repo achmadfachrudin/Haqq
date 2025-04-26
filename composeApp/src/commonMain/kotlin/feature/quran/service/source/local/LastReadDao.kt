@@ -7,44 +7,44 @@ import androidx.room.MapColumn
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import feature.quran.service.entity.LastReadRealm
+import feature.quran.service.entity.LastReadRoom
 
 @Dao
 interface LastReadDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(lastReadRealm: LastReadRealm)
+    suspend fun insert(lastReadRoom: LastReadRoom)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(lastReadRealmList: List<LastReadRealm>)
+    suspend fun insert(lastReadRoomList: List<LastReadRoom>)
 
     @Update
-    suspend fun update(lastReadRealm: LastReadRealm)
+    suspend fun update(lastReadRoom: LastReadRoom)
 
     @Update
-    suspend fun update(lastReadRealmList: List<LastReadRealm>)
+    suspend fun update(lastReadRoomList: List<LastReadRoom>)
 
     @Delete
-    suspend fun delete(lastReadRealm: LastReadRealm)
+    suspend fun delete(lastReadRoom: LastReadRoom)
 
     @Delete
-    suspend fun delete(lastReadRealmList: List<LastReadRealm>)
+    suspend fun delete(lastReadRoomList: List<LastReadRoom>)
 
-    @Query("DELETE FROM LastReadRealm")
+    @Query("DELETE FROM LastReadRoom")
     suspend fun deleteAll()
 
-    @Query("SELECT COUNT(*) as count FROM LastReadRealm")
+    @Query("SELECT COUNT(*) as count FROM LastReadRoom")
     suspend fun count(): Int
 
-    @Query("SELECT * FROM LastReadRealm")
-    suspend fun getAll(): List<LastReadRealm>
+    @Query("SELECT * FROM LastReadRoom")
+    suspend fun getAll(): List<LastReadRoom>
 
-    @Query("SELECT * FROM LastReadRealm WHERE id in (:ids)")
-    suspend fun loadAllById(ids: List<Int>): List<LastReadRealm>
+    @Query("SELECT * FROM LastReadRoom WHERE id in (:ids)")
+    suspend fun loadAllById(ids: List<Int>): List<LastReadRoom>
 
-    @Query("SELECT * FROM LastReadRealm WHERE id in (:ids)")
+    @Query("SELECT * FROM LastReadRoom WHERE id in (:ids)")
     suspend fun loadMappedById(ids: List<Int>): Map<
         @MapColumn(columnName = "id")
         Long,
-        LastReadRealm,
+        LastReadRoom,
     >
 }

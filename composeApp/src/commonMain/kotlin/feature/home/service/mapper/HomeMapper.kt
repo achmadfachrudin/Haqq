@@ -3,7 +3,7 @@ package feature.home.service.mapper
 import core.util.orZero
 import feature.dhikr.service.model.DhikrType
 import feature.home.service.entity.HomeTemplateEntity
-import feature.home.service.entity.HomeTemplateRealm
+import feature.home.service.entity.HomeTemplateRoom
 import feature.home.service.model.HomeTemplate
 import feature.home.service.model.TemplateType
 import feature.other.service.AppRepository
@@ -20,22 +20,22 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.withContext
 import org.koin.mp.KoinPlatform
 
-internal fun HomeTemplateEntity.mapToRealm(): HomeTemplateRealm {
-    val itemType = this@mapToRealm.type.orEmpty()
-    val itemPosition = this@mapToRealm.position.orZero()
-    return HomeTemplateRealm().apply {
-        position = itemPosition
-        type = itemType
-        labelId = this@mapToRealm.label?.id.orEmpty()
-        labelEn = this@mapToRealm.label?.en.orEmpty()
-        textId = this@mapToRealm.text?.id.orEmpty()
-        textEn = this@mapToRealm.text?.en.orEmpty()
-        images = this@mapToRealm.images.orEmpty()
-        links = this@mapToRealm.links.orEmpty()
-    }
+internal fun HomeTemplateEntity.mapToRoom(): HomeTemplateRoom {
+    val itemType = type.orEmpty()
+    val itemPosition = position.orZero()
+    return HomeTemplateRoom(
+        position = itemPosition,
+        type = itemType,
+        labelId = label?.id.orEmpty(),
+        labelEn = label?.en.orEmpty(),
+        textId = text?.id.orEmpty(),
+        textEn = text?.en.orEmpty(),
+        images = images.orEmpty(),
+        links = links.orEmpty(),
+    )
 }
 
-internal suspend fun List<HomeTemplateRealm>.mapToModel(): List<HomeTemplate> =
+internal suspend fun List<HomeTemplateRoom>.mapToModel(): List<HomeTemplate> =
     withContext(Dispatchers.IO) {
         val appRepository = KoinPlatform.getKoin().get<AppRepository>()
         val prayerRepository = KoinPlatform.getKoin().get<PrayerRepository>()

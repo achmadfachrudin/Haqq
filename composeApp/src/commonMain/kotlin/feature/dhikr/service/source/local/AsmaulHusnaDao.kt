@@ -7,44 +7,44 @@ import androidx.room.MapColumn
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import feature.dhikr.service.entity.AsmaulHusnaRealm
+import feature.dhikr.service.entity.AsmaulHusnaRoom
 
 @Dao
 interface AsmaulHusnaDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(asmaulHusnaRealm: AsmaulHusnaRealm)
+    suspend fun insert(asmaulHusnaRoom: AsmaulHusnaRoom)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(asmaulHusnaRealmList: List<AsmaulHusnaRealm>)
+    suspend fun insert(asmaulHusnaRoomList: List<AsmaulHusnaRoom>)
 
     @Update
-    suspend fun update(asmaulHusnaRealm: AsmaulHusnaRealm)
+    suspend fun update(asmaulHusnaRoom: AsmaulHusnaRoom)
 
     @Update
-    suspend fun update(asmaulHusnaRealmList: List<AsmaulHusnaRealm>)
+    suspend fun update(asmaulHusnaRoomList: List<AsmaulHusnaRoom>)
 
     @Delete
-    suspend fun delete(asmaulHusnaRealm: AsmaulHusnaRealm)
+    suspend fun delete(asmaulHusnaRoom: AsmaulHusnaRoom)
 
     @Delete
-    suspend fun delete(asmaulHusnaRealmList: List<AsmaulHusnaRealm>)
+    suspend fun delete(asmaulHusnaRoomList: List<AsmaulHusnaRoom>)
 
-    @Query("DELETE FROM AsmaulHusnaRealm")
+    @Query("DELETE FROM AsmaulHusnaRoom")
     suspend fun deleteAll()
 
-    @Query("SELECT COUNT(*) as count FROM AsmaulHusnaRealm")
+    @Query("SELECT COUNT(*) as count FROM AsmaulHusnaRoom")
     suspend fun count(): Int
 
-    @Query("SELECT * FROM AsmaulHusnaRealm")
-    suspend fun getAll(): List<AsmaulHusnaRealm>
+    @Query("SELECT * FROM AsmaulHusnaRoom")
+    suspend fun getAll(): List<AsmaulHusnaRoom>
 
-    @Query("SELECT * FROM AsmaulHusnaRealm WHERE id in (:ids)")
-    suspend fun loadAllById(ids: List<Int>): List<AsmaulHusnaRealm>
+    @Query("SELECT * FROM AsmaulHusnaRoom WHERE id in (:ids)")
+    suspend fun loadAllById(ids: List<Int>): List<AsmaulHusnaRoom>
 
-    @Query("SELECT * FROM AsmaulHusnaRealm WHERE id in (:ids)")
+    @Query("SELECT * FROM AsmaulHusnaRoom WHERE id in (:ids)")
     suspend fun loadMappedById(ids: List<Int>): Map<
         @MapColumn(columnName = "id")
         Long,
-        AsmaulHusnaRealm,
+        AsmaulHusnaRoom,
     >
 }

@@ -7,44 +7,44 @@ import androidx.room.MapColumn
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import feature.dhikr.service.entity.DhikrRealm
+import feature.dhikr.service.entity.DhikrRoom
 
 @Dao
 interface DhikrDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(dhikrRealm: DhikrRealm)
+    suspend fun insert(dhikrRoom: DhikrRoom)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(dhikrRealmList: List<DhikrRealm>)
+    suspend fun insert(dhikrRoomList: List<DhikrRoom>)
 
     @Update
-    suspend fun update(dhikrRealm: DhikrRealm)
+    suspend fun update(dhikrRoom: DhikrRoom)
 
     @Update
-    suspend fun update(dhikrRealmList: List<DhikrRealm>)
+    suspend fun update(dhikrRoomList: List<DhikrRoom>)
 
     @Delete
-    suspend fun delete(dhikrRealm: DhikrRealm)
+    suspend fun delete(dhikrRoom: DhikrRoom)
 
     @Delete
-    suspend fun delete(dhikrRealmList: List<DhikrRealm>)
+    suspend fun delete(dhikrRoomList: List<DhikrRoom>)
 
-    @Query("DELETE FROM DhikrRealm")
+    @Query("DELETE FROM DhikrRoom")
     suspend fun deleteAll()
 
-    @Query("SELECT COUNT(*) as count FROM DhikrRealm")
+    @Query("SELECT COUNT(*) as count FROM DhikrRoom")
     suspend fun count(): Int
 
-    @Query("SELECT * FROM DhikrRealm")
-    suspend fun getAll(): List<DhikrRealm>
+    @Query("SELECT * FROM DhikrRoom")
+    suspend fun getAll(): List<DhikrRoom>
 
-    @Query("SELECT * FROM DhikrRealm WHERE type in (:types)")
-    suspend fun loadAllByType(types: List<String>): List<DhikrRealm>
+    @Query("SELECT * FROM DhikrRoom WHERE type in (:types)")
+    suspend fun loadAllByType(types: List<String>): List<DhikrRoom>
 
-    @Query("SELECT * FROM DhikrRealm WHERE id in (:ids)")
+    @Query("SELECT * FROM DhikrRoom WHERE id in (:ids)")
     suspend fun loadMappedById(ids: List<Int>): Map<
         @MapColumn(columnName = "id")
         Long,
-        DhikrRealm,
+        DhikrRoom,
     >
 }

@@ -17,6 +17,7 @@ import feature.quran.service.model.LastRead
 import feature.quran.service.model.Page
 import feature.quran.service.model.QuranConstant.MAX_CHAPTER
 import feature.quran.service.model.VerseFavorite
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -49,7 +50,7 @@ class MainScreenModel(
         val quranChapterState: QuranChapterState = QuranChapterState.Loading,
         val quranJuzState: QuranJuzState = QuranJuzState.Loading,
         val quranPageState: QuranPageState = QuranPageState.Loading,
-        val favorites: List<VerseFavorite> = listOf(),
+        val verseFavorites: List<VerseFavorite> = listOf(),
         val verseDownloading: Int = 1,
     )
 
@@ -208,7 +209,7 @@ class MainScreenModel(
                         quranChapterState = chapterState,
                         quranJuzState = juzState,
                         quranPageState = pageState,
-                        favorites = quranRepository.getVerseFavorites(),
+                        verseFavorites = quranRepository.getVerseFavorites(),
                     )
             }
         }
@@ -222,11 +223,19 @@ class MainScreenModel(
         }
     }
 
+    fun getVerseFavorites() {
+        viewModelScope.launch {
+            val verseFavorites = quranRepository.getVerseFavorites()
+
+            mutableState.value = state.value.copy(verseFavorites = verseFavorites)
+        }
+    }
+
     fun addOrRemoveFavorite(verse: VerseFavorite) {
         viewModelScope.launch {
             quranRepository.addOrRemoveVerseFavorites(verse)
-
-            mutableState.value = state.value.copy(favorites = quranRepository.getVerseFavorites())
+            delay(300)
+            getVerseFavorites()
         }
     }
 

@@ -11,7 +11,7 @@ import feature.prayertime.service.mapper.DEFAULT_HIJRI_MONTH
 import feature.prayertime.service.mapper.DEFAULT_HIJRI_YEAR
 
 @Entity
-data class PrayerTimeRealm(
+data class PrayerTimeRoom(
     @PrimaryKey
     var gregorianFullDate: String = DEFAULT_GREGORIAN_FULLDATE,
     var gregorianDate: Int = DEFAULT_GREGORIAN_DATE,

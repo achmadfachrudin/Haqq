@@ -7,44 +7,44 @@ import androidx.room.MapColumn
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import feature.dhikr.service.entity.DuaRealm
+import feature.dhikr.service.entity.DuaRoom
 
 @Dao
 interface DuaDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(duaRealm: DuaRealm)
+    suspend fun insert(duaRoom: DuaRoom)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(duaRealmList: List<DuaRealm>)
+    suspend fun insert(duaRoomList: List<DuaRoom>)
 
     @Update
-    suspend fun update(duaRealm: DuaRealm)
+    suspend fun update(duaRoom: DuaRoom)
 
     @Update
-    suspend fun update(duaRealmList: List<DuaRealm>)
+    suspend fun update(duaRoomList: List<DuaRoom>)
 
     @Delete
-    suspend fun delete(duaRealm: DuaRealm)
+    suspend fun delete(duaRoom: DuaRoom)
 
     @Delete
-    suspend fun delete(duaRealmList: List<DuaRealm>)
+    suspend fun delete(duaRoomList: List<DuaRoom>)
 
-    @Query("DELETE FROM DuaRealm")
+    @Query("DELETE FROM DuaRoom")
     suspend fun deleteAll()
 
-    @Query("SELECT COUNT(*) as count FROM DuaRealm")
+    @Query("SELECT COUNT(*) as count FROM DuaRoom")
     suspend fun count(): Int
 
-    @Query("SELECT * FROM DuaRealm")
-    suspend fun getAll(): List<DuaRealm>
+    @Query("SELECT * FROM DuaRoom")
+    suspend fun getAll(): List<DuaRoom>
 
-    @Query("SELECT * FROM DuaRealm WHERE id in (:ids)")
-    suspend fun loadAllById(ids: List<Int>): List<DuaRealm>
+    @Query("SELECT * FROM DuaRoom WHERE id in (:ids)")
+    suspend fun loadAllById(ids: List<Int>): List<DuaRoom>
 
-    @Query("SELECT * FROM DuaRealm WHERE id in (:ids)")
+    @Query("SELECT * FROM DuaRoom WHERE id in (:ids)")
     suspend fun loadMappedById(ids: List<Int>): Map<
         @MapColumn(columnName = "id")
         Long,
-        DuaRealm,
+        DuaRoom,
     >
 }

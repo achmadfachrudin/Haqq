@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import feature.other.service.model.AppSetting
 
 @Entity
-data class AppSettingRealm(
+data class AppSettingRoom(
     @PrimaryKey
     var id: Int = 0,
     var languageName: String = AppSetting.Language.INDONESIAN.name,

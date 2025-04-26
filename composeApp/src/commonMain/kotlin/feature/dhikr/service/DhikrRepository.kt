@@ -4,7 +4,7 @@ import core.data.ApiResponse
 import core.data.DataState
 import data.AppDatabase
 import feature.dhikr.service.mapper.mapToModel
-import feature.dhikr.service.mapper.mapToRealm
+import feature.dhikr.service.mapper.mapToRoom
 import feature.dhikr.service.model.Dhikr
 import feature.dhikr.service.model.DhikrType
 import feature.dhikr.service.source.remote.DhikrRemote
@@ -34,7 +34,7 @@ class DhikrRepository(
                     is ApiResponse.Success -> {
                         val remoteDhikr = result.body
 
-                        database.dhikrDao().insert(remoteDhikr.map { it.mapToRealm(dhikrType) })
+                        database.dhikrDao().insert(remoteDhikr.map { it.mapToRoom(dhikrType) })
 
                         val dhikrs =
                             database
@@ -106,7 +106,7 @@ class DhikrRepository(
                     is ApiResponse.Success -> {
                         val remoteResult = result.body
 
-                        database.duaCategoryDao().insert(remoteResult.map { it.mapToRealm() })
+                        database.duaCategoryDao().insert(remoteResult.map { it.mapToRoom() })
 
                         val latestCategories =
                             database
@@ -145,7 +145,7 @@ class DhikrRepository(
                     is ApiResponse.Success -> {
                         val remoteResult = result.body
 
-                        database.duaDao().insert(remoteResult.map { it.mapToRealm() })
+                        database.duaDao().insert(remoteResult.map { it.mapToRoom() })
 
                         val latestDuas =
                             database
@@ -184,7 +184,7 @@ class DhikrRepository(
                     is ApiResponse.Success -> {
                         val remoteResult = result.body
 
-                        database.asmaulHusnaDao().insert(remoteResult.map { it.mapToRealm() })
+                        database.asmaulHusnaDao().insert(remoteResult.map { it.mapToRoom() })
 
                         val latestAsmaul =
                             database

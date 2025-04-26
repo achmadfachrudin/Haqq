@@ -6,37 +6,37 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import feature.home.service.entity.HomeTemplateRealm
+import feature.home.service.entity.HomeTemplateRoom
 
 @Dao
 interface HomeTemplateDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(homeTemplateRealm: HomeTemplateRealm)
+    suspend fun insert(homeTemplateRoom: HomeTemplateRoom)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(homeTemplateRealmList: List<HomeTemplateRealm>)
+    suspend fun insert(homeTemplateRoomList: List<HomeTemplateRoom>)
 
     @Update
-    suspend fun update(homeTemplateRealm: HomeTemplateRealm)
+    suspend fun update(homeTemplateRoom: HomeTemplateRoom)
 
     @Update
-    suspend fun update(homeTemplateRealmList: List<HomeTemplateRealm>)
+    suspend fun update(homeTemplateRoomList: List<HomeTemplateRoom>)
 
     @Delete
-    suspend fun delete(homeTemplateRealm: HomeTemplateRealm)
+    suspend fun delete(homeTemplateRoom: HomeTemplateRoom)
 
     @Delete
-    suspend fun delete(homeTemplateRealmList: List<HomeTemplateRealm>)
+    suspend fun delete(homeTemplateRoomList: List<HomeTemplateRoom>)
 
-    @Query("DELETE FROM HomeTemplateRealm")
+    @Query("DELETE FROM HomeTemplateRoom")
     suspend fun deleteAll()
 
-    @Query("SELECT COUNT(*) as count FROM HomeTemplateRealm")
+    @Query("SELECT COUNT(*) as count FROM HomeTemplateRoom")
     suspend fun count(): Int
 
-    @Query("SELECT * FROM HomeTemplateRealm")
-    suspend fun getAll(): List<HomeTemplateRealm>
+    @Query("SELECT * FROM HomeTemplateRoom")
+    suspend fun getAll(): List<HomeTemplateRoom>
 
-    @Query("SELECT * FROM HomeTemplateRealm WHERE position in (:positions)")
-    suspend fun loadAllByPosition(positions: List<Int>): List<HomeTemplateRealm>
+    @Query("SELECT * FROM HomeTemplateRoom WHERE position in (:positions)")
+    suspend fun loadAllByPosition(positions: List<Int>): List<HomeTemplateRoom>
 }

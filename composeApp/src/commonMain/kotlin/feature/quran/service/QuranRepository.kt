@@ -7,12 +7,12 @@ import data.AppDatabase
 import feature.other.service.AppRepository
 import feature.other.service.model.AppSetting.Language
 import feature.quran.service.entity.ChaptersEntity
-import feature.quran.service.entity.LastReadRealm
+import feature.quran.service.entity.LastReadRoom
 import feature.quran.service.entity.PageEntity
-import feature.quran.service.entity.VerseFavoriteRealm
+import feature.quran.service.entity.VerseFavoriteRoom
 import feature.quran.service.mapper.mapToListString
 import feature.quran.service.mapper.mapToModel
-import feature.quran.service.mapper.mapToRealm
+import feature.quran.service.mapper.mapToRoom
 import feature.quran.service.model.Chapter
 import feature.quran.service.model.Juz
 import feature.quran.service.model.LastRead
@@ -91,7 +91,7 @@ class QuranRepository(
                 }
 
                 val finalChapters =
-                    chapters.mapToRealm(
+                    chapters.mapToRoom(
                         translationId = translationId,
                         translationEn = translationEn,
                     )
@@ -126,7 +126,7 @@ class QuranRepository(
                                 .orEmpty()
                                 .filter { it.id.orZero() <= MAX_JUZ }
                                 .distinctBy { it.juzNumber }
-                                .mapToRealm()
+                                .mapToRoom()
 
                         database.juzDao().insert(remoteResult)
 
@@ -156,9 +156,6 @@ class QuranRepository(
                             .verseDao()
                             .getAll()
                             .filter { it.pageNumber == i }
-//                        realm
-//                            .query<VerseRealm>("pageNumber == $0", i)
-//                            .find()
 
                     val firstVerse = verses.minBy { it.id }
 
@@ -182,7 +179,7 @@ class QuranRepository(
                 }
             }
 
-            database.pageDao().insert(pageEntities.map { it.mapToRealm() })
+            database.pageDao().insert(pageEntities.map { it.mapToRoom() })
             emit(true)
         }.flowOn(Dispatchers.IO)
 
@@ -346,7 +343,7 @@ class QuranRepository(
                             return@flow
                         } else {
                             val remoteVerses =
-                                result.body.mapToRealm(
+                                result.body.mapToRoom(
                                     indopak = indopak,
                                     uthmani = uthmani,
                                     uthmaniTajweed = uthmaniTajweed,
@@ -386,7 +383,7 @@ class QuranRepository(
                         val transliteration = QuranArchiveSource.latins[chapterNumber - 1]
 
                         val remoteVerses =
-                            result.body.mapToRealm(
+                            result.body.mapToRoom(
                                 indopak = indopak,
                                 uthmani = uthmani,
                                 uthmaniTajweed = uthmaniTajweed,
@@ -575,7 +572,7 @@ class QuranRepository(
         runBlocking {
             withContext(Dispatchers.IO) {
                 if (database.lastReadDao().getAll().isEmpty()) {
-                    database.lastReadDao().insert(LastReadRealm())
+                    database.lastReadDao().insert(LastReadRoom())
                 }
 
                 val lastRead = database.lastReadDao().getAll().first()
@@ -599,12 +596,17 @@ class QuranRepository(
             val progressFloat = verse.verseNumber.toFloat() / chapter.versesCount.toFloat()
             val progressInt = (progressFloat * 100).toInt()
 
-            lastRead.chapterId = verse.chapterId
-            lastRead.chapterNameSimple = chapter.nameSimple
-            lastRead.verseId = verse.id
-            lastRead.verseNumber = verse.verseNumber
-            lastRead.progressFloat = progressFloat
-            lastRead.progressInt = progressInt
+            val updated =
+                lastRead.copy(
+                    chapterId = verse.chapterId,
+                    chapterNameSimple = chapter.nameSimple,
+                    verseId = verse.id,
+                    verseNumber = verse.verseNumber,
+                    progressFloat = progressFloat,
+                    progressInt = progressInt,
+                )
+
+            database.lastReadDao().update(updated)
         }
     }
 
@@ -640,16 +642,16 @@ class QuranRepository(
                     .getAll()
                     .firstOrNull { it.verseId == verse.id }
 
-            val chapter = getChapterById(verse.chapterId)
-
             if (verseFavorites == null) {
+                val chapter = getChapterById(verse.chapterId)
+
                 database.verseFavoriteDao().insert(
-                    VerseFavoriteRealm().apply {
-                        verseId = verse.id
-                        verseNumber = verse.verseNumber
-                        chapterId = verse.chapterId
-                        chapterNameSimple = chapter.nameSimple
-                    },
+                    VerseFavoriteRoom(
+                        verseId = verse.id,
+                        verseNumber = verse.verseNumber,
+                        chapterId = verse.chapterId,
+                        chapterNameSimple = chapter.nameSimple,
+                    ),
                 )
             } else {
                 database.verseFavoriteDao().delete(verseFavorites)
@@ -667,12 +669,12 @@ class QuranRepository(
 
             if (verseFavorites == null) {
                 database.verseFavoriteDao().insert(
-                    VerseFavoriteRealm().apply {
-                        verseId = verseFavorite.verseId
-                        verseNumber = verseFavorite.verseNumber
-                        chapterId = verseFavorite.chapterId
-                        chapterNameSimple = verseFavorite.chapterNameSimple
-                    },
+                    VerseFavoriteRoom(
+                        verseId = verseFavorite.verseId,
+                        verseNumber = verseFavorite.verseNumber,
+                        chapterId = verseFavorite.chapterId,
+                        chapterNameSimple = verseFavorite.chapterNameSimple,
+                    ),
                 )
             } else {
                 database.verseFavoriteDao().delete(verseFavorites)

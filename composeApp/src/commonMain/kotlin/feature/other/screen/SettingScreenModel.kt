@@ -29,7 +29,7 @@ class SettingScreenModel(
             mutableState.value =
                 state.value.copy(appSetting = appRepository.getSetting(), verse = null)
 
-            delay(500)
+            delay(300)
 
             getVerse()
         }

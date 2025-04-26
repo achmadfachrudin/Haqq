@@ -7,44 +7,44 @@ import androidx.room.MapColumn
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import feature.quran.service.entity.ChapterRealm
+import feature.quran.service.entity.ChapterRoom
 
 @Dao
 interface ChapterDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(chapterRealm: ChapterRealm)
+    suspend fun insert(chapterRoom: ChapterRoom)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(chapterRealmList: List<ChapterRealm>)
+    suspend fun insert(chapterRoomList: List<ChapterRoom>)
 
     @Update
-    suspend fun update(chapterRealm: ChapterRealm)
+    suspend fun update(chapterRoom: ChapterRoom)
 
     @Update
-    suspend fun update(chapterRealmList: List<ChapterRealm>)
+    suspend fun update(chapterRoomList: List<ChapterRoom>)
 
     @Delete
-    suspend fun delete(chapterRealm: ChapterRealm)
+    suspend fun delete(chapterRoom: ChapterRoom)
 
     @Delete
-    suspend fun delete(chapterRealmList: List<ChapterRealm>)
+    suspend fun delete(chapterRoomList: List<ChapterRoom>)
 
-    @Query("DELETE FROM ChapterRealm")
+    @Query("DELETE FROM ChapterRoom")
     suspend fun deleteAll()
 
-    @Query("SELECT COUNT(*) as count FROM ChapterRealm")
+    @Query("SELECT COUNT(*) as count FROM ChapterRoom")
     suspend fun count(): Int
 
-    @Query("SELECT * FROM ChapterRealm")
-    suspend fun getAll(): List<ChapterRealm>
+    @Query("SELECT * FROM ChapterRoom")
+    suspend fun getAll(): List<ChapterRoom>
 
-    @Query("SELECT * FROM ChapterRealm WHERE id in (:ids)")
-    suspend fun loadAllById(ids: List<Int>): List<ChapterRealm>
+    @Query("SELECT * FROM ChapterRoom WHERE id in (:ids)")
+    suspend fun loadAllById(ids: List<Int>): List<ChapterRoom>
 
-    @Query("SELECT * FROM ChapterRealm WHERE id in (:ids)")
+    @Query("SELECT * FROM ChapterRoom WHERE id in (:ids)")
     suspend fun loadMappedById(ids: List<Int>): Map<
         @MapColumn(columnName = "id")
         Long,
-        ChapterRealm,
+        ChapterRoom,
     >
 }

@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class JuzRealm(
+data class JuzRoom(
     @PrimaryKey
     var id: Int = 0,
     var juzNumber: Int = 0,

@@ -21,7 +21,12 @@ class NoteDetailScreenModel(
 
     fun getNoteDetail(noteId: Int) {
         viewModelScope.launch {
-            val note = repository.fetchNote(noteId) ?: Note()
+            val note =
+                if (noteId == 0) {
+                    Note()
+                } else {
+                    repository.fetchNote(noteId)
+                }
             mutableState.value = mutableState.value.copy(note = note)
         }
     }

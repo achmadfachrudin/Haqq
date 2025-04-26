@@ -10,7 +10,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class LastReadRealm(
+data class LastReadRoom(
     @PrimaryKey
     var id: Int = 0,
     var verseId: Int = DEFAULT_VERSE_ID,

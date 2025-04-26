@@ -1,29 +1,30 @@
 package feature.dhikr.service.mapper
 
+import core.util.orZero
 import feature.dhikr.service.entity.DuaCategoryEntity
-import feature.dhikr.service.entity.DuaCategoryRealm
+import feature.dhikr.service.entity.DuaCategoryRoom
 import feature.dhikr.service.entity.DuaEntity
-import feature.dhikr.service.entity.DuaRealm
+import feature.dhikr.service.entity.DuaRoom
 import feature.dhikr.service.model.Dua
 import feature.dhikr.service.model.DuaCategory
 import feature.other.service.model.AppSetting
 
-internal fun DuaEntity.mapToRealm(): DuaRealm =
-    DuaRealm().apply {
-        id = this@mapToRealm.id ?: 0
-        textIndopak = this@mapToRealm.textIndopak.orEmpty()
-        textUthmani = this@mapToRealm.textUthmani.orEmpty()
-        titleId = this@mapToRealm.titleId.orEmpty()
-        titleEn = this@mapToRealm.titleEn.orEmpty()
-        textTransliteration = this@mapToRealm.textTransliteration.orEmpty()
-        textTranslationId = this@mapToRealm.textTranslationId.orEmpty()
-        textTranslationEn = this@mapToRealm.textTranslationEn.orEmpty()
-        hadithId = this@mapToRealm.hadithId.orEmpty()
-        hadithEn = this@mapToRealm.hadithEn.orEmpty()
-        tag = this@mapToRealm.tag.orEmpty()
-    }
+internal fun DuaEntity.mapToRoom(): DuaRoom =
+    DuaRoom(
+        id = id.orZero(),
+        textIndopak = textIndopak.orEmpty(),
+        textUthmani = textUthmani.orEmpty(),
+        titleId = titleId.orEmpty(),
+        titleEn = titleEn.orEmpty(),
+        textTransliteration = textTransliteration.orEmpty(),
+        textTranslationId = textTranslationId.orEmpty(),
+        textTranslationEn = textTranslationEn.orEmpty(),
+        hadithId = hadithId.orEmpty(),
+        hadithEn = hadithEn.orEmpty(),
+        tag = tag.orEmpty(),
+    )
 
-internal fun DuaRealm.mapToModel(setting: AppSetting): Dua {
+internal fun DuaRoom.mapToModel(setting: AppSetting): Dua {
     val title =
         when (setting.language) {
             AppSetting.Language.ENGLISH -> titleEn
@@ -57,20 +58,19 @@ internal fun DuaRealm.mapToModel(setting: AppSetting): Dua {
     )
 }
 
-internal fun DuaCategoryEntity.mapToRealm(): DuaCategoryRealm =
-    DuaCategoryRealm().apply {
+internal fun DuaCategoryEntity.mapToRoom(): DuaCategoryRoom =
+    DuaCategoryRoom(
         tag =
-            this@mapToRealm
-                .tag
+            tag
                 .orEmpty()
                 .lowercase()
                 .trim()
-                .replace(" ", "-")
-        titleId = this@mapToRealm.titleId.orEmpty()
-        titleEn = this@mapToRealm.titleEn.orEmpty()
-    }
+                .replace(" ", "-"),
+        titleId = titleId.orEmpty(),
+        titleEn = titleEn.orEmpty(),
+    )
 
-internal fun DuaCategoryRealm.mapToModel(setting: AppSetting): DuaCategory {
+internal fun DuaCategoryRoom.mapToModel(setting: AppSetting): DuaCategory {
     val title =
         when (setting.language) {
             AppSetting.Language.ENGLISH -> titleEn

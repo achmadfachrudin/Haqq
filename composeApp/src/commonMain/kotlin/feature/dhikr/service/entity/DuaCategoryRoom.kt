@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class DuaCategoryRealm(
+data class DuaCategoryRoom(
     @PrimaryKey
     var tag: String = "",
     var titleId: String = "",

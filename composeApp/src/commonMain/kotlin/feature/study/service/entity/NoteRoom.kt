@@ -4,9 +4,9 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class NoteRealm(
+data class NoteRoom(
     @PrimaryKey
-    var id: Int = 1,
+    var id: Int = 0,
     var title: String = "",
     var text: String = "",
     var kitab: String = "",

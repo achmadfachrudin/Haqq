@@ -4,7 +4,7 @@ import core.data.ApiResponse
 import core.data.DataState
 import data.AppDatabase
 import feature.conversation.service.mapper.mapToModel
-import feature.conversation.service.mapper.mapToRealm
+import feature.conversation.service.mapper.mapToRoom
 import feature.conversation.service.source.remote.ConversationRemote
 import feature.other.service.AppRepository
 import kotlinx.coroutines.Dispatchers
@@ -30,7 +30,7 @@ class ConversationRepository(
                     is ApiResponse.Success -> {
                         val remoteResult = result.body
 
-                        database.conversationDao().insert(remoteResult.map { it.mapToRealm() })
+                        database.conversationDao().insert(remoteResult.map { it.mapToRoom() })
 
                         val latestConversations =
                             database

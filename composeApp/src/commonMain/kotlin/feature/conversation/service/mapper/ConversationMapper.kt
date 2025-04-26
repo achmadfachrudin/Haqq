@@ -2,21 +2,21 @@ package feature.conversation.service.mapper
 
 import core.util.orZero
 import feature.conversation.service.entity.ConversationEntity
-import feature.conversation.service.entity.ConversationRealm
+import feature.conversation.service.entity.ConversationRoom
 import feature.conversation.service.model.Conversation
 import feature.other.service.model.AppSetting
 
-internal fun ConversationEntity.mapToRealm(): ConversationRealm =
-    ConversationRealm().apply {
-        id = this@mapToRealm.id.orZero()
-        textIndopak = this@mapToRealm.textIndopak.orEmpty()
-        textUthmani = this@mapToRealm.textUthmani.orEmpty()
-        textTransliteration = this@mapToRealm.textTransliteration.orEmpty()
-        textTranslationId = this@mapToRealm.textTranslationId.orEmpty()
-        textTranslationEn = this@mapToRealm.textTranslationEn.orEmpty()
-    }
+internal fun ConversationEntity.mapToRoom(): ConversationRoom =
+    ConversationRoom(
+        id = id.orZero(),
+        textIndopak = textIndopak.orEmpty(),
+        textUthmani = textUthmani.orEmpty(),
+        textTransliteration = textTransliteration.orEmpty(),
+        textTranslationId = textTranslationId.orEmpty(),
+        textTranslationEn = textTranslationEn.orEmpty(),
+    )
 
-internal fun ConversationRealm.mapToModel(setting: AppSetting): Conversation {
+internal fun ConversationRoom.mapToModel(setting: AppSetting): Conversation {
     val textArabic =
         when {
             textIndopak.isNotEmpty() && textUthmani.isEmpty() -> textIndopak

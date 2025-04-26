@@ -8,7 +8,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class VerseFavoriteRealm(
+data class VerseFavoriteRoom(
     @PrimaryKey
     var verseId: Int = DEFAULT_VERSE_ID,
     var verseNumber: Int = DEFAULT_VERSE_NUMBER,

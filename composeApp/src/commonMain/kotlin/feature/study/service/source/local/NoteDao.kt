@@ -7,44 +7,44 @@ import androidx.room.MapColumn
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import feature.study.service.entity.NoteRealm
+import feature.study.service.entity.NoteRoom
 
 @Dao
 interface NoteDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(noteRealm: NoteRealm)
+    suspend fun insert(noteRoom: NoteRoom)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(noteRealmList: List<NoteRealm>)
+    suspend fun insert(noteRoomList: List<NoteRoom>)
 
     @Update
-    suspend fun update(noteRealm: NoteRealm)
+    suspend fun update(noteRoom: NoteRoom)
 
     @Update
-    suspend fun update(noteRealmList: List<NoteRealm>)
+    suspend fun update(noteRoomList: List<NoteRoom>)
 
     @Delete
-    suspend fun delete(noteRealm: NoteRealm)
+    suspend fun delete(noteRoom: NoteRoom)
 
     @Delete
-    suspend fun delete(noteRealmList: List<NoteRealm>)
+    suspend fun delete(noteRoomList: List<NoteRoom>)
 
-    @Query("DELETE FROM NoteRealm")
+    @Query("DELETE FROM NoteRoom")
     suspend fun deleteAll()
 
-    @Query("SELECT COUNT(*) as count FROM NoteRealm")
+    @Query("SELECT COUNT(*) as count FROM NoteRoom")
     suspend fun count(): Int
 
-    @Query("SELECT * FROM NoteRealm")
-    suspend fun getAll(): List<NoteRealm>
+    @Query("SELECT * FROM NoteRoom")
+    suspend fun getAll(): List<NoteRoom>
 
-    @Query("SELECT * FROM NoteRealm WHERE id in (:ids)")
-    suspend fun loadAllById(ids: List<Int>): List<NoteRealm>
+    @Query("SELECT * FROM NoteRoom WHERE id in (:ids)")
+    suspend fun loadAllById(ids: List<Int>): List<NoteRoom>
 
-    @Query("SELECT * FROM NoteRealm WHERE id in (:ids)")
+    @Query("SELECT * FROM NoteRoom WHERE id in (:ids)")
     suspend fun loadMappedById(ids: List<Int>): Map<
         @MapColumn(columnName = "id")
         Long,
-        NoteRealm,
+        NoteRoom,
     >
 }

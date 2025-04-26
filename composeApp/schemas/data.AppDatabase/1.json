@@ -2,10 +2,10 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "3be34c98b55873110d7a3c4008f19d64",
+    "identityHash": "3c2f50df78694e3f75345700fa90b8d8",
     "entities": [
       {
-        "tableName": "AppSettingRealm",
+        "tableName": "AppSettingRoom",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `languageName` TEXT NOT NULL, `theme` TEXT NOT NULL, `themeColor` TEXT NOT NULL, `arabicStyleName` TEXT NOT NULL, `arabicFontSize` INTEGER NOT NULL, `translationFontSize` INTEGER NOT NULL, `translationVisibility` INTEGER NOT NULL, `transliterationFontSize` INTEGER NOT NULL, `transliterationVisibility` INTEGER NOT NULL, `locationLatitude` REAL NOT NULL, `locationLongitude` REAL NOT NULL, `locationName` TEXT NOT NULL, `acceptPrivacyPolicy` INTEGER NOT NULL, `lastUpdate` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
@@ -107,7 +107,7 @@
         }
       },
       {
-        "tableName": "AsmaulHusnaRealm",
+        "tableName": "AsmaulHusnaRoom",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `textIndopak` TEXT NOT NULL, `textUthmani` TEXT NOT NULL, `textTransliteration` TEXT NOT NULL, `textTranslationId` TEXT NOT NULL, `textTranslationEn` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
@@ -155,7 +155,7 @@
         }
       },
       {
-        "tableName": "ChapterRealm",
+        "tableName": "ChapterRoom",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `revelationPlace` TEXT NOT NULL, `revelationOrder` INTEGER NOT NULL, `bismillahPre` INTEGER NOT NULL, `nameSimple` TEXT NOT NULL, `nameComplex` TEXT NOT NULL, `nameArabic` TEXT NOT NULL, `nameTranslationId` TEXT NOT NULL, `nameTranslationEn` TEXT NOT NULL, `versesCount` INTEGER NOT NULL, `pages` TEXT NOT NULL, `isDownloaded` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
@@ -239,7 +239,7 @@
         }
       },
       {
-        "tableName": "ConversationRealm",
+        "tableName": "ConversationRoom",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `textIndopak` TEXT NOT NULL, `textUthmani` TEXT NOT NULL, `textTransliteration` TEXT NOT NULL, `textTranslationId` TEXT NOT NULL, `textTranslationEn` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
@@ -287,7 +287,7 @@
         }
       },
       {
-        "tableName": "DhikrRealm",
+        "tableName": "DhikrRoom",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`pkey` TEXT NOT NULL, `id` INTEGER NOT NULL, `type` TEXT NOT NULL, `titleId` TEXT NOT NULL, `titleEn` TEXT NOT NULL, `textIndopak` TEXT NOT NULL, `textUthmani` TEXT NOT NULL, `textTransliteration` TEXT NOT NULL, `textTranslationId` TEXT NOT NULL, `textTranslationEn` TEXT NOT NULL, `hadithId` TEXT NOT NULL, `hadithEn` TEXT NOT NULL, `maxCount` INTEGER NOT NULL, `count` INTEGER NOT NULL, `latestUpdate` TEXT NOT NULL, PRIMARY KEY(`pkey`))",
         "fields": [
           {
@@ -389,7 +389,7 @@
         }
       },
       {
-        "tableName": "DuaCategoryRealm",
+        "tableName": "DuaCategoryRoom",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`tag` TEXT NOT NULL, `titleId` TEXT NOT NULL, `titleEn` TEXT NOT NULL, PRIMARY KEY(`tag`))",
         "fields": [
           {
@@ -419,7 +419,7 @@
         }
       },
       {
-        "tableName": "DuaRealm",
+        "tableName": "DuaRoom",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `titleId` TEXT NOT NULL, `titleEn` TEXT NOT NULL, `textIndopak` TEXT NOT NULL, `textUthmani` TEXT NOT NULL, `textTransliteration` TEXT NOT NULL, `textTranslationId` TEXT NOT NULL, `textTranslationEn` TEXT NOT NULL, `hadithId` TEXT NOT NULL, `hadithEn` TEXT NOT NULL, `tag` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
@@ -497,7 +497,7 @@
         }
       },
       {
-        "tableName": "GuidanceRealm",
+        "tableName": "GuidanceRoom",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`pkey` TEXT NOT NULL, `position` INTEGER NOT NULL, `type` TEXT NOT NULL, `image` TEXT NOT NULL, `titleId` TEXT NOT NULL, `titleEn` TEXT NOT NULL, `descId` TEXT NOT NULL, `descEn` TEXT NOT NULL, `textIndopak` TEXT NOT NULL, `textUthmani` TEXT NOT NULL, `textTransliteration` TEXT NOT NULL, `textTranslationId` TEXT NOT NULL, `textTranslationEn` TEXT NOT NULL, `hadithId` TEXT NOT NULL, `hadithEn` TEXT NOT NULL, PRIMARY KEY(`pkey`))",
         "fields": [
           {
@@ -599,7 +599,7 @@
         }
       },
       {
-        "tableName": "HomeTemplateRealm",
+        "tableName": "HomeTemplateRoom",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`position` INTEGER NOT NULL, `type` TEXT NOT NULL, `labelId` TEXT NOT NULL, `labelEn` TEXT NOT NULL, `textId` TEXT NOT NULL, `textEn` TEXT NOT NULL, `images` TEXT NOT NULL, `links` TEXT NOT NULL, PRIMARY KEY(`position`))",
         "fields": [
           {
@@ -659,7 +659,7 @@
         }
       },
       {
-        "tableName": "JuzRealm",
+        "tableName": "JuzRoom",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `juzNumber` INTEGER NOT NULL, `chapters` TEXT NOT NULL, `firstChapterNumber` INTEGER NOT NULL, `firstVerseNumber` INTEGER NOT NULL, `firstVerseId` INTEGER NOT NULL, `lastChapterNumber` INTEGER NOT NULL, `lastVerseNumber` INTEGER NOT NULL, `lastVerseId` INTEGER NOT NULL, `versesCount` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
@@ -731,7 +731,7 @@
         }
       },
       {
-        "tableName": "LastReadRealm",
+        "tableName": "LastReadRoom",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `verseId` INTEGER NOT NULL, `verseNumber` INTEGER NOT NULL, `chapterId` INTEGER NOT NULL, `chapterNameSimple` TEXT NOT NULL, `progressFloat` REAL NOT NULL, `progressInt` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
@@ -785,7 +785,7 @@
         }
       },
       {
-        "tableName": "NoteRealm",
+        "tableName": "NoteRoom",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `title` TEXT NOT NULL, `text` TEXT NOT NULL, `kitab` TEXT NOT NULL, `speaker` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `studyAt` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
@@ -839,7 +839,7 @@
         }
       },
       {
-        "tableName": "PageRealm",
+        "tableName": "PageRoom",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `pageNumber` INTEGER NOT NULL, `chapters` TEXT NOT NULL, `firstChapterNumber` INTEGER NOT NULL, `firstVerseNumber` INTEGER NOT NULL, `firstVerseId` INTEGER NOT NULL, `lastChapterNumber` INTEGER NOT NULL, `lastVerseNumber` INTEGER NOT NULL, `lastVerseId` INTEGER NOT NULL, `versesCount` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
@@ -911,7 +911,7 @@
         }
       },
       {
-        "tableName": "PrayerTimeRealm",
+        "tableName": "PrayerTimeRoom",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`gregorianFullDate` TEXT NOT NULL, `gregorianDate` INTEGER NOT NULL, `gregorianMonth` INTEGER NOT NULL, `gregorianYear` INTEGER NOT NULL, `hijriDate` INTEGER NOT NULL, `hijriMonth` INTEGER NOT NULL, `hijriYear` INTEGER NOT NULL, `day` TEXT NOT NULL, `locationName` TEXT NOT NULL, `timeImsak` TEXT NOT NULL, `timeSubuh` TEXT NOT NULL, `timeSyuruq` TEXT NOT NULL, `timeZhuhur` TEXT NOT NULL, `timeAshar` TEXT NOT NULL, `timeMaghrib` TEXT NOT NULL, `timeIsya` TEXT NOT NULL, `timeLastThird` TEXT NOT NULL, PRIMARY KEY(`gregorianFullDate`))",
         "fields": [
           {
@@ -1025,7 +1025,7 @@
         }
       },
       {
-        "tableName": "VerseFavoriteRealm",
+        "tableName": "VerseFavoriteRoom",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`verseId` INTEGER NOT NULL, `verseNumber` INTEGER NOT NULL, `chapterId` INTEGER NOT NULL, `chapterNameSimple` TEXT NOT NULL, PRIMARY KEY(`verseId`))",
         "fields": [
           {
@@ -1061,7 +1061,7 @@
         }
       },
       {
-        "tableName": "VerseRealm",
+        "tableName": "VerseRoom",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `chapterId` INTEGER NOT NULL, `verseNumber` INTEGER NOT NULL, `verseKey` TEXT NOT NULL, `hizbNumber` INTEGER NOT NULL, `rubElHizbNumber` INTEGER NOT NULL, `rukuNumber` INTEGER NOT NULL, `manzilNumber` INTEGER NOT NULL, `sajdahNumber` INTEGER NOT NULL, `pageNumber` INTEGER NOT NULL, `juzNumber` INTEGER NOT NULL, `textIndopak` TEXT NOT NULL, `textUthmani` TEXT NOT NULL, `textUthmaniTajweed` TEXT NOT NULL, `textTransliteration` TEXT NOT NULL, `textTranslationId` TEXT NOT NULL, `textTranslationEn` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
@@ -1177,7 +1177,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3be34c98b55873110d7a3c4008f19d64')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3c2f50df78694e3f75345700fa90b8d8')"
     ]
   }
 }

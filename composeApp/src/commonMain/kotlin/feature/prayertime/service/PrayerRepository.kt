@@ -7,7 +7,7 @@ import feature.other.service.AppRepository
 import feature.prayertime.service.mapper.mapToHaqqCalendar
 import feature.prayertime.service.mapper.mapToHijri
 import feature.prayertime.service.mapper.mapToModel
-import feature.prayertime.service.mapper.mapToRealm
+import feature.prayertime.service.mapper.mapToRoom
 import feature.prayertime.service.model.GuidanceType
 import feature.prayertime.service.source.remote.PrayerRemote
 import haqq.composeapp.generated.resources.Res
@@ -41,7 +41,7 @@ class PrayerRepository(
                     is ApiResponse.Success -> {
                         val remoteResult = result.body
 
-                        database.guidanceDao().insert(remoteResult.map { it.mapToRealm() })
+                        database.guidanceDao().insert(remoteResult.map { it.mapToRoom() })
 
                         val latestGuidances =
                             database
@@ -171,7 +171,7 @@ class PrayerRepository(
                 remoteResult.data?.let { calendar ->
                     database
                         .prayerTimeDao()
-                        .insert(calendar.map { it.mapToRealm(setting.location.name) })
+                        .insert(calendar.map { it.mapToRoom(setting.location.name) })
                 }
 
                 emit(DataState.Success(result.body.mapToHaqqCalendar()))

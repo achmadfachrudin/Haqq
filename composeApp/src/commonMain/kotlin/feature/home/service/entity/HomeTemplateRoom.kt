@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class HomeTemplateRealm(
+data class HomeTemplateRoom(
     @PrimaryKey
     var position: Int = 0,
     var type: String = "",

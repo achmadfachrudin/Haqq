@@ -6,37 +6,37 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import feature.prayertime.service.entity.GuidanceRealm
+import feature.prayertime.service.entity.GuidanceRoom
 
 @Dao
 interface GuidanceDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(guidanceRealm: GuidanceRealm)
+    suspend fun insert(guidanceRoom: GuidanceRoom)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(guidanceRealmList: List<GuidanceRealm>)
+    suspend fun insert(guidanceRoomList: List<GuidanceRoom>)
 
     @Update
-    suspend fun update(guidanceRealm: GuidanceRealm)
+    suspend fun update(guidanceRoom: GuidanceRoom)
 
     @Update
-    suspend fun update(guidanceRealmList: List<GuidanceRealm>)
+    suspend fun update(guidanceRoomList: List<GuidanceRoom>)
 
     @Delete
-    suspend fun delete(guidanceRealm: GuidanceRealm)
+    suspend fun delete(guidanceRoom: GuidanceRoom)
 
     @Delete
-    suspend fun delete(guidanceRealmList: List<GuidanceRealm>)
+    suspend fun delete(guidanceRoomList: List<GuidanceRoom>)
 
-    @Query("DELETE FROM GuidanceRealm")
+    @Query("DELETE FROM GuidanceRoom")
     suspend fun deleteAll()
 
-    @Query("SELECT COUNT(*) as count FROM GuidanceRealm")
+    @Query("SELECT COUNT(*) as count FROM GuidanceRoom")
     suspend fun count(): Int
 
-    @Query("SELECT * FROM GuidanceRealm")
-    suspend fun getAll(): List<GuidanceRealm>
+    @Query("SELECT * FROM GuidanceRoom")
+    suspend fun getAll(): List<GuidanceRoom>
 
-    @Query("SELECT * FROM GuidanceRealm WHERE type in (:types)")
-    suspend fun loadAllByType(types: List<String>): List<GuidanceRealm>
+    @Query("SELECT * FROM GuidanceRoom WHERE type in (:types)")
+    suspend fun loadAllByType(types: List<String>): List<GuidanceRoom>
 }

@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class ChapterRealm(
+data class ChapterRoom(
     @PrimaryKey
     var id: Int = 0,
     var revelationPlace: String = "",

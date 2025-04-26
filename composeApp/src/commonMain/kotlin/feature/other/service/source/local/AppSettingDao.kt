@@ -7,44 +7,44 @@ import androidx.room.MapColumn
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import feature.other.service.entity.AppSettingRealm
+import feature.other.service.entity.AppSettingRoom
 
 @Dao
 interface AppSettingDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(appSettingRealm: AppSettingRealm)
+    suspend fun insert(appSettingRoom: AppSettingRoom)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(appSettingRealmList: List<AppSettingRealm>)
+    suspend fun insert(appSettingRoomList: List<AppSettingRoom>)
 
     @Update
-    suspend fun update(appSettingRealm: AppSettingRealm)
+    suspend fun update(appSettingRoom: AppSettingRoom)
 
     @Update
-    suspend fun update(appSettingRealmList: List<AppSettingRealm>)
+    suspend fun update(appSettingRoomList: List<AppSettingRoom>)
 
     @Delete
-    suspend fun delete(appSettingRealm: AppSettingRealm)
+    suspend fun delete(appSettingRoom: AppSettingRoom)
 
     @Delete
-    suspend fun delete(appSettingRealmList: List<AppSettingRealm>)
+    suspend fun delete(appSettingRoomList: List<AppSettingRoom>)
 
-    @Query("DELETE FROM AppSettingRealm")
+    @Query("DELETE FROM AppSettingRoom")
     suspend fun deleteAll()
 
-    @Query("SELECT COUNT(*) as count FROM AppSettingRealm")
+    @Query("SELECT COUNT(*) as count FROM AppSettingRoom")
     suspend fun count(): Int
 
-    @Query("SELECT * FROM AppSettingRealm")
-    suspend fun getAll(): List<AppSettingRealm>
+    @Query("SELECT * FROM AppSettingRoom")
+    suspend fun getAll(): List<AppSettingRoom>
 
-    @Query("SELECT * FROM AppSettingRealm WHERE id in (:ids)")
-    suspend fun loadAllById(ids: List<Int>): List<AppSettingRealm>
+    @Query("SELECT * FROM AppSettingRoom WHERE id in (:ids)")
+    suspend fun loadAllById(ids: List<Int>): List<AppSettingRoom>
 
-    @Query("SELECT * FROM AppSettingRealm WHERE id in (:ids)")
+    @Query("SELECT * FROM AppSettingRoom WHERE id in (:ids)")
     suspend fun loadMappedById(ids: List<Int>): Map<
         @MapColumn(columnName = "id")
         Long,
-        AppSettingRealm,
+        AppSettingRoom,
     >
 }

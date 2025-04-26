@@ -7,44 +7,44 @@ import androidx.room.MapColumn
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import feature.conversation.service.entity.ConversationRealm
+import feature.conversation.service.entity.ConversationRoom
 
 @Dao
 interface ConversationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(conversationRealm: ConversationRealm)
+    suspend fun insert(conversationRoom: ConversationRoom)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(conversationRealmList: List<ConversationRealm>)
+    suspend fun insert(conversationRoomList: List<ConversationRoom>)
 
     @Update
-    suspend fun update(conversationRealm: ConversationRealm)
+    suspend fun update(conversationRoom: ConversationRoom)
 
     @Update
-    suspend fun update(conversationRealmList: List<ConversationRealm>)
+    suspend fun update(conversationRoomList: List<ConversationRoom>)
 
     @Delete
-    suspend fun delete(conversationRealm: ConversationRealm)
+    suspend fun delete(conversationRoom: ConversationRoom)
 
     @Delete
-    suspend fun delete(conversationRealmList: List<ConversationRealm>)
+    suspend fun delete(conversationRoomList: List<ConversationRoom>)
 
-    @Query("DELETE FROM ConversationRealm")
+    @Query("DELETE FROM ConversationRoom")
     suspend fun deleteAll()
 
-    @Query("SELECT COUNT(*) as count FROM ConversationRealm")
+    @Query("SELECT COUNT(*) as count FROM ConversationRoom")
     suspend fun count(): Int
 
-    @Query("SELECT * FROM ConversationRealm")
-    suspend fun getAll(): List<ConversationRealm>
+    @Query("SELECT * FROM ConversationRoom")
+    suspend fun getAll(): List<ConversationRoom>
 
-    @Query("SELECT * FROM ConversationRealm WHERE id in (:ids)")
-    suspend fun loadAllById(ids: List<Int>): List<ConversationRealm>
+    @Query("SELECT * FROM ConversationRoom WHERE id in (:ids)")
+    suspend fun loadAllById(ids: List<Int>): List<ConversationRoom>
 
-    @Query("SELECT * FROM ConversationRealm WHERE id in (:ids)")
+    @Query("SELECT * FROM ConversationRoom WHERE id in (:ids)")
     suspend fun loadMappedById(ids: List<Int>): Map<
         @MapColumn(columnName = "id")
         Long,
-        ConversationRealm,
+        ConversationRoom,
     >
 }

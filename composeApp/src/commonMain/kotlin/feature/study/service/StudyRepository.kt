@@ -3,7 +3,7 @@ package feature.study.service
 import core.data.ApiResponse
 import core.data.DataState
 import data.AppDatabase
-import feature.study.service.entity.NoteRealm
+import feature.study.service.entity.NoteRoom
 import feature.study.service.mapper.mapToModel
 import feature.study.service.mapper.mapToNote
 import feature.study.service.mapper.mapToVideos
@@ -141,24 +141,29 @@ class StudyRepository(
             if (localNote == null) {
                 // add
                 database.noteDao().insert(
-                    NoteRealm().apply {
-                        id = nextNoteId
-                        title = note.title
-                        text = note.text
-                        speaker = note.speaker
-                        kitab = note.kitab
-                        createdAt = note.createdAt
-                        studyAt = note.studyAt
-                    },
+                    NoteRoom(
+                        id = nextNoteId,
+                        title = note.title,
+                        text = note.text,
+                        speaker = note.speaker,
+                        kitab = note.kitab,
+                        createdAt = note.createdAt,
+                        studyAt = note.studyAt,
+                    ),
                 )
             } else {
                 // update
-                localNote.title = note.title
-                localNote.text = note.text
-                localNote.speaker = note.speaker
-                localNote.kitab = note.kitab
-                localNote.createdAt = note.createdAt
-                localNote.studyAt = note.studyAt
+                val updated =
+                    localNote.copy(
+                        title = note.title,
+                        text = note.text,
+                        speaker = note.speaker,
+                        kitab = note.kitab,
+                        createdAt = note.createdAt,
+                        studyAt = note.studyAt,
+                    )
+
+                database.noteDao().update(updated)
             }
         }
     }
