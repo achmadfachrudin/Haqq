@@ -131,10 +131,8 @@ fun NoteListScreen(
     }
 
     LaunchedEffect(Unit) {
-        if (vm.shouldRefresh) {
-            trackScreen("NoteListScreen")
-            vm.getNotes()
-        }
+        trackScreen("NoteListScreen")
+        vm.getNotes()
     }
 }
 

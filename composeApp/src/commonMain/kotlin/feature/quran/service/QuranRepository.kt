@@ -99,14 +99,10 @@ class QuranRepository(
                 database.chapterDao().insert(finalChapters)
 
                 downloadVerses(1).collect()
-
-                val latestChapters = database.chapterDao().getAll().map { it.mapToModel() }
-                emit(DataState.Success(latestChapters))
-            } else {
-                val latestChapters = database.chapterDao().getAll().map { it.mapToModel() }
-
-                emit(DataState.Success(latestChapters))
             }
+
+            val latestChapters = database.chapterDao().getAll().map { it.mapToModel() }
+            emit(DataState.Success(latestChapters))
         }.onStart { emit(DataState.Loading) }
             .catch { emit(DataState.Error(it.message.orEmpty())) }
             .flowOn(Dispatchers.IO)
@@ -151,11 +147,8 @@ class QuranRepository(
             val pageEntities = mutableListOf<PageEntity>()
             for (i in 1..MAX_PAGE) {
                 try {
-                    val verses =
-                        database
-                            .verseDao()
-                            .getAll()
-                            .filter { it.pageNumber == i }
+                    val localVerse = database.verseDao().getAll()
+                    val verses = localVerse.filter { it.pageNumber == i }
 
                     val firstVerse = verses.minBy { it.id }
 
@@ -185,6 +178,12 @@ class QuranRepository(
 
     fun fetchPages() =
         flow {
+            val localPages = database.pageDao().getAll()
+
+            if (localPages.isEmpty() && checkIsAllDownloaded()) {
+                addPages().last()
+            }
+
             val latestPages = database.pageDao().getAll().map { it.mapToModel() }
 
             emit(latestPages)
@@ -301,6 +300,18 @@ class QuranRepository(
             database.chapterDao().update(updated)
         }
     }
+
+    fun isChapterDownloaded(chapterId: Int): Boolean =
+        runBlocking {
+            withContext(Dispatchers.IO) {
+                try {
+                    database.chapterDao().loadAllById(listOf(chapterId)).isNotEmpty()
+                } catch (e: Exception) {
+                    Napier.e { "Error retrieving isChapterDownloaded chapterId $chapterId" }
+                    false
+                }
+            }
+        }
 
     fun isVerseDownloaded(verseId: Int): Boolean =
         runBlocking {

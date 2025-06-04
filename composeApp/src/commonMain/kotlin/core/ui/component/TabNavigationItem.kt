@@ -22,28 +22,28 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun RowScope.TabNavigationItem(
-    pageState: MainScreenModel.PageState,
-    pageSelected: MainScreenModel.PageState,
+    mainPageState: MainScreenModel.MainPageState,
+    pageSelected: MainScreenModel.MainPageState,
     onClick: () -> Unit,
 ) {
-    val isSelected = pageState == pageSelected
+    val isSelected = mainPageState == pageSelected
 
     val title =
-        when (pageState) {
-            MainScreenModel.PageState.HOME -> stringResource(Res.string.home_title)
-            MainScreenModel.PageState.DHIKR -> stringResource(Res.string.dhikr_title)
-            MainScreenModel.PageState.QURAN -> stringResource(Res.string.quran_title)
-            MainScreenModel.PageState.PRAYER -> stringResource(Res.string.prayer_title)
-            MainScreenModel.PageState.ACTIVITY -> stringResource(Res.string.activity_title)
+        when (mainPageState) {
+            MainScreenModel.MainPageState.HOME -> stringResource(Res.string.home_title)
+            MainScreenModel.MainPageState.DHIKR -> stringResource(Res.string.dhikr_title)
+            MainScreenModel.MainPageState.QURAN -> stringResource(Res.string.quran_title)
+            MainScreenModel.MainPageState.PRAYER -> stringResource(Res.string.prayer_title)
+            MainScreenModel.MainPageState.ACTIVITY -> stringResource(Res.string.activity_title)
         }
 
     val icon =
-        when (pageState) {
-            MainScreenModel.PageState.HOME -> Res.drawable.home
-            MainScreenModel.PageState.DHIKR -> Res.drawable.battery_charging
-            MainScreenModel.PageState.QURAN -> Res.drawable.book
-            MainScreenModel.PageState.PRAYER -> Res.drawable.clock
-            MainScreenModel.PageState.ACTIVITY -> Res.drawable.check_square
+        when (mainPageState) {
+            MainScreenModel.MainPageState.HOME -> Res.drawable.home
+            MainScreenModel.MainPageState.DHIKR -> Res.drawable.battery_charging
+            MainScreenModel.MainPageState.QURAN -> Res.drawable.book
+            MainScreenModel.MainPageState.PRAYER -> Res.drawable.clock
+            MainScreenModel.MainPageState.ACTIVITY -> Res.drawable.check_square
         }
 
     NavigationBarItem(

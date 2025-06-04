@@ -159,9 +159,10 @@ fun MainScreen(
             },
             content = {
                 Column(modifier = Modifier.padding(it).fillMaxSize()) {
-                    when (state.pageState) {
-                        MainScreenModel.PageState.HOME -> {
+                    when (state.mainPageState) {
+                        MainScreenModel.MainPageState.HOME -> {
                             MainPageHome(
+                                vm = vm,
                                 state = state.homeState,
                                 onPrayerTimeClick = {
                                     onPrayerTimeDailyClick(PrayerTimeDailyNav)
@@ -191,7 +192,7 @@ fun MainScreen(
                             )
                         }
 
-                        MainScreenModel.PageState.DHIKR -> {
+                        MainScreenModel.MainPageState.DHIKR -> {
                             val duaTitle = stringResource(Res.string.dua_quran)
                             MainPageDhikr(
                                 onDzikirClick = { dhikrType ->
@@ -214,10 +215,11 @@ fun MainScreen(
                             )
                         }
 
-                        MainScreenModel.PageState.QURAN -> {
+                        MainScreenModel.MainPageState.QURAN -> {
                             MainPageQuran(
+                                vm = vm,
                                 state = state,
-                                onRetryClick = { vm.getQuran() },
+                                onRetryClick = { vm.getQuran2() },
                                 onLastReadClick = { verse ->
                                     onVerseListClick(
                                         VerseListNav(
@@ -269,7 +271,7 @@ fun MainScreen(
                             )
                         }
 
-                        MainScreenModel.PageState.PRAYER -> {
+                        MainScreenModel.MainPageState.PRAYER -> {
                             MainPagePrayer(
                                 onOpenActivity = { name ->
                                     platformPage.value = name
@@ -297,7 +299,7 @@ fun MainScreen(
                             )
                         }
 
-                        MainScreenModel.PageState.ACTIVITY -> {
+                        MainScreenModel.MainPageState.ACTIVITY -> {
                             val kidsTitle = stringResource(Res.string.kids_activity_title)
                             MainPageActivity(
                                 onArticleClick = {
@@ -331,10 +333,10 @@ fun MainScreen(
             },
             bottomBar = {
                 NavigationBar {
-                    MainScreenModel.PageState.entries.forEach {
+                    MainScreenModel.MainPageState.entries.forEach {
                         TabNavigationItem(
-                            pageState = it,
-                            pageSelected = state.pageState,
+                            mainPageState = it,
+                            pageSelected = state.mainPageState,
                             onClick = { vm.updatePage(it) },
                         )
                     }
@@ -349,10 +351,9 @@ fun MainScreen(
     }
 
     LaunchedEffect(Unit) {
-        vm.getLastRead()
-        if (vm.shouldRefresh) {
+        if (vm.shouldRefreshHome) {
             vm.onViewed()
-            vm.shouldRefresh = false
+            vm.shouldRefreshHome = false
         }
     }
 }

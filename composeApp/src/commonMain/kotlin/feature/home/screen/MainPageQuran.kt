@@ -24,6 +24,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -82,6 +83,7 @@ import org.koin.mp.KoinPlatform
 
 @Composable
 internal fun MainPageQuran(
+    vm: MainScreenModel,
     state: MainScreenModel.State,
     onRetryClick: () -> Unit,
     onLastReadClick: (lastRead: LastRead) -> Unit,
@@ -132,7 +134,7 @@ internal fun MainPageQuran(
             verticalAlignment = Alignment.Top,
         ) { index ->
             when (index) {
-                0 -> {
+                MainScreenModel.QuranTabState.CHAPTER.ordinal -> {
                     ChapterContent(
                         state = state.quranChapterState,
                         onRetryClick = onRetryClick,
@@ -140,7 +142,7 @@ internal fun MainPageQuran(
                     )
                 }
 
-                1 -> {
+                MainScreenModel.QuranTabState.JUZ.ordinal -> {
                     if (state.quranDownloadState == MainScreenModel.QuranDownloadState.Done) {
                         JuzContent(
                             state = state.quranJuzState,
@@ -152,7 +154,7 @@ internal fun MainPageQuran(
                     }
                 }
 
-                2 -> {
+                MainScreenModel.QuranTabState.PAGE.ordinal -> {
                     if (state.quranDownloadState == MainScreenModel.QuranDownloadState.Done) {
                         PageContent(
                             state = state.quranPageState,
@@ -172,6 +174,14 @@ internal fun MainPageQuran(
                     )
                 }
             }
+        }
+
+        LaunchedEffect(pagerState.currentPage) {
+            vm.updateQuranTab(MainScreenModel.QuranTabState.entries[pagerState.currentPage])
+        }
+
+        LaunchedEffect(Unit) {
+            vm.getQuran2()
         }
     }
 

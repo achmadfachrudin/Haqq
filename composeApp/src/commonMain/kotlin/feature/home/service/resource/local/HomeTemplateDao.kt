@@ -39,4 +39,7 @@ interface HomeTemplateDao {
 
     @Query("SELECT * FROM HomeTemplateRoom WHERE position in (:positions)")
     suspend fun loadAllByPosition(positions: List<Int>): List<HomeTemplateRoom>
+
+    @Query("SELECT * FROM HomeTemplateRoom WHERE type in (:types)")
+    suspend fun getByType(types: List<String>): List<HomeTemplateRoom>
 }
