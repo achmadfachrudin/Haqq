@@ -159,6 +159,12 @@ class MainScreenModel(
 
     fun onViewed() {
         viewModelScope.launch {
+            // get first chapter
+            if (!quranRepository.isChapterDownloaded(DEFAULT_CHAPTER_ID)) {
+                quranRepository.fetchChapters().last()
+                quranRepository.fetchVersesByChapter(DEFAULT_CHAPTER_ID).last()
+            }
+
             val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
 
             mutableState.value =
@@ -167,14 +173,6 @@ class MainScreenModel(
                     location = appRepository.getSetting().location,
                     shouldShowSupport = today.dayOfWeek == DayOfWeek.FRIDAY,
                 )
-
-            // get first chapter
-            if (!quranRepository.isChapterDownloaded(DEFAULT_CHAPTER_ID)) {
-                quranRepository.fetchChapters().last()
-                quranRepository.fetchVersesByChapter(DEFAULT_CHAPTER_ID).last()
-            }
-
-            getHome()
         }
     }
 

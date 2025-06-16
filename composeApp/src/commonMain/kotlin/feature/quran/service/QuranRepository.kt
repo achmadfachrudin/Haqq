@@ -305,7 +305,11 @@ class QuranRepository(
         runBlocking {
             withContext(Dispatchers.IO) {
                 try {
-                    database.chapterDao().loadAllById(listOf(chapterId)).isNotEmpty()
+                    database
+                        .chapterDao()
+                        .loadAllById(listOf(chapterId))
+                        .first()
+                        .isDownloaded
                 } catch (e: Exception) {
                     Napier.e { "Error retrieving isChapterDownloaded chapterId $chapterId" }
                     false

@@ -198,12 +198,12 @@ internal fun VersesEntity.VerseEntity.mapToRoom(
 ): VerseRoom {
     val translationId =
         translations
-            ?.first { it.resourceId == AppSetting.Language.INDONESIAN.translationId }
+            ?.firstOrNull { it.resourceId == AppSetting.Language.INDONESIAN.translationId }
             ?.text
             .orEmpty()
     val translationEn =
         translations
-            ?.first { it.resourceId == AppSetting.Language.ENGLISH.translationId }
+            ?.firstOrNull { it.resourceId == AppSetting.Language.ENGLISH.translationId }
             ?.text
             .orEmpty()
 

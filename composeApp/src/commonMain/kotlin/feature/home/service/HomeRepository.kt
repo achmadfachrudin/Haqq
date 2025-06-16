@@ -104,11 +104,15 @@ class HomeRepository(
             var dhikrType: DhikrType? = null
 
             val todayAndTomorrow =
-                prayerRepository.fetchTodayTomorrowPrayerTimes().lastOrNull()
+                prayerRepository
+                    .fetchTodayTomorrowPrayerTimes()
+                    .lastOrNull()
+                    ?.data
+                    .orEmpty()
 
-            if (todayAndTomorrow != null) {
-                prayerTimeToday = todayAndTomorrow.data.first()
-                val prayerTimeTomorrow = todayAndTomorrow.data.last()
+            if (todayAndTomorrow.isNotEmpty()) {
+                prayerTimeToday = todayAndTomorrow.first()
+                val prayerTimeTomorrow = todayAndTomorrow.last()
                 prayerTimeNext =
                     prayerTimeToday.whatNextPrayerTime(prayerTimeTomorrow, true)
 
