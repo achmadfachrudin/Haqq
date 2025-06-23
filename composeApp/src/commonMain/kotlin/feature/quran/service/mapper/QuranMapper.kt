@@ -3,17 +3,17 @@ package feature.quran.service.mapper
 import core.util.orZero
 import feature.other.service.AppRepository
 import feature.other.service.model.AppSetting
-import feature.quran.service.entity.ChapterRealm
+import feature.quran.service.entity.ChapterRoom
 import feature.quran.service.entity.ChaptersEntity
 import feature.quran.service.entity.IndopakEntity
-import feature.quran.service.entity.JuzRealm
+import feature.quran.service.entity.JuzRoom
 import feature.quran.service.entity.JuzsEntity
 import feature.quran.service.entity.PageEntity
-import feature.quran.service.entity.PageRealm
+import feature.quran.service.entity.PageRoom
 import feature.quran.service.entity.TranslationsEntity
 import feature.quran.service.entity.UthmaniEntity
 import feature.quran.service.entity.UthmaniTajweedEntity
-import feature.quran.service.entity.VerseRealm
+import feature.quran.service.entity.VerseRoom
 import feature.quran.service.entity.VersesEntity
 import feature.quran.service.model.Chapter
 import feature.quran.service.model.Juz
@@ -21,42 +21,42 @@ import feature.quran.service.model.Page
 import feature.quran.service.model.Verse
 import org.koin.mp.KoinPlatform
 
-internal fun List<ChaptersEntity.ChapterEntity>.mapToRealm(
+internal fun List<ChaptersEntity.ChapterEntity>.mapToRoom(
     translationId: List<String>,
     translationEn: List<String>,
-): List<ChapterRealm> =
+): List<ChapterRoom> =
     mapIndexed { index, entity ->
-        entity.mapToRealm(
+        entity.mapToRoom(
             translationId = translationId[index],
             translationEn = translationEn[index],
         )
     }
 
-internal fun ChaptersEntity.ChapterEntity.mapToRealm(
+internal fun ChaptersEntity.ChapterEntity.mapToRoom(
     translationId: String,
     translationEn: String,
-): ChapterRealm =
-    ChapterRealm().apply {
-        id = this@mapToRealm.id.orZero()
-        revelationPlace = this@mapToRealm.revelationPlace.orEmpty().replaceFirstChar { it.uppercase() }
-        revelationOrder = this@mapToRealm.revelationOrder.orZero()
-        bismillahPre = this@mapToRealm.bismillahPre ?: false
-        nameSimple = this@mapToRealm.nameSimple.orEmpty()
-        nameComplex = this@mapToRealm.nameComplex.orEmpty()
-        nameArabic = this@mapToRealm.nameArabic.orEmpty()
-        nameTranslationId = cleanChapterNameTranslation(translationId)
-        nameTranslationEn = cleanChapterNameTranslation(translationEn)
-        versesCount = this@mapToRealm.versesCount.orZero()
-        pages = this@mapToRealm.pages?.joinToString(",").orEmpty()
-        isDownloaded = false
-    }
+): ChapterRoom =
+    ChapterRoom(
+        id = id.orZero(),
+        revelationPlace = revelationPlace.orEmpty().replaceFirstChar { it.uppercase() },
+        revelationOrder = revelationOrder.orZero(),
+        bismillahPre = bismillahPre ?: false,
+        nameSimple = nameSimple.orEmpty(),
+        nameComplex = nameComplex.orEmpty(),
+        nameArabic = nameArabic.orEmpty(),
+        nameTranslationId = cleanChapterNameTranslation(translationId),
+        nameTranslationEn = cleanChapterNameTranslation(translationEn),
+        versesCount = versesCount.orZero(),
+        pages = pages?.joinToString(",").orEmpty(),
+        isDownloaded = false,
+    )
 
-internal fun List<JuzsEntity.JuzEntity>.mapToRealm(): List<JuzRealm> =
+internal fun List<JuzsEntity.JuzEntity>.mapToRoom(): List<JuzRoom> =
     map { entity ->
-        entity.mapToRealm()
+        entity.mapToRoom()
     }
 
-internal fun ChapterRealm.mapToModel(): Chapter {
+internal fun ChapterRoom.mapToModel(): Chapter {
     val appRepository = KoinPlatform.getKoin().get<AppRepository>()
     val language = appRepository.getSetting().language
 
@@ -81,8 +81,8 @@ internal fun ChapterRealm.mapToModel(): Chapter {
     )
 }
 
-internal fun JuzsEntity.JuzEntity.mapToRealm(): JuzRealm {
-    val verseMapping = this@mapToRealm.verseMapping ?: emptyMap()
+internal fun JuzsEntity.JuzEntity.mapToRoom(): JuzRoom {
+    val verseMapping = verseMapping ?: emptyMap()
     verseMapping.entries.sortedBy { it.key.toInt() }
 
     val chaptersMapping =
@@ -113,21 +113,21 @@ internal fun JuzsEntity.JuzEntity.mapToRealm(): JuzRealm {
             .toIntOrNull() ?: lVerseNumber
     }
 
-    return JuzRealm().apply {
-        id = this@mapToRealm.id.orZero()
-        juzNumber = this@mapToRealm.juzNumber.orZero()
-        chapters = chaptersMapping // "2,3"
-        firstChapterNumber = fChapterNumber
-        firstVerseNumber = fVerseNumber
-        firstVerseId = this@mapToRealm.firstVerseId.orZero()
-        lastChapterNumber = lChapterNumber
-        lastVerseNumber = lVerseNumber
-        lastVerseId = this@mapToRealm.lastVerseId.orZero()
-        versesCount = this@mapToRealm.versesCount.orZero()
-    }
+    return JuzRoom(
+        id = id.orZero(),
+        juzNumber = juzNumber.orZero(),
+        chapters = chaptersMapping, // "2,3"
+        firstChapterNumber = fChapterNumber,
+        firstVerseNumber = fVerseNumber,
+        firstVerseId = firstVerseId.orZero(),
+        lastChapterNumber = lChapterNumber,
+        lastVerseNumber = lVerseNumber,
+        lastVerseId = lastVerseId.orZero(),
+        versesCount = versesCount.orZero(),
+    )
 }
 
-internal fun JuzRealm.mapToModel(): Juz {
+internal fun JuzRoom.mapToModel(): Juz {
     val chapterIds = chapters.split(",").map { it.toInt() }
 
     return Juz(
@@ -144,21 +144,21 @@ internal fun JuzRealm.mapToModel(): Juz {
     )
 }
 
-internal fun PageEntity.mapToRealm(): PageRealm =
-    PageRealm().apply {
-        id = this@mapToRealm.id.orZero()
-        pageNumber = this@mapToRealm.pageNumber.orZero()
-        chapters = this@mapToRealm.chapters.orEmpty()
-        firstChapterNumber = this@mapToRealm.firstChapterNumber.orZero()
-        firstVerseNumber = this@mapToRealm.firstVerseNumber.orZero()
-        firstVerseId = this@mapToRealm.firstVerseId.orZero()
-        lastChapterNumber = this@mapToRealm.lastChapterNumber.orZero()
-        lastVerseNumber = this@mapToRealm.lastVerseNumber.orZero()
-        lastVerseId = this@mapToRealm.lastVerseId.orZero()
-        versesCount = this@mapToRealm.versesCount.orZero()
-    }
+internal fun PageEntity.mapToRoom(): PageRoom =
+    PageRoom(
+        id = id.orZero(),
+        pageNumber = pageNumber.orZero(),
+        chapters = chapters.orEmpty(),
+        firstChapterNumber = firstChapterNumber.orZero(),
+        firstVerseNumber = firstVerseNumber.orZero(),
+        firstVerseId = firstVerseId.orZero(),
+        lastChapterNumber = lastChapterNumber.orZero(),
+        lastVerseNumber = lastVerseNumber.orZero(),
+        lastVerseId = lastVerseId.orZero(),
+        versesCount = versesCount.orZero(),
+    )
 
-internal fun PageRealm.mapToModel(): Page {
+internal fun PageRoom.mapToModel(): Page {
     val chapterIds = chapters.split(",").map { it.toInt() }
 
     return Page(
@@ -175,14 +175,14 @@ internal fun PageRealm.mapToModel(): Page {
     )
 }
 
-internal fun VersesEntity.mapToRealm(
+internal fun VersesEntity.mapToRoom(
     indopak: List<String>,
     uthmani: List<String>,
     uthmaniTajweed: List<String>,
     transliteration: List<String>,
-): List<VerseRealm> =
+): List<VerseRoom> =
     verses?.mapIndexed { index, entity ->
-        entity.mapToRealm(
+        entity.mapToRoom(
             indopak = indopak[index],
             uthmani = uthmani[index],
             uthmaniTajweed = uthmaniTajweed[index],
@@ -190,51 +190,50 @@ internal fun VersesEntity.mapToRealm(
         )
     } ?: listOf()
 
-internal fun VersesEntity.VerseEntity.mapToRealm(
+internal fun VersesEntity.VerseEntity.mapToRoom(
     indopak: String,
     uthmani: String,
     uthmaniTajweed: String,
     transliteration: String,
-): VerseRealm {
+): VerseRoom {
     val translationId =
         translations
-            ?.first { it.resourceId == AppSetting.Language.INDONESIAN.translationId }
+            ?.firstOrNull { it.resourceId == AppSetting.Language.INDONESIAN.translationId }
             ?.text
             .orEmpty()
     val translationEn =
         translations
-            ?.first { it.resourceId == AppSetting.Language.ENGLISH.translationId }
+            ?.firstOrNull { it.resourceId == AppSetting.Language.ENGLISH.translationId }
             ?.text
             .orEmpty()
 
-    return VerseRealm().apply {
-        id = this@mapToRealm.id.orZero()
+    return VerseRoom(
+        id = id.orZero(),
         chapterId =
-            this@mapToRealm
-                .verseKey
+            verseKey
                 .orEmpty()
                 .split(":")
                 .first()
-                .toInt()
-        verseNumber = this@mapToRealm.verseNumber.orZero()
-        verseKey = this@mapToRealm.verseKey.orEmpty()
-        hizbNumber = this@mapToRealm.hizbNumber.orZero()
-        rubElHizbNumber = this@mapToRealm.rubElHizbNumber.orZero()
-        rukuNumber = this@mapToRealm.rukuNumber.orZero()
-        manzilNumber = this@mapToRealm.manzilNumber.orZero()
-        sajdahNumber = this@mapToRealm.sajdahNumber.orZero()
-        pageNumber = this@mapToRealm.pageNumber.orZero()
-        juzNumber = this@mapToRealm.juzNumber.orZero()
-        textIndopak = indopak
-        textUthmani = uthmani
-        textUthmaniTajweed = uthmaniTajweed
-        textTransliteration = transliteration
-        textTranslationId = cleanVerseTranslation(translationId)
-        textTranslationEn = cleanVerseTranslation(translationEn)
-    }
+                .toInt(),
+        verseNumber = verseNumber.orZero(),
+        verseKey = verseKey.orEmpty(),
+        hizbNumber = hizbNumber.orZero(),
+        rubElHizbNumber = rubElHizbNumber.orZero(),
+        rukuNumber = rukuNumber.orZero(),
+        manzilNumber = manzilNumber.orZero(),
+        sajdahNumber = sajdahNumber.orZero(),
+        pageNumber = pageNumber.orZero(),
+        juzNumber = juzNumber.orZero(),
+        textIndopak = indopak,
+        textUthmani = uthmani,
+        textUthmaniTajweed = uthmaniTajweed,
+        textTransliteration = transliteration,
+        textTranslationId = cleanVerseTranslation(translationId),
+        textTranslationEn = cleanVerseTranslation(translationEn),
+    )
 }
 
-internal fun VerseRealm.mapToModel(setting: AppSetting): Verse {
+internal fun VerseRoom.mapToModel(setting: AppSetting): Verse {
     val textArabic =
         when (setting.arabicStyle) {
             AppSetting.ArabicStyle.INDOPAK -> textIndopak

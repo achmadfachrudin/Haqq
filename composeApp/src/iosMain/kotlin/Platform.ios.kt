@@ -1,3 +1,4 @@
+import data.AppDatabase
 import org.koin.dsl.module
 import platform.UIKit.UIDevice
 
@@ -12,10 +13,10 @@ class IOSPlatform : Platform {
         get() = UIDevice.currentDevice.name
 
     override val appVersionName: String
-        get() = "1.0.17"
+        get() = "1.0.18"
 
     override val appVersionCode: Int
-        get() = 17
+        get() = 18
 
     override val isIOS: Boolean = true
 
@@ -32,7 +33,8 @@ class IOSPlatform : Platform {
 
 actual fun getPlatform(): Platform = IOSPlatform()
 
-actual val targetModule =
+actual val platformModule =
     module {
         single<Localization> { Localization() }
+        single<AppDatabase> { createRoomDatabase() }
     }

@@ -2,14 +2,15 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.jetbrains.kotlin.plugin.compose)
     alias(libs.plugins.jetbrains.kotlin.multiplatform)
     alias(libs.plugins.jetbrains.kotlin.serialization)
-    alias(libs.plugins.realm.kotlin)
+    alias(libs.plugins.room)
+    alias(libs.plugins.ksp)
 
     // Android
+    alias(libs.plugins.android.application)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
 }
@@ -37,8 +38,9 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
-            implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.android.compose)
+
+            implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.ktor.client.okhttp)
 
             implementation(libs.play.services.location)
@@ -71,21 +73,30 @@ kotlin {
             implementation(libs.kottie)
 
             // Data
-            implementation(libs.realm.core)
+            implementation(libs.room.runtime)
+            implementation(libs.sqlite.bundled)
             implementation(libs.ktor.core)
             implementation(libs.ktor.json)
             implementation(libs.ktor.logging)
             implementation(libs.ktor.negotiation)
-            implementation(libs.ksoup.entities)
 
             // Util
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.datetime)
             implementation(libs.napier.logging)
+            implementation(libs.ksoup.entities)
         }
     }
 
     task("testClasses")
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
+}
+
+dependencies {
+    ksp(libs.room.compiler)
 }
 
 android {
@@ -109,8 +120,8 @@ android {
             libs.versions.android.targetSdk
                 .get()
                 .toInt()
-        versionName = "1.0.17"
-        versionCode = 17
+        versionName = "1.0.18"
+        versionCode = 18
     }
     packaging {
         resources {

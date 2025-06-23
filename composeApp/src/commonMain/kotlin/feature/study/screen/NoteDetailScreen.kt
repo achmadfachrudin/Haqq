@@ -55,6 +55,7 @@ import haqq.composeapp.generated.resources.note_title
 import haqq.composeapp.generated.resources.ok
 import haqq.composeapp.generated.resources.save
 import haqq.composeapp.generated.resources.study_note_new
+import haqq.composeapp.generated.resources.study_note_title
 import haqq.composeapp.generated.resources.trash_2
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
@@ -92,7 +93,12 @@ fun NoteDetailScreen(
     Scaffold(
         topBar = {
             BaseTopAppBar(
-                title = stringResource(Res.string.study_note_new),
+                title =
+                    if (state.note?.id.isNullOrZero()) {
+                        stringResource(Res.string.study_note_new)
+                    } else {
+                        stringResource(Res.string.study_note_title)
+                    },
                 showOptionalButton = !state.note?.id.isNullOrZero(),
                 showRightButton = true,
                 optionalButtonImage = painterResource(Res.drawable.trash_2),

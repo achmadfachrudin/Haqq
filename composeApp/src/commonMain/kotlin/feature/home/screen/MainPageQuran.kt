@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -25,6 +24,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -83,6 +83,7 @@ import org.koin.mp.KoinPlatform
 
 @Composable
 internal fun MainPageQuran(
+    vm: MainScreenModel,
     state: MainScreenModel.State,
     onRetryClick: () -> Unit,
     onLastReadClick: (lastRead: LastRead) -> Unit,
@@ -133,7 +134,7 @@ internal fun MainPageQuran(
             verticalAlignment = Alignment.Top,
         ) { index ->
             when (index) {
-                0 -> {
+                MainScreenModel.QuranTabState.CHAPTER.ordinal -> {
                     ChapterContent(
                         state = state.quranChapterState,
                         onRetryClick = onRetryClick,
@@ -141,7 +142,7 @@ internal fun MainPageQuran(
                     )
                 }
 
-                1 -> {
+                MainScreenModel.QuranTabState.JUZ.ordinal -> {
                     if (state.quranDownloadState == MainScreenModel.QuranDownloadState.Done) {
                         JuzContent(
                             state = state.quranJuzState,
@@ -153,7 +154,7 @@ internal fun MainPageQuran(
                     }
                 }
 
-                2 -> {
+                MainScreenModel.QuranTabState.PAGE.ordinal -> {
                     if (state.quranDownloadState == MainScreenModel.QuranDownloadState.Done) {
                         PageContent(
                             state = state.quranPageState,
@@ -167,12 +168,20 @@ internal fun MainPageQuran(
 
                 else -> {
                     FavoriteContent(
-                        favorites = state.favorites,
+                        favorites = state.verseFavorites,
                         onFavoriteClick = onFavoriteClick,
                         onRemoveFavoriteClick = onRemoveFavoriteClick,
                     )
                 }
             }
+        }
+
+        LaunchedEffect(pagerState.currentPage) {
+            vm.updateQuranTab(MainScreenModel.QuranTabState.entries[pagerState.currentPage])
+        }
+
+        LaunchedEffect(Unit) {
+            vm.getQuran2()
         }
     }
 
@@ -491,14 +500,13 @@ private fun LastReadCard(
             .replace("%2", lastRead.verseNumber.toString())
 
     Card(
-        modifier = Modifier.fillMaxWidth().padding(16.dp),
+        modifier = Modifier.fillMaxWidth().padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 8.dp),
         onClick = { onClick() },
     ) {
         Row(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .height(80.dp)
                     .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -511,7 +519,7 @@ private fun LastReadCard(
             }
             Box(contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(
-                    modifier = Modifier.size(50.dp),
+                    modifier = Modifier.size(42.dp),
                     progress = { lastRead.progressFloat },
                     strokeWidth = 5.dp,
                     trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
@@ -519,7 +527,7 @@ private fun LastReadCard(
 
                 BaseText(
                     text = "${lastRead.progressInt}%",
-                    style = getHaqqTypography().bodySmall,
+                    style = getHaqqTypography().labelSmall,
                 )
             }
         }
@@ -539,9 +547,8 @@ private fun ChapterCard(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .clickable {
-                        onClick(chapter)
-                    }.padding(16.dp),
+                    .clickable { onClick(chapter) }
+                    .padding(vertical = 4.dp, horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {

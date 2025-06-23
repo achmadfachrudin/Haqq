@@ -3,47 +3,48 @@ package feature.home.service.mapper
 import core.util.orZero
 import feature.dhikr.service.model.DhikrType
 import feature.home.service.entity.HomeTemplateEntity
-import feature.home.service.entity.HomeTemplateRealm
+import feature.home.service.entity.HomeTemplateRoom
 import feature.home.service.model.HomeTemplate
 import feature.home.service.model.TemplateType
 import feature.other.service.AppRepository
 import feature.other.service.model.AppSetting
-import feature.prayertime.service.PrayerRepository
+import feature.prayertime.service.model.PrayerTime
 import feature.prayertime.service.model.Salah
-import feature.quran.service.QuranRepository
 import feature.quran.service.model.Verse
 import haqq.composeapp.generated.resources.Res
 import haqq.composeapp.generated.resources.prayer_enable_gps
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.withContext
 import org.koin.mp.KoinPlatform
 
-internal fun HomeTemplateEntity.mapToHomeTemplateRealm(): HomeTemplateRealm {
-    val itemType = this@mapToHomeTemplateRealm.type.orEmpty()
-    val itemPosition = this@mapToHomeTemplateRealm.position.orZero()
-    return HomeTemplateRealm().apply {
-        position = itemPosition
-        type = itemType
-        labelId = this@mapToHomeTemplateRealm.label?.id.orEmpty()
-        labelEn = this@mapToHomeTemplateRealm.label?.en.orEmpty()
-        textId = this@mapToHomeTemplateRealm.text?.id.orEmpty()
-        textEn = this@mapToHomeTemplateRealm.text?.en.orEmpty()
-        images = this@mapToHomeTemplateRealm.images.orEmpty()
-        links = this@mapToHomeTemplateRealm.links.orEmpty()
-    }
+internal fun HomeTemplateEntity.mapToRoom(): HomeTemplateRoom {
+    val itemType = type.orEmpty()
+    val itemPosition = position.orZero()
+    return HomeTemplateRoom(
+        position = itemPosition,
+        type = itemType,
+        labelId = label?.id.orEmpty(),
+        labelEn = label?.en.orEmpty(),
+        textId = text?.id.orEmpty(),
+        textEn = text?.en.orEmpty(),
+        images = images.orEmpty(),
+        links = links.orEmpty(),
+    )
 }
 
-internal suspend fun List<HomeTemplateRealm>.mapToModel(): List<HomeTemplate> =
+internal suspend fun List<HomeTemplateRoom>.mapToModel(
+    lastReadVerse: Verse,
+    quranVerse: Verse,
+    prayerTimeToday: PrayerTime?,
+    prayerTimeNext: Triple<Salah, String, Boolean>,
+    dhikrType: DhikrType?,
+): List<HomeTemplate> =
     withContext(Dispatchers.IO) {
         val appRepository = KoinPlatform.getKoin().get<AppRepository>()
-        val prayerRepository = KoinPlatform.getKoin().get<PrayerRepository>()
-        val quranRepository = KoinPlatform.getKoin().get<QuranRepository>()
         val language = appRepository.getSetting().language
 
         val templates = mutableListOf<HomeTemplate>()
-        var dhikrType: DhikrType? = null
 
         this@mapToModel
             .sortedBy { it.position }
@@ -67,71 +68,35 @@ internal suspend fun List<HomeTemplateRealm>.mapToModel(): List<HomeTemplate> =
 
                 when (type) {
                     TemplateType.PRAYER_TIME -> {
-                        prayerRepository
-                            .fetchTodayTomorrowPrayerTimes()
-                            .collectLatest { times ->
-                                if (times.data.isEmpty()) {
-                                    templates.add(
-                                        HomeTemplate.Message(
-                                            position = position,
-                                            type = type,
-                                            label = label,
-                                            textString = text,
-                                            textResource = Res.string.prayer_enable_gps,
-                                        ),
-                                    )
-                                } else {
-                                    val today = times.data.first()
-                                    val tomorrow = times.data.last()
-                                    val nextTime =
-                                        today.whatNextPrayerTime(tomorrow, true)
-
-                                    val dayName =
-                                        when (appRepository.getSetting().language) {
-                                            AppSetting.Language.ENGLISH -> today.day.dayNameEn
-                                            AppSetting.Language.INDONESIAN -> today.day.dayNameId
-                                        }
-
-                                    templates.add(
-                                        HomeTemplate.PrayerTime(
-                                            position = position,
-                                            type = type,
-                                            label = label,
-                                            date = "$dayName, ${today.hijri.fullDate} / ${today.gregorian.fullDate}",
-                                            locationName = today.locationName,
-                                            nextPrayerName = nextTime.first.titleRes,
-                                            nextPrayerTime = nextTime.second,
-                                        ),
-                                    )
-
-                                    when (nextTime.first) {
-                                        Salah.IMSAK,
-                                        Salah.SUBUH,
-                                        -> {
-                                            dhikrType = DhikrType.SLEEP
-                                        }
-
-                                        Salah.SYURUQ,
-                                        Salah.ZHUHUR,
-                                        -> {
-                                            dhikrType = DhikrType.MORNING
-                                        }
-
-                                        Salah.ASHAR -> {
-                                        }
-
-                                        Salah.MAGHRIB,
-                                        Salah.ISYA,
-                                        -> {
-                                            dhikrType = DhikrType.AFTERNOON
-                                        }
-
-                                        Salah.LASTTHIRD -> {
-                                            dhikrType = DhikrType.SLEEP
-                                        }
-                                    }
+                        prayerTimeToday?.let { today ->
+                            val prayerTimeDate =
+                                when (appRepository.getSetting().language) {
+                                    AppSetting.Language.ENGLISH -> today.day.dayNameEn
+                                    AppSetting.Language.INDONESIAN -> today.day.dayNameId
                                 }
-                            }
+
+                            templates.add(
+                                HomeTemplate.PrayerTime(
+                                    position = position,
+                                    type = type,
+                                    label = label,
+                                    date = prayerTimeDate,
+                                    locationName = today.locationName,
+                                    nextPrayerName = prayerTimeNext.first.titleRes,
+                                    nextPrayerTime = prayerTimeNext.second,
+                                ),
+                            )
+                        } ?: run {
+                            templates.add(
+                                HomeTemplate.Message(
+                                    position = position,
+                                    type = type,
+                                    label = label,
+                                    textString = text,
+                                    textResource = Res.string.prayer_enable_gps,
+                                ),
+                            )
+                        }
                     }
 
                     TemplateType.DHIKR -> {
@@ -202,59 +167,33 @@ internal suspend fun List<HomeTemplateRealm>.mapToModel(): List<HomeTemplate> =
                     }
 
                     TemplateType.LAST_READ -> {
-                        val lastRead = quranRepository.getLastRead()
+                        val chapterId = lastReadVerse.chapterId
+                        val verseNumber = lastReadVerse.verseNumber
+                        val textArabic = lastReadVerse.textArabic
 
-                        if (quranRepository.isVerseDownloaded(lastRead.verseId)) {
-                            val verse = quranRepository.getVerseById(lastRead.verseId)
-
-                            val chapterId = lastRead.chapterId
-                            val verseNumber = lastRead.verseNumber
-                            val textArabic = verse.textArabic
-
-                            templates.add(
-                                HomeTemplate.LastRead(
-                                    position = position,
-                                    type = type,
-                                    label = label,
-                                    arabic = textArabic,
-                                    chapterNumber = chapterId,
-                                    verseNumber = verseNumber,
-                                ),
-                            )
-                        }
+                        templates.add(
+                            HomeTemplate.LastRead(
+                                position = position,
+                                type = type,
+                                label = label,
+                                arabic = textArabic,
+                                chapterNumber = chapterId,
+                                verseNumber = verseNumber,
+                            ),
+                        )
                     }
 
                     TemplateType.QURAN_VERSE -> {
-                        val quranVerse: Verse?
-
-                        if (links.isNotEmpty()) {
-                            val chapterId = links[0].toInt()
-                            val verseNumber = links[1].toInt()
-                            val verseId = links[2].toInt()
-                            val isRandom = links.getOrElse(3) { "false" } == "true"
-
-                            quranVerse =
-                                if (!isRandom && quranRepository.isVerseDownloaded(verseId)) {
-                                    quranRepository.getVerseById(verseId)
-                                } else {
-                                    quranRepository.getRandomVerse()
-                                }
-                        } else {
-                            quranVerse = quranRepository.getRandomVerse()
-                        }
-
-                        quranVerse.let { verse ->
-                            templates.add(
-                                HomeTemplate.QuranVerse(
-                                    position = position,
-                                    type = type,
-                                    label = label,
-                                    translation = verse.textTranslation,
-                                    chapterNumber = verse.chapterId,
-                                    verseNumber = verse.verseNumber,
-                                ),
-                            )
-                        }
+                        templates.add(
+                            HomeTemplate.QuranVerse(
+                                position = position,
+                                type = type,
+                                label = label,
+                                translation = quranVerse.textTranslation,
+                                chapterNumber = quranVerse.chapterId,
+                                verseNumber = quranVerse.verseNumber,
+                            ),
+                        )
                     }
 
                     TemplateType.VIDEO -> {

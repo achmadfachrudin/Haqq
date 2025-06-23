@@ -71,7 +71,7 @@ class DhikrListScreenModel(
         viewModelScope.launch {
             repository.resetDhikrCount(dhikrType)
 
-            delay(200)
+            delay(300)
             getDzikir(dhikrType)
         }
     }

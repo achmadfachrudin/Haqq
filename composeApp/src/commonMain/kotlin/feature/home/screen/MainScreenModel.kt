@@ -1,5 +1,6 @@
 package feature.home.screen
 
+import AppConstant.DEFAULT_CHAPTER_ID
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -17,10 +18,10 @@ import feature.quran.service.model.LastRead
 import feature.quran.service.model.Page
 import feature.quran.service.model.QuranConstant.MAX_CHAPTER
 import feature.quran.service.model.VerseFavorite
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.launch
@@ -36,29 +37,41 @@ class MainScreenModel(
 ) : ViewModel() {
     val mutableState = MutableStateFlow(State())
     val state: StateFlow<State> = mutableState.asStateFlow()
-    var shouldRefresh by mutableStateOf(true)
+    var shouldRefreshHome by mutableStateOf(true)
+    var shouldRefreshQuranChapter by mutableStateOf(true)
+    var shouldRefreshQuranJuz by mutableStateOf(true)
+    var shouldRefreshQuranPage by mutableStateOf(true)
+    var shouldRefreshQuranFavorite by mutableStateOf(true)
 
     data class State(
         val acceptPrivacyPolicy: Boolean = true, // for offline connection
         val location: AppSetting.Location? = null,
         val shouldShowSupport: Boolean = false,
-        val pageState: PageState = PageState.HOME,
+        val mainPageState: MainPageState = MainPageState.HOME,
         val homeState: HomeState = HomeState.Loading,
         val lastRead: LastRead = LastRead(),
+        val quranTabState: QuranTabState = QuranTabState.CHAPTER,
         val quranDownloadState: QuranDownloadState = QuranDownloadState.Done,
         val quranChapterState: QuranChapterState = QuranChapterState.Loading,
         val quranJuzState: QuranJuzState = QuranJuzState.Loading,
         val quranPageState: QuranPageState = QuranPageState.Loading,
-        val favorites: List<VerseFavorite> = listOf(),
+        val verseFavorites: List<VerseFavorite> = listOf(),
         val verseDownloading: Int = 1,
     )
 
-    enum class PageState {
+    enum class MainPageState {
         HOME,
         DHIKR,
         QURAN,
         PRAYER,
         ACTIVITY,
+    }
+
+    enum class QuranTabState {
+        CHAPTER,
+        JUZ,
+        PAGE,
+        FAVORITE,
     }
 
     sealed class HomeState {
@@ -117,14 +130,41 @@ class MainScreenModel(
         ) : QuranPageState()
     }
 
-    fun updatePage(page: PageState) {
+    fun updatePage(page: MainPageState) {
         viewModelScope.launch {
-            mutableState.value = state.value.copy(pageState = page)
+            mutableState.value = state.value.copy(mainPageState = page)
+        }
+    }
+
+    fun updateQuranTab(tab: QuranTabState) {
+        viewModelScope.launch {
+            when (tab) {
+                QuranTabState.CHAPTER -> {
+                    getQuranChapters()
+                }
+                QuranTabState.JUZ -> {
+                    getQuranJuzs()
+                }
+                QuranTabState.PAGE -> {
+                    getQuranPages()
+                }
+                QuranTabState.FAVORITE -> {
+                    getQuranFavorites()
+                }
+            }
+
+            mutableState.value = state.value.copy(quranTabState = tab)
         }
     }
 
     fun onViewed() {
         viewModelScope.launch {
+            // get first chapter
+            if (!quranRepository.isChapterDownloaded(DEFAULT_CHAPTER_ID)) {
+                quranRepository.fetchChapters().last()
+                quranRepository.fetchVersesByChapter(DEFAULT_CHAPTER_ID).last()
+            }
+
             val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
 
             mutableState.value =
@@ -133,15 +173,13 @@ class MainScreenModel(
                     location = appRepository.getSetting().location,
                     shouldShowSupport = today.dayOfWeek == DayOfWeek.FRIDAY,
                 )
-
-            getQuran()
-            getMain()
         }
     }
 
     fun acceptPrivacyPolicy() {
         viewModelScope.launch {
             appRepository.updateAcceptPrivacyPolicy()
+
             mutableState.value =
                 state.value.copy(
                     acceptPrivacyPolicy = appRepository.getSetting().acceptPrivacyPolicy,
@@ -149,7 +187,7 @@ class MainScreenModel(
         }
     }
 
-    fun getMain() {
+    fun getHome() {
         viewModelScope.launch {
             homeRepository.fetchHomeTemplates().collectLatest {
                 val homeState =
@@ -164,13 +202,27 @@ class MainScreenModel(
         }
     }
 
-    fun getQuran() {
+    fun getQuran2() {
+        viewModelScope.launch {
+            val lastRead = quranRepository.getLastRead()
+            val downloadState =
+                if (quranRepository.checkIsAllDownloaded()) {
+                    QuranDownloadState.Done
+                } else {
+                    QuranDownloadState.Ready
+                }
+
+            mutableState.value =
+                state.value.copy(
+                    lastRead = lastRead,
+                    quranDownloadState = downloadState,
+                )
+        }
+    }
+
+    fun getQuranChapters() {
         viewModelScope.launch {
             quranRepository.fetchChapters().collectLatest {
-                var downloadState: QuranDownloadState = QuranDownloadState.Ready
-                var juzState: QuranJuzState = QuranJuzState.Loading
-                var pageState: QuranPageState = QuranPageState.Loading
-
                 val chapterState =
                     when (it) {
                         is DataState.Error -> QuranChapterState.Error(it.message)
@@ -178,55 +230,60 @@ class MainScreenModel(
                         is DataState.Success -> QuranChapterState.Content(chapters = it.data)
                     }
 
-                if (chapterState is QuranChapterState.Content) {
-                    downloadState =
-                        if (quranRepository.checkIsAllDownloaded()) {
-                            quranRepository.addPages().last()
-
-                            QuranDownloadState.Done
-                        } else {
-                            QuranDownloadState.Ready
-                        }
-
-                    juzState =
-                        when (val result = quranRepository.fetchJuzs().last()) {
-                            is DataState.Error -> QuranJuzState.Error(result.message)
-                            DataState.Loading -> QuranJuzState.Loading
-                            is DataState.Success -> QuranJuzState.Content(juzs = result.data)
-                        }
-
-                    pageState =
-                        QuranPageState.Content(
-                            pages = quranRepository.fetchPages().last(),
-                        )
-                }
-
                 mutableState.value =
                     state.value.copy(
-                        lastRead = quranRepository.getLastRead(),
-                        quranDownloadState = downloadState,
                         quranChapterState = chapterState,
-                        quranJuzState = juzState,
-                        quranPageState = pageState,
-                        favorites = quranRepository.getVerseFavorites(),
                     )
             }
         }
     }
 
-    fun getLastRead() {
+    fun getQuranJuzs() {
         viewModelScope.launch {
-            val lastRead = quranRepository.getLastRead()
+            quranRepository.fetchJuzs().collectLatest {
+                val juzState =
+                    when (it) {
+                        is DataState.Error -> QuranJuzState.Error(it.message)
+                        DataState.Loading -> QuranJuzState.Loading
+                        is DataState.Success -> QuranJuzState.Content(juzs = it.data)
+                    }
 
-            mutableState.value = state.value.copy(lastRead = lastRead)
+                mutableState.value =
+                    state.value.copy(
+                        quranJuzState = juzState,
+                    )
+            }
+        }
+    }
+
+    fun getQuranPages() {
+        viewModelScope.launch {
+            val pageState =
+                QuranPageState.Content(
+                    pages = quranRepository.fetchPages().last(),
+                )
+
+            mutableState.value =
+                state.value.copy(
+                    quranPageState = pageState,
+                )
+        }
+    }
+
+    fun getQuranFavorites() {
+        viewModelScope.launch {
+            mutableState.value =
+                state.value.copy(
+                    verseFavorites = quranRepository.getVerseFavorites(),
+                )
         }
     }
 
     fun addOrRemoveFavorite(verse: VerseFavorite) {
         viewModelScope.launch {
             quranRepository.addOrRemoveVerseFavorites(verse)
-
-            mutableState.value = state.value.copy(favorites = quranRepository.getVerseFavorites())
+            delay(300)
+            getQuranFavorites()
         }
     }
 
@@ -236,12 +293,16 @@ class MainScreenModel(
                 state.value.copy(quranDownloadState = QuranDownloadState.Downloading)
 
             for (i in 1..MAX_CHAPTER) {
-                quranRepository.downloadVerses(i).collect()
+                quranRepository.downloadVerses(i).last()
                 mutableState.value =
                     state.value.copy(verseDownloading = i)
             }
 
-            getQuran()
+            getQuran2()
+            getQuranChapters()
+            getQuranJuzs()
+            getQuranPages()
+            getQuranFavorites()
         }
     }
 }

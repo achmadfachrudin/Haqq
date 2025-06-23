@@ -333,7 +333,7 @@ fun VerseListScreen(
                                 onClick = {
                                     vm.updateQuery("")
                                     scope.launch {
-                                        delay(500)
+                                        delay(300)
                                         listState.scrollToItem(
                                             index =
                                                 vm.getIndex(

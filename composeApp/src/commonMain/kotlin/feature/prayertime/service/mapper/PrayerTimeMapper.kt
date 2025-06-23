@@ -3,7 +3,7 @@ package feature.prayertime.service.mapper
 import core.util.orZero
 import feature.prayertime.service.entity.ConvertDateEntity
 import feature.prayertime.service.entity.HaqqCalendarEntity
-import feature.prayertime.service.entity.PrayerTimeRealm
+import feature.prayertime.service.entity.PrayerTimeRoom
 import feature.prayertime.service.entity.PrayertimeEntity
 import feature.prayertime.service.model.GregorianMonth
 import feature.prayertime.service.model.HaqqCalendar
@@ -58,31 +58,32 @@ internal fun ConvertDateEntity.mapToHijri(): Triple<Int, Int, Int> {
     return Triple(date, month, year)
 }
 
-internal fun PrayertimeEntity.Data.mapToPrayerTimeRealm(locationName: String): PrayerTimeRealm {
+internal fun PrayertimeEntity.Data.mapToRoom(locationName: String): PrayerTimeRoom {
     val gYear = date.gregorian.year?.toInt()
     val gMonth = date.gregorian.month?.number
     val gDate = date.gregorian.day?.toInt()
 
-    return PrayerTimeRealm().apply {
-        gregorianFullDate = "$gYear-$gMonth-$gDate"
-        gregorianDate = gDate ?: DEFAULT_GREGORIAN_DATE
-        gregorianMonth = gMonth ?: DEFAULT_GREGORIAN_MONTH
-        gregorianYear = gYear ?: DEFAULT_GREGORIAN_YEAR
-        hijriDate = date.hijri.day?.toInt() ?: DEFAULT_HIJRI_DATE
-        hijriMonth = date.hijri.month?.number ?: DEFAULT_HIJRI_MONTH
-        hijriYear = date.hijri.year?.toInt() ?: DEFAULT_HIJRI_YEAR
-        day = date.gregorian.weekday.en
-            ?.uppercase() ?: DEFAULT_GREGORIAN_WEEKDAY
-        this.locationName = locationName
-        timeImsak = timings.Imsak ?: DEFAULT_TIME
-        timeSubuh = timings.Fajr ?: DEFAULT_TIME
-        timeSyuruq = timings.Sunrise ?: DEFAULT_TIME
-        timeZhuhur = timings.Dhuhr ?: DEFAULT_TIME
-        timeAshar = timings.Asr ?: DEFAULT_TIME
-        timeMaghrib = timings.Maghrib ?: DEFAULT_TIME
-        timeIsya = timings.Isha ?: DEFAULT_TIME
-        timeLastThird = timings.Lastthird ?: DEFAULT_TIME
-    }
+    return PrayerTimeRoom(
+        gregorianFullDate = "$gYear-$gMonth-$gDate",
+        gregorianDate = gDate ?: DEFAULT_GREGORIAN_DATE,
+        gregorianMonth = gMonth ?: DEFAULT_GREGORIAN_MONTH,
+        gregorianYear = gYear ?: DEFAULT_GREGORIAN_YEAR,
+        hijriDate = date.hijri.day?.toInt() ?: DEFAULT_HIJRI_DATE,
+        hijriMonth = date.hijri.month?.number ?: DEFAULT_HIJRI_MONTH,
+        hijriYear = date.hijri.year?.toInt() ?: DEFAULT_HIJRI_YEAR,
+        day =
+            date.gregorian.weekday.en
+                ?.uppercase() ?: DEFAULT_GREGORIAN_WEEKDAY,
+        locationName = locationName,
+        timeImsak = timings.Imsak ?: DEFAULT_TIME,
+        timeSubuh = timings.Fajr ?: DEFAULT_TIME,
+        timeSyuruq = timings.Sunrise ?: DEFAULT_TIME,
+        timeZhuhur = timings.Dhuhr ?: DEFAULT_TIME,
+        timeAshar = timings.Asr ?: DEFAULT_TIME,
+        timeMaghrib = timings.Maghrib ?: DEFAULT_TIME,
+        timeIsya = timings.Isha ?: DEFAULT_TIME,
+        timeLastThird = timings.Lastthird ?: DEFAULT_TIME,
+    )
 }
 
 internal fun PrayertimeEntity.Data.mapToPrayerTime(): PrayerTime {
@@ -149,7 +150,7 @@ internal fun PrayertimeEntity.Data.mapToPrayerTime(): PrayerTime {
     )
 }
 
-internal fun PrayerTimeRealm.mapToModel(): PrayerTime {
+internal fun PrayerTimeRoom.mapToModel(): PrayerTime {
     val timeImsak = timeImsak
     val timeSubuh = timeSubuh
     val timeSyuruq = timeSyuruq

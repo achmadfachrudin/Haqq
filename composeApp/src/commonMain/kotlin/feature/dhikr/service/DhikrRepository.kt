@@ -1,39 +1,32 @@
 package feature.dhikr.service
 
-import androidx.compose.ui.util.fastFirst
 import core.data.ApiResponse
 import core.data.DataState
-import feature.dhikr.service.entity.AsmaulHusnaRealm
-import feature.dhikr.service.entity.DhikrRealm
-import feature.dhikr.service.entity.DuaCategoryRealm
-import feature.dhikr.service.entity.DuaRealm
-import feature.dhikr.service.mapper.mapToDuaRealm
+import data.AppDatabase
 import feature.dhikr.service.mapper.mapToModel
-import feature.dhikr.service.mapper.mapToRealm
+import feature.dhikr.service.mapper.mapToRoom
 import feature.dhikr.service.model.Dhikr
 import feature.dhikr.service.model.DhikrType
 import feature.dhikr.service.source.remote.DhikrRemote
 import feature.other.service.AppRepository
-import io.realm.kotlin.Realm
-import io.realm.kotlin.ext.query
-import io.realm.kotlin.query.RealmResults
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
 
 class DhikrRepository(
     private val appRepository: AppRepository,
     private val remote: DhikrRemote,
-    private val realm: Realm,
+    private val database: AppDatabase,
 ) {
     fun fetchDhikr(dhikrType: DhikrType) =
         flow {
             val setting = appRepository.getSetting()
-            val localDhikrs: RealmResults<DhikrRealm> =
-                realm.query<DhikrRealm>("type == $0", dhikrType.name).find()
+            val localDhikrs = database.dhikrDao().loadAllByType(listOf(dhikrType.name))
 
             if (localDhikrs.isEmpty()) {
                 when (val result = remote.fetchDhikr(dhikrType)) {
@@ -41,18 +34,12 @@ class DhikrRepository(
                     is ApiResponse.Success -> {
                         val remoteDhikr = result.body
 
-                        realm.writeBlocking {
-                            remoteDhikr.forEach { dhikr ->
-                                copyToRealm(
-                                    dhikr.mapToRealm(dhikrType),
-                                )
-                            }
-                        }
+                        database.dhikrDao().insert(remoteDhikr.map { it.mapToRoom(dhikrType) })
 
                         val dhikrs =
-                            realm
-                                .query<DhikrRealm>("type == $0", dhikrType.name)
-                                .find()
+                            database
+                                .dhikrDao()
+                                .loadAllByType(listOf(dhikrType.name))
                                 .map { it.mapToModel(setting) }
                                 .sortedBy { it.id }
                         emit(DataState.Success(dhikrs))
@@ -60,9 +47,9 @@ class DhikrRepository(
                 }
             } else {
                 val dhikrs =
-                    realm
-                        .query<DhikrRealm>("type == $0", dhikrType.name)
-                        .find()
+                    database
+                        .dhikrDao()
+                        .loadAllByType(listOf(dhikrType.name))
                         .map { it.mapToModel(setting) }
                         .sortedBy { it.id }
                 emit(DataState.Success(dhikrs))
@@ -75,30 +62,43 @@ class DhikrRepository(
         dhikrType: DhikrType,
         dhikr: Dhikr,
     ) {
-        realm.writeBlocking {
-            val localDhikr =
-                this.query<DhikrRealm>("type == $0", dhikrType.name).find().fastFirst {
-                    it.id == dhikr.id
-                }
-
-            localDhikr.count += 1
+        CoroutineScope(Dispatchers.IO).launch {
+            val current =
+                database
+                    .dhikrDao()
+                    .loadAllByType(listOf(dhikrType.name))
+                    .first { it.id == dhikr.id }
+            val updated =
+                current.copy(
+                    count = current.count + 1,
+                )
+            database.dhikrDao().update(updated)
         }
     }
 
     fun resetDhikrCount(dhikrType: DhikrType) {
-        realm.writeBlocking {
-            val localDhikrs = this.query<DhikrRealm>("type == $0", dhikrType.name).find()
-
-            localDhikrs.forEach {
-                it.count = 0
-            }
+        CoroutineScope(Dispatchers.IO).launch {
+            val current =
+                database
+                    .dhikrDao()
+                    .loadAllByType(listOf(dhikrType.name))
+            val updated =
+                current.map {
+                    it.copy(
+                        count = 0,
+                    )
+                }
+            database.dhikrDao().update(updated)
         }
     }
 
     fun fetchDuaCategories(tagFilter: String = "") =
         flow {
             val setting = appRepository.getSetting()
-            val localDuaCategories = realm.query<DuaCategoryRealm>().find()
+            val localDuaCategories =
+                database
+                    .duaCategoryDao()
+                    .getAll()
 
             if (localDuaCategories.isEmpty()) {
                 when (val result = remote.fetchDuaCategories()) {
@@ -106,21 +106,14 @@ class DhikrRepository(
                     is ApiResponse.Success -> {
                         val remoteResult = result.body
 
-                        realm.writeBlocking {
-                            remoteResult.forEach { category ->
-                                copyToRealm(
-                                    category.mapToRealm(),
-                                )
-                            }
-                        }
+                        database.duaCategoryDao().insert(remoteResult.map { it.mapToRoom() })
 
                         val latestCategories =
-                            realm
-                                .query<DuaCategoryRealm>()
-                                .find()
-                                .apply {
-                                    if (tagFilter.isNotEmpty()) filter { it.tag == tagFilter }
-                                }.map { it.mapToModel(setting) }
+                            database
+                                .duaCategoryDao()
+                                .getAll()
+                                .filter { it.tag == tagFilter }
+                                .map { it.mapToModel(setting) }
                                 .sortedBy { it.title }
 
                         emit(DataState.Success(latestCategories))
@@ -128,12 +121,11 @@ class DhikrRepository(
                 }
             } else {
                 val latestCategories =
-                    realm
-                        .query<DuaCategoryRealm>()
-                        .find()
-                        .apply {
-                            if (tagFilter.isNotEmpty()) filter { it.tag == tagFilter }
-                        }.map { it.mapToModel(setting) }
+                    database
+                        .duaCategoryDao()
+                        .getAll()
+                        .filter { it.tag == tagFilter }
+                        .map { it.mapToModel(setting) }
                         .sortedBy { it.title }
 
                 emit(DataState.Success(latestCategories))
@@ -145,7 +137,7 @@ class DhikrRepository(
     fun fetchDuaByTag(tag: String) =
         flow {
             val setting = appRepository.getSetting()
-            val localDuas = realm.query<DuaRealm>().find()
+            val localDuas = database.duaDao().getAll()
 
             if (localDuas.isEmpty()) {
                 when (val result = remote.fetchDuaSunnah()) {
@@ -153,18 +145,12 @@ class DhikrRepository(
                     is ApiResponse.Success -> {
                         val remoteResult = result.body
 
-                        realm.writeBlocking {
-                            remoteResult.forEach { dua ->
-                                copyToRealm(
-                                    dua.mapToDuaRealm(),
-                                )
-                            }
-                        }
+                        database.duaDao().insert(remoteResult.map { it.mapToRoom() })
 
                         val latestDuas =
-                            realm
-                                .query<DuaRealm>()
-                                .find()
+                            database
+                                .duaDao()
+                                .getAll()
                                 .filter { it.tag.contains(tag) }
                                 .map { it.mapToModel(setting) }
                                 .sortedBy { it.title }
@@ -174,9 +160,9 @@ class DhikrRepository(
                 }
             } else {
                 val latestDuas =
-                    realm
-                        .query<DuaRealm>()
-                        .find()
+                    database
+                        .duaDao()
+                        .getAll()
                         .filter { it.tag.contains(tag) }
                         .map { it.mapToModel(setting) }
                         .sortedBy { it.title }
@@ -190,41 +176,35 @@ class DhikrRepository(
     fun fetchAsmaulHusna() =
         flow {
             val setting = appRepository.getSetting()
-            val localDhikrs = realm.query<AsmaulHusnaRealm>().find()
+            val localAsmaul = database.asmaulHusnaDao().getAll()
 
-            if (localDhikrs.isEmpty()) {
+            if (localAsmaul.isEmpty()) {
                 when (val result = remote.fetchAsmaulHusna()) {
                     is ApiResponse.Error -> emit(DataState.Error(result.message))
                     is ApiResponse.Success -> {
                         val remoteResult = result.body
 
-                        realm.writeBlocking {
-                            remoteResult.forEach { dhikr ->
-                                copyToRealm(
-                                    dhikr.mapToRealm(),
-                                )
-                            }
-                        }
+                        database.asmaulHusnaDao().insert(remoteResult.map { it.mapToRoom() })
 
-                        val latestDhikrs =
-                            realm
-                                .query<AsmaulHusnaRealm>()
-                                .find()
+                        val latestAsmaul =
+                            database
+                                .asmaulHusnaDao()
+                                .getAll()
                                 .map { it.mapToModel(setting) }
                                 .sortedBy { it.id }
 
-                        emit(DataState.Success(latestDhikrs))
+                        emit(DataState.Success(latestAsmaul))
                     }
                 }
             } else {
-                val latestDhikrs =
-                    realm
-                        .query<AsmaulHusnaRealm>()
-                        .find()
+                val latestAsmaul =
+                    database
+                        .asmaulHusnaDao()
+                        .getAll()
                         .map { it.mapToModel(setting) }
                         .sortedBy { it.id }
 
-                emit(DataState.Success(latestDhikrs))
+                emit(DataState.Success(latestAsmaul))
             }
         }.onStart { emit(DataState.Loading) }
             .catch { emit(DataState.Error(it.message.orEmpty())) }

@@ -173,14 +173,16 @@ private fun PrayerTimeCard(
         )
 
         day.mapStringTime.forEach {
-            val weight = if (it.key == Salah.MAGHRIB) 1.1f else 1f
-            BaseText(
-                modifier = Modifier.weight(weight),
-                text = it.value.cleanTime(),
-                horizontalArrangement = Arrangement.Center,
-                color = contentColor,
-                style = textStyle,
-            )
+            if (it.key != Salah.LASTTHIRD) {
+                val weight = if (it.key == Salah.MAGHRIB) 1.1f else 1f
+                BaseText(
+                    modifier = Modifier.weight(weight),
+                    text = it.value.cleanTime(),
+                    horizontalArrangement = Arrangement.Center,
+                    color = contentColor,
+                    style = textStyle,
+                )
+            }
         }
     }
 }

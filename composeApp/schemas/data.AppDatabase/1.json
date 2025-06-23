@@ -1,0 +1,1183 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "3c2f50df78694e3f75345700fa90b8d8",
+    "entities": [
+      {
+        "tableName": "AppSettingRoom",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `languageName` TEXT NOT NULL, `theme` TEXT NOT NULL, `themeColor` TEXT NOT NULL, `arabicStyleName` TEXT NOT NULL, `arabicFontSize` INTEGER NOT NULL, `translationFontSize` INTEGER NOT NULL, `translationVisibility` INTEGER NOT NULL, `transliterationFontSize` INTEGER NOT NULL, `transliterationVisibility` INTEGER NOT NULL, `locationLatitude` REAL NOT NULL, `locationLongitude` REAL NOT NULL, `locationName` TEXT NOT NULL, `acceptPrivacyPolicy` INTEGER NOT NULL, `lastUpdate` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "languageName",
+            "columnName": "languageName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "theme",
+            "columnName": "theme",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "themeColor",
+            "columnName": "themeColor",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "arabicStyleName",
+            "columnName": "arabicStyleName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "arabicFontSize",
+            "columnName": "arabicFontSize",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "translationFontSize",
+            "columnName": "translationFontSize",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "translationVisibility",
+            "columnName": "translationVisibility",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "transliterationFontSize",
+            "columnName": "transliterationFontSize",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "transliterationVisibility",
+            "columnName": "transliterationVisibility",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "locationLatitude",
+            "columnName": "locationLatitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "locationLongitude",
+            "columnName": "locationLongitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "locationName",
+            "columnName": "locationName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "acceptPrivacyPolicy",
+            "columnName": "acceptPrivacyPolicy",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastUpdate",
+            "columnName": "lastUpdate",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "AsmaulHusnaRoom",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `textIndopak` TEXT NOT NULL, `textUthmani` TEXT NOT NULL, `textTransliteration` TEXT NOT NULL, `textTranslationId` TEXT NOT NULL, `textTranslationEn` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textIndopak",
+            "columnName": "textIndopak",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textUthmani",
+            "columnName": "textUthmani",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textTransliteration",
+            "columnName": "textTransliteration",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textTranslationId",
+            "columnName": "textTranslationId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textTranslationEn",
+            "columnName": "textTranslationEn",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "ChapterRoom",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `revelationPlace` TEXT NOT NULL, `revelationOrder` INTEGER NOT NULL, `bismillahPre` INTEGER NOT NULL, `nameSimple` TEXT NOT NULL, `nameComplex` TEXT NOT NULL, `nameArabic` TEXT NOT NULL, `nameTranslationId` TEXT NOT NULL, `nameTranslationEn` TEXT NOT NULL, `versesCount` INTEGER NOT NULL, `pages` TEXT NOT NULL, `isDownloaded` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "revelationPlace",
+            "columnName": "revelationPlace",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "revelationOrder",
+            "columnName": "revelationOrder",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bismillahPre",
+            "columnName": "bismillahPre",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nameSimple",
+            "columnName": "nameSimple",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nameComplex",
+            "columnName": "nameComplex",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nameArabic",
+            "columnName": "nameArabic",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nameTranslationId",
+            "columnName": "nameTranslationId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nameTranslationEn",
+            "columnName": "nameTranslationEn",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "versesCount",
+            "columnName": "versesCount",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pages",
+            "columnName": "pages",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isDownloaded",
+            "columnName": "isDownloaded",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "ConversationRoom",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `textIndopak` TEXT NOT NULL, `textUthmani` TEXT NOT NULL, `textTransliteration` TEXT NOT NULL, `textTranslationId` TEXT NOT NULL, `textTranslationEn` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textIndopak",
+            "columnName": "textIndopak",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textUthmani",
+            "columnName": "textUthmani",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textTransliteration",
+            "columnName": "textTransliteration",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textTranslationId",
+            "columnName": "textTranslationId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textTranslationEn",
+            "columnName": "textTranslationEn",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "DhikrRoom",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`pkey` TEXT NOT NULL, `id` INTEGER NOT NULL, `type` TEXT NOT NULL, `titleId` TEXT NOT NULL, `titleEn` TEXT NOT NULL, `textIndopak` TEXT NOT NULL, `textUthmani` TEXT NOT NULL, `textTransliteration` TEXT NOT NULL, `textTranslationId` TEXT NOT NULL, `textTranslationEn` TEXT NOT NULL, `hadithId` TEXT NOT NULL, `hadithEn` TEXT NOT NULL, `maxCount` INTEGER NOT NULL, `count` INTEGER NOT NULL, `latestUpdate` TEXT NOT NULL, PRIMARY KEY(`pkey`))",
+        "fields": [
+          {
+            "fieldPath": "pkey",
+            "columnName": "pkey",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "titleId",
+            "columnName": "titleId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "titleEn",
+            "columnName": "titleEn",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textIndopak",
+            "columnName": "textIndopak",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textUthmani",
+            "columnName": "textUthmani",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textTransliteration",
+            "columnName": "textTransliteration",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textTranslationId",
+            "columnName": "textTranslationId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textTranslationEn",
+            "columnName": "textTranslationEn",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hadithId",
+            "columnName": "hadithId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hadithEn",
+            "columnName": "hadithEn",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maxCount",
+            "columnName": "maxCount",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "count",
+            "columnName": "count",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "latestUpdate",
+            "columnName": "latestUpdate",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "pkey"
+          ]
+        }
+      },
+      {
+        "tableName": "DuaCategoryRoom",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`tag` TEXT NOT NULL, `titleId` TEXT NOT NULL, `titleEn` TEXT NOT NULL, PRIMARY KEY(`tag`))",
+        "fields": [
+          {
+            "fieldPath": "tag",
+            "columnName": "tag",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "titleId",
+            "columnName": "titleId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "titleEn",
+            "columnName": "titleEn",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "tag"
+          ]
+        }
+      },
+      {
+        "tableName": "DuaRoom",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `titleId` TEXT NOT NULL, `titleEn` TEXT NOT NULL, `textIndopak` TEXT NOT NULL, `textUthmani` TEXT NOT NULL, `textTransliteration` TEXT NOT NULL, `textTranslationId` TEXT NOT NULL, `textTranslationEn` TEXT NOT NULL, `hadithId` TEXT NOT NULL, `hadithEn` TEXT NOT NULL, `tag` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "titleId",
+            "columnName": "titleId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "titleEn",
+            "columnName": "titleEn",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textIndopak",
+            "columnName": "textIndopak",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textUthmani",
+            "columnName": "textUthmani",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textTransliteration",
+            "columnName": "textTransliteration",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textTranslationId",
+            "columnName": "textTranslationId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textTranslationEn",
+            "columnName": "textTranslationEn",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hadithId",
+            "columnName": "hadithId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hadithEn",
+            "columnName": "hadithEn",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tag",
+            "columnName": "tag",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "GuidanceRoom",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`pkey` TEXT NOT NULL, `position` INTEGER NOT NULL, `type` TEXT NOT NULL, `image` TEXT NOT NULL, `titleId` TEXT NOT NULL, `titleEn` TEXT NOT NULL, `descId` TEXT NOT NULL, `descEn` TEXT NOT NULL, `textIndopak` TEXT NOT NULL, `textUthmani` TEXT NOT NULL, `textTransliteration` TEXT NOT NULL, `textTranslationId` TEXT NOT NULL, `textTranslationEn` TEXT NOT NULL, `hadithId` TEXT NOT NULL, `hadithEn` TEXT NOT NULL, PRIMARY KEY(`pkey`))",
+        "fields": [
+          {
+            "fieldPath": "pkey",
+            "columnName": "pkey",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "position",
+            "columnName": "position",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "image",
+            "columnName": "image",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "titleId",
+            "columnName": "titleId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "titleEn",
+            "columnName": "titleEn",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "descId",
+            "columnName": "descId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "descEn",
+            "columnName": "descEn",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textIndopak",
+            "columnName": "textIndopak",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textUthmani",
+            "columnName": "textUthmani",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textTransliteration",
+            "columnName": "textTransliteration",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textTranslationId",
+            "columnName": "textTranslationId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textTranslationEn",
+            "columnName": "textTranslationEn",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hadithId",
+            "columnName": "hadithId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hadithEn",
+            "columnName": "hadithEn",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "pkey"
+          ]
+        }
+      },
+      {
+        "tableName": "HomeTemplateRoom",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`position` INTEGER NOT NULL, `type` TEXT NOT NULL, `labelId` TEXT NOT NULL, `labelEn` TEXT NOT NULL, `textId` TEXT NOT NULL, `textEn` TEXT NOT NULL, `images` TEXT NOT NULL, `links` TEXT NOT NULL, PRIMARY KEY(`position`))",
+        "fields": [
+          {
+            "fieldPath": "position",
+            "columnName": "position",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "labelId",
+            "columnName": "labelId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "labelEn",
+            "columnName": "labelEn",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textId",
+            "columnName": "textId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textEn",
+            "columnName": "textEn",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "images",
+            "columnName": "images",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "links",
+            "columnName": "links",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "position"
+          ]
+        }
+      },
+      {
+        "tableName": "JuzRoom",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `juzNumber` INTEGER NOT NULL, `chapters` TEXT NOT NULL, `firstChapterNumber` INTEGER NOT NULL, `firstVerseNumber` INTEGER NOT NULL, `firstVerseId` INTEGER NOT NULL, `lastChapterNumber` INTEGER NOT NULL, `lastVerseNumber` INTEGER NOT NULL, `lastVerseId` INTEGER NOT NULL, `versesCount` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "juzNumber",
+            "columnName": "juzNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chapters",
+            "columnName": "chapters",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "firstChapterNumber",
+            "columnName": "firstChapterNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "firstVerseNumber",
+            "columnName": "firstVerseNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "firstVerseId",
+            "columnName": "firstVerseId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastChapterNumber",
+            "columnName": "lastChapterNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastVerseNumber",
+            "columnName": "lastVerseNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastVerseId",
+            "columnName": "lastVerseId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "versesCount",
+            "columnName": "versesCount",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "LastReadRoom",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `verseId` INTEGER NOT NULL, `verseNumber` INTEGER NOT NULL, `chapterId` INTEGER NOT NULL, `chapterNameSimple` TEXT NOT NULL, `progressFloat` REAL NOT NULL, `progressInt` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "verseId",
+            "columnName": "verseId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "verseNumber",
+            "columnName": "verseNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chapterId",
+            "columnName": "chapterId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chapterNameSimple",
+            "columnName": "chapterNameSimple",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "progressFloat",
+            "columnName": "progressFloat",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "progressInt",
+            "columnName": "progressInt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "NoteRoom",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `title` TEXT NOT NULL, `text` TEXT NOT NULL, `kitab` TEXT NOT NULL, `speaker` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `studyAt` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "text",
+            "columnName": "text",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "kitab",
+            "columnName": "kitab",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "speaker",
+            "columnName": "speaker",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "studyAt",
+            "columnName": "studyAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "PageRoom",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `pageNumber` INTEGER NOT NULL, `chapters` TEXT NOT NULL, `firstChapterNumber` INTEGER NOT NULL, `firstVerseNumber` INTEGER NOT NULL, `firstVerseId` INTEGER NOT NULL, `lastChapterNumber` INTEGER NOT NULL, `lastVerseNumber` INTEGER NOT NULL, `lastVerseId` INTEGER NOT NULL, `versesCount` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pageNumber",
+            "columnName": "pageNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chapters",
+            "columnName": "chapters",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "firstChapterNumber",
+            "columnName": "firstChapterNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "firstVerseNumber",
+            "columnName": "firstVerseNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "firstVerseId",
+            "columnName": "firstVerseId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastChapterNumber",
+            "columnName": "lastChapterNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastVerseNumber",
+            "columnName": "lastVerseNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastVerseId",
+            "columnName": "lastVerseId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "versesCount",
+            "columnName": "versesCount",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "PrayerTimeRoom",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`gregorianFullDate` TEXT NOT NULL, `gregorianDate` INTEGER NOT NULL, `gregorianMonth` INTEGER NOT NULL, `gregorianYear` INTEGER NOT NULL, `hijriDate` INTEGER NOT NULL, `hijriMonth` INTEGER NOT NULL, `hijriYear` INTEGER NOT NULL, `day` TEXT NOT NULL, `locationName` TEXT NOT NULL, `timeImsak` TEXT NOT NULL, `timeSubuh` TEXT NOT NULL, `timeSyuruq` TEXT NOT NULL, `timeZhuhur` TEXT NOT NULL, `timeAshar` TEXT NOT NULL, `timeMaghrib` TEXT NOT NULL, `timeIsya` TEXT NOT NULL, `timeLastThird` TEXT NOT NULL, PRIMARY KEY(`gregorianFullDate`))",
+        "fields": [
+          {
+            "fieldPath": "gregorianFullDate",
+            "columnName": "gregorianFullDate",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gregorianDate",
+            "columnName": "gregorianDate",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gregorianMonth",
+            "columnName": "gregorianMonth",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gregorianYear",
+            "columnName": "gregorianYear",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hijriDate",
+            "columnName": "hijriDate",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hijriMonth",
+            "columnName": "hijriMonth",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hijriYear",
+            "columnName": "hijriYear",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "day",
+            "columnName": "day",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "locationName",
+            "columnName": "locationName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timeImsak",
+            "columnName": "timeImsak",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timeSubuh",
+            "columnName": "timeSubuh",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timeSyuruq",
+            "columnName": "timeSyuruq",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timeZhuhur",
+            "columnName": "timeZhuhur",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timeAshar",
+            "columnName": "timeAshar",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timeMaghrib",
+            "columnName": "timeMaghrib",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timeIsya",
+            "columnName": "timeIsya",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timeLastThird",
+            "columnName": "timeLastThird",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "gregorianFullDate"
+          ]
+        }
+      },
+      {
+        "tableName": "VerseFavoriteRoom",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`verseId` INTEGER NOT NULL, `verseNumber` INTEGER NOT NULL, `chapterId` INTEGER NOT NULL, `chapterNameSimple` TEXT NOT NULL, PRIMARY KEY(`verseId`))",
+        "fields": [
+          {
+            "fieldPath": "verseId",
+            "columnName": "verseId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "verseNumber",
+            "columnName": "verseNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chapterId",
+            "columnName": "chapterId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chapterNameSimple",
+            "columnName": "chapterNameSimple",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "verseId"
+          ]
+        }
+      },
+      {
+        "tableName": "VerseRoom",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `chapterId` INTEGER NOT NULL, `verseNumber` INTEGER NOT NULL, `verseKey` TEXT NOT NULL, `hizbNumber` INTEGER NOT NULL, `rubElHizbNumber` INTEGER NOT NULL, `rukuNumber` INTEGER NOT NULL, `manzilNumber` INTEGER NOT NULL, `sajdahNumber` INTEGER NOT NULL, `pageNumber` INTEGER NOT NULL, `juzNumber` INTEGER NOT NULL, `textIndopak` TEXT NOT NULL, `textUthmani` TEXT NOT NULL, `textUthmaniTajweed` TEXT NOT NULL, `textTransliteration` TEXT NOT NULL, `textTranslationId` TEXT NOT NULL, `textTranslationEn` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chapterId",
+            "columnName": "chapterId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "verseNumber",
+            "columnName": "verseNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "verseKey",
+            "columnName": "verseKey",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hizbNumber",
+            "columnName": "hizbNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rubElHizbNumber",
+            "columnName": "rubElHizbNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rukuNumber",
+            "columnName": "rukuNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "manzilNumber",
+            "columnName": "manzilNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sajdahNumber",
+            "columnName": "sajdahNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pageNumber",
+            "columnName": "pageNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "juzNumber",
+            "columnName": "juzNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textIndopak",
+            "columnName": "textIndopak",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textUthmani",
+            "columnName": "textUthmani",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textUthmaniTajweed",
+            "columnName": "textUthmaniTajweed",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textTransliteration",
+            "columnName": "textTransliteration",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textTranslationId",
+            "columnName": "textTranslationId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "textTranslationEn",
+            "columnName": "textTranslationEn",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3c2f50df78694e3f75345700fa90b8d8')"
+    ]
+  }
+}

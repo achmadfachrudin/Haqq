@@ -23,7 +23,7 @@ data class PrayerTime(
      */
     fun whatNextPrayerTime(
         tomorrow: PrayerTime,
-        showMandatoryPrayer: Boolean = false,
+        showFardOnly: Boolean = false,
     ): Triple<Salah, String, Boolean> {
         try {
             val thisTime =
@@ -35,14 +35,14 @@ data class PrayerTime(
                 mapLocalTime
                     .toList()
                     .sortedBy { it.second }
-                    .filter { if (showMandatoryPrayer) it.first != Salah.IMSAK && it.first != Salah.SYURUQ else true }
+                    .filter { if (showFardOnly) it.first != Salah.IMSAK && it.first != Salah.SYURUQ else true }
                     .firstOrNull { it.second > thisTime }
 
             val tomorrowSalahTimes =
                 tomorrow.mapLocalTime
                     .toList()
                     .sortedBy { it.second }
-                    .first { if (showMandatoryPrayer) it.first != Salah.IMSAK && it.first != Salah.SYURUQ else true }
+                    .first { if (showFardOnly) it.first != Salah.IMSAK && it.first != Salah.SYURUQ else true }
 
             // Find the next prayer time
             val nextPrayer =
