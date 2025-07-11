@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package feature.dhikr.service.mapper
 
 import core.util.orZero
@@ -6,10 +8,11 @@ import feature.dhikr.service.entity.DhikrRoom
 import feature.dhikr.service.model.Dhikr
 import feature.dhikr.service.model.DhikrType
 import feature.other.service.model.AppSetting
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 internal fun DhikrEntity.mapToRoom(dhikrType: DhikrType): DhikrRoom {
     val dhikrId = id ?: 0

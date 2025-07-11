@@ -14,11 +14,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.number
 import kotlinx.datetime.todayIn
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
+@OptIn(ExperimentalTime::class)
 class CalendarScreenModel(
     private val prayerRepository: PrayerRepository,
 ) : ViewModel() {
@@ -97,8 +100,8 @@ class CalendarScreenModel(
 
             prayerRepository
                 .fetchConvertGregorianToHijri(
-                    today.dayOfMonth,
-                    today.monthNumber,
+                    today.day,
+                    today.month.number,
                     today.year,
                 ).collectLatest {
                     when (it) {

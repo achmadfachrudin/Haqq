@@ -151,6 +151,7 @@ internal fun PrayertimeEntity.Data.mapToPrayerTime(): PrayerTime {
 }
 
 internal fun PrayerTimeRoom.mapToModel(): PrayerTime {
+    val timeLastThird = timeLastThird
     val timeImsak = timeImsak
     val timeSubuh = timeSubuh
     val timeSyuruq = timeSyuruq
@@ -158,11 +159,11 @@ internal fun PrayerTimeRoom.mapToModel(): PrayerTime {
     val timeAshar = timeAshar
     val timeMaghrib = timeMaghrib
     val timeIsya = timeIsya
-    val timeLastThird = timeLastThird
 
     return PrayerTime(
         mapStringTime =
             mapOf(
+                Salah.LASTTHIRD to timeLastThird,
                 Salah.IMSAK to timeImsak,
                 Salah.SUBUH to timeSubuh,
                 Salah.SYURUQ to timeSyuruq,
@@ -170,10 +171,10 @@ internal fun PrayerTimeRoom.mapToModel(): PrayerTime {
                 Salah.ASHAR to timeAshar,
                 Salah.MAGHRIB to timeMaghrib,
                 Salah.ISYA to timeIsya,
-                Salah.LASTTHIRD to timeLastThird,
             ),
         mapLocalTime =
             mapOf(
+                Salah.LASTTHIRD to mapHourToLocalTime(timeLastThird),
                 Salah.IMSAK to mapHourToLocalTime(timeImsak),
                 Salah.SUBUH to mapHourToLocalTime(timeSubuh),
                 Salah.SYURUQ to mapHourToLocalTime(timeSyuruq),
@@ -181,7 +182,6 @@ internal fun PrayerTimeRoom.mapToModel(): PrayerTime {
                 Salah.ASHAR to mapHourToLocalTime(timeAshar),
                 Salah.MAGHRIB to mapHourToLocalTime(timeMaghrib),
                 Salah.ISYA to mapHourToLocalTime(timeIsya),
-                Salah.LASTTHIRD to mapHourToLocalTime(timeLastThird),
             ),
         gregorian =
             PrayerTime.Gregorian(

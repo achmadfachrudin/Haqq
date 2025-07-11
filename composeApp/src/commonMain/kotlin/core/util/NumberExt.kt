@@ -1,9 +1,10 @@
 package core.util
 
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 fun Int?.orZero(): Int = this ?: 0
 
@@ -52,6 +53,7 @@ fun Long.formatAsCurrency(showPrefix: Boolean = true): String {
 }
 
 // milliseconds: Long
+@OptIn(ExperimentalTime::class)
 fun Long.toLocalDateTime(): LocalDateTime =
     Instant
         .fromEpochMilliseconds(this)
