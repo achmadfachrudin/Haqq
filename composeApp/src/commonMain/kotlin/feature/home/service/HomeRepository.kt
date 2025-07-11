@@ -23,10 +23,11 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.lastOrNull
 import kotlinx.coroutines.flow.onStart
-import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.daysUntil
 import kotlinx.datetime.todayIn
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 class HomeRepository(
     private val appRepository: AppRepository,
@@ -35,6 +36,7 @@ class HomeRepository(
     private val remote: HomeRemote,
     private val database: AppDatabase,
 ) {
+    @OptIn(ExperimentalTime::class)
     fun fetchHomeTemplates() =
         flow {
             val lastUpdate = appRepository.getSetting().lastUpdate

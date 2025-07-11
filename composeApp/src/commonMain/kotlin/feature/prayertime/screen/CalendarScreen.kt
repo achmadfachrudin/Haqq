@@ -62,7 +62,6 @@ import haqq.composeapp.generated.resources.calendar_ramadhan
 import haqq.composeapp.generated.resources.chevron_left
 import haqq.composeapp.generated.resources.chevron_right
 import haqq.composeapp.generated.resources.prayer_enable_gps
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
@@ -71,6 +70,8 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.mp.KoinPlatform
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 @Serializable
 object CalendarNav
@@ -228,6 +229,7 @@ private fun LabelCard(day: HijriDay) {
     )
 }
 
+@OptIn(ExperimentalTime::class)
 @Composable
 private fun DayCard(
     day: PrayerTime,

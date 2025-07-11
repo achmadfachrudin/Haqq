@@ -57,7 +57,6 @@ import haqq.composeapp.generated.resources.save
 import haqq.composeapp.generated.resources.study_note_new
 import haqq.composeapp.generated.resources.study_note_title
 import haqq.composeapp.generated.resources.trash_2
-import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
@@ -65,13 +64,15 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 @Serializable
 data class NoteDetailNav(
     val noteId: Int = 0,
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalTime::class)
 @Composable
 fun NoteDetailScreen(
     nav: NoteDetailNav,

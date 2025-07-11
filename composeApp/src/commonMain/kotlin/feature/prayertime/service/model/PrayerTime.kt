@@ -1,11 +1,13 @@
 package feature.prayertime.service.model
 
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.Serializable
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class PrayerTime(
     val mapStringTime: Map<Salah, String>, // SUBUH to 05:00

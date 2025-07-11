@@ -25,10 +25,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 class MainScreenModel(
     private val appRepository: AppRepository,
@@ -157,6 +158,7 @@ class MainScreenModel(
         }
     }
 
+    @OptIn(ExperimentalTime::class)
     fun onViewed() {
         viewModelScope.launch {
             // get first chapter

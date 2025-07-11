@@ -14,6 +14,7 @@ import org.jetbrains.compose.resources.StringResource
 enum class Salah(
     val titleRes: StringResource,
 ) {
+    LASTTHIRD(Res.string.prayer_lastthird),
     IMSAK(Res.string.prayer_imsak),
     SUBUH(Res.string.prayer_fajr),
     SYURUQ(Res.string.prayer_sunrise),
@@ -21,5 +22,4 @@ enum class Salah(
     ASHAR(Res.string.prayer_asr),
     MAGHRIB(Res.string.prayer_maghrib),
     ISYA(Res.string.prayer_isha),
-    LASTTHIRD(Res.string.prayer_lastthird),
 }
