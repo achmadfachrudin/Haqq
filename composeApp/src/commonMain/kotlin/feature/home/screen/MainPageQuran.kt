@@ -181,7 +181,7 @@ internal fun MainPageQuran(
         }
 
         LaunchedEffect(Unit) {
-            vm.getQuran2()
+            vm.getQuran()
         }
     }
 

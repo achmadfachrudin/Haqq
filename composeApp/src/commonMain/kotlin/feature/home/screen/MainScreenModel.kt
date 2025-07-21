@@ -39,10 +39,6 @@ class MainScreenModel(
     val mutableState = MutableStateFlow(State())
     val state: StateFlow<State> = mutableState.asStateFlow()
     var shouldRefreshHome by mutableStateOf(true)
-    var shouldRefreshQuranChapter by mutableStateOf(true)
-    var shouldRefreshQuranJuz by mutableStateOf(true)
-    var shouldRefreshQuranPage by mutableStateOf(true)
-    var shouldRefreshQuranFavorite by mutableStateOf(true)
 
     data class State(
         val acceptPrivacyPolicy: Boolean = true, // for offline connection
@@ -204,7 +200,7 @@ class MainScreenModel(
         }
     }
 
-    fun getQuran2() {
+    fun getQuran() {
         viewModelScope.launch {
             val lastRead = quranRepository.getLastRead()
             val downloadState =
@@ -296,11 +292,10 @@ class MainScreenModel(
 
             for (i in 1..MAX_CHAPTER) {
                 quranRepository.downloadVerses(i).last()
-                mutableState.value =
-                    state.value.copy(verseDownloading = i)
+                mutableState.value = state.value.copy(verseDownloading = i)
             }
 
-            getQuran2()
+            getQuran()
             getQuranChapters()
             getQuranJuzs()
             getQuranPages()
