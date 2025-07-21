@@ -219,7 +219,7 @@ fun MainScreen(
                             MainPageQuran(
                                 vm = vm,
                                 state = state,
-                                onRetryClick = { vm.getQuran2() },
+                                onRetryClick = { vm.getQuran() },
                                 onLastReadClick = { verse ->
                                     onVerseListClick(
                                         VerseListNav(

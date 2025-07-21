@@ -373,6 +373,8 @@ class QuranRepository(
                         }
                     }
                 }
+            } else {
+                emit(DataState.Success(true))
             }
         }.flowOn(Dispatchers.IO)
 
