@@ -17,9 +17,8 @@ plugins {
 
 kotlin {
     androidTarget {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget.set(JvmTarget.JVM_17)
         }
     }
 
@@ -120,8 +119,8 @@ android {
             libs.versions.android.targetSdk
                 .get()
                 .toInt()
-        versionName = "1.0.20"
-        versionCode = 20
+        versionName = "1.0.21"
+        versionCode = 21
     }
     packaging {
         resources {
@@ -134,8 +133,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures {
         compose = true
