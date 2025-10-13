@@ -112,7 +112,7 @@ class DhikrRepository(
                             database
                                 .duaCategoryDao()
                                 .getAll()
-                                .filter { it.tag == tagFilter }
+                                .filter { tagFilter.isEmpty() || it.tag == tagFilter }
                                 .map { it.mapToModel(setting) }
                                 .sortedBy { it.title }
 
@@ -124,7 +124,7 @@ class DhikrRepository(
                     database
                         .duaCategoryDao()
                         .getAll()
-                        .filter { it.tag == tagFilter }
+                        .filter { tagFilter.isEmpty() || it.tag == tagFilter }
                         .map { it.mapToModel(setting) }
                         .sortedBy { it.title }
 
